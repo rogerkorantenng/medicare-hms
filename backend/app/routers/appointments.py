@@ -24,8 +24,10 @@ _LIST = """
       left join staff s on s.id = a.doctor_id
      where ($1::date is null or a.appt_date >= $1)
        and ($2::text is null or a.mrn = $2)
+       and ($3::text is null or a.status::text = $3)
+       and ($4::uuid is null or a.doctor_id = $4)
      order by a.appt_date, a.appt_time
-     limit 200
+     limit $5 offset $6
 """
 
 
@@ -48,7 +50,9 @@ class NewAppointment(BaseModel):
 
 @router.get("")
 async def list_appointments(
-    user: AnyUser, mrn: str | None = None, since: Date | None = None
+    user: AnyUser, mrn: str | None = None, since: Date | None = None,
+    status: str | None = None, doctor_id: str | None = None,
+    limit: int = 200, offset: int = 0,
 ):
     # A patient may only ever list their own appointments.
     if user.role == "patient":
@@ -56,7 +60,8 @@ async def list_appointments(
     elif mrn:
         scope_to_patient(user, mrn)
     async with connection() as conn:
-        return rows(await conn.fetch(_LIST, since, mrn))
+        return rows(await conn.fetch(_LIST, since, mrn, status, doctor_id,
+                                     min(limit, 500), offset))
 
 
 @router.get("/free-slots")

@@ -32,9 +32,10 @@ class NewPatient(BaseModel):
 
 
 @router.get("")
-async def search_patients(user: AnyStaff, q_: str = Query("", alias="q")):
+async def search_patients(user: AnyStaff, q_: str = Query("", alias="q"),
+                          limit: int = Query(50, ge=1, le=200), offset: int = 0):
     async with connection() as conn:
-        return await q.search(conn, q_)
+        return await q.search(conn, q_, limit, offset)
 
 
 @router.post("", status_code=201)

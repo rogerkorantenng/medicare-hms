@@ -90,8 +90,11 @@ async def test_full_patient_journey(api, auth):
                         headers=auth("pharmacist"))).json() if i["name"] == "Atorvastatin 20mg")
     pending = (await api.get("/api/pharmacy/prescriptions", headers=auth("pharmacist"))).json()
     rx = next(r for r in pending if r["mrn"] == mrn)
-    assert (await api.post(f"/api/pharmacy/prescriptions/{rx['id']}/dispense",
-                           headers=auth("pharmacist"))).status_code == 204
+    dispensed = await api.post(f"/api/pharmacy/prescriptions/{rx['id']}/dispense",
+                               headers=auth("pharmacist"))
+    assert dispensed.status_code == 200
+    # Nothing left outstanding: the whole prescription went out at once.
+    assert dispensed.json()["remaining"] == 0
 
     stock_after = next(i for i in (await api.get("/api/pharmacy/inventory",
                        headers=auth("pharmacist"))).json() if i["name"] == "Atorvastatin 20mg")

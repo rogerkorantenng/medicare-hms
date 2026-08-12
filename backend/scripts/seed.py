@@ -79,6 +79,8 @@ async def main(reset: bool) -> int:
         await run_file(conn, "002_functions.sql")
         # Additive migrations, safe to re-run.
         await run_file(conn, "005_account_prefs.sql")
+        await run_file(conn, "006_operations.sql")
+        await run_file(conn, "007_operations_functions.sql")
         print("Creating accounts")
         await create_accounts(conn, password)
         print("Seeding")
@@ -88,6 +90,8 @@ async def main(reset: bool) -> int:
         # Without it the receptionist, nurse and doctor dashboards are
         # empty, which is three of the nine.
         await run_file(conn, "004_seed_activity.sql")
+        # Reference data that used to live in TypeScript, plus rosters.
+        await run_file(conn, "008_seed_operations.sql")
 
         counts = await conn.fetchrow(
             """select (select count(*) from patients) as patients,

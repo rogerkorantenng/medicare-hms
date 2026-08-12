@@ -3,6 +3,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from pydantic import BaseModel, Field
+
 from ..db import connection
 from ..security import CurrentUser, require
 from ..serialise import rows
@@ -11,6 +13,7 @@ router = APIRouter(prefix="/pharmacy", tags=["pharmacy"])
 
 Pharmacist = Annotated[CurrentUser, Depends(require("pharmacist", "admin"))]
 Reader = Annotated[CurrentUser, Depends(require("pharmacist", "doctor", "nurse", "admin"))]
+Prescriber = Annotated[CurrentUser, Depends(require("doctor", "admin"))]
 
 _PENDING = """select r.*, p.full_name as patient_name, s.full_name as prescriber_name
                 from prescriptions r join patients p on p.mrn = r.mrn
@@ -24,8 +27,28 @@ async def pending_prescriptions(user: Reader):
         return rows(await conn.fetch(_PENDING))
 
 
-@router.post("/prescriptions/{rx_id}/dispense", status_code=204)
-async def dispense(rx_id: int, user: Pharmacist):
+class Dispense(BaseModel):
+    """Omit the quantity to give the whole outstanding amount."""
+    quantity: int | None = Field(default=None, gt=0)
+
+
+class Discontinue(BaseModel):
+    reason: str = Field(min_length=3, max_length=200)
+
+
+@router.post("/prescriptions/{rx_id}/discontinue", status_code=204)
+async def discontinue(rx_id: int, body: Discontinue, user: Prescriber):
+    """
+    A drug prescribed in error could not be withdrawn. The row stays,
+    because it really was prescribed; the reason records why it stopped.
+    """
+    async with connection() as conn:
+        await conn.execute("select discontinue_prescription($1, $2, $3)",
+                           user.id, rx_id, body.reason)
+
+
+@router.post("/prescriptions/{rx_id}/dispense", status_code=200)
+async def dispense(rx_id: int, user: Pharmacist, body: Dispense | None = None):
     """
     Calls the database function. Stock is decremented from current state
     inside one transaction, never read-subtract-write from a copy the
@@ -34,9 +57,15 @@ async def dispense(rx_id: int, user: Pharmacist):
     """
     async with connection() as conn:
         async with conn.transaction():
-            await conn.execute("select dispense_prescription($1, $2)", rx_id, user.id)
-            await conn.execute("select write_audit($1,'Dispensed prescription',$2)",
-                               user.id, f"rx {rx_id}")
+            remaining = await conn.fetchval(
+                "select dispense_prescription($1, $2, $3)",
+                rx_id, user.id, body.quantity if body else None)
+            await conn.execute(
+                "select write_audit($1, $2, $3)", user.id,
+                'Dispensed prescription' if remaining == 0
+                else f'Part-dispensed prescription, {remaining} outstanding',
+                f"rx {rx_id}")
+    return {"remaining": remaining}
 
 
 @router.get("/inventory")

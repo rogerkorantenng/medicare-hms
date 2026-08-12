@@ -14,7 +14,10 @@ Billing = Annotated[CurrentUser, Depends(require(*BILLING_ROLES))]
 
 _INVOICES = """select i.*, p.full_name as patient_name
                  from invoices i join patients p on p.mrn = i.mrn
-                order by i.created_at desc"""
+                where ($1::text is null or i.status::text = $1)
+                  and ($2::text is null or i.mrn = $2)
+                order by i.created_at desc
+                limit $3 offset $4"""
 _LINES = "select * from invoice_lines order by created_at"
 
 
@@ -25,10 +28,12 @@ class Payment(BaseModel):
 
 
 @router.get("/invoices")
-async def invoices(user: Billing):
+async def invoices(user: Billing, status: str | None = None, mrn: str | None = None,
+                   limit: int = 100, offset: int = 0):
     """Status is a generated column — derived from total and paid, never stored."""
     async with connection() as conn:
-        found = rows(await conn.fetch(_INVOICES))
+        found = rows(await conn.fetch(_INVOICES, status, mrn,
+                                      min(limit, 500), offset))
         lines = await conn.fetch(_LINES)
     by_invoice: dict[str, list[dict]] = {}
     for line in lines:

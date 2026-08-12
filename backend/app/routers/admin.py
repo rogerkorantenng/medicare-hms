@@ -28,7 +28,9 @@ async def snapshot(user: Admin):
 
 
 @router.get("/audit")
-async def audit_log(user: Admin, limit: int = 300):
+async def audit_log(user: Admin, limit: int = 100, offset: int = 0,
+                    actor: str | None = None, action: str | None = None,
+                    since: str | None = None):
     """
     Read-only by construction. There is no update or delete route on this
     resource anywhere in the API — an audit trail that can be edited is not
@@ -36,7 +38,13 @@ async def audit_log(user: Admin, limit: int = 300):
     """
     async with connection() as conn:
         return rows(await conn.fetch(
-            "select * from audit_entries order by occurred_at desc limit $1", limit))
+            """select * from audit_entries
+                where ($3::text is null or actor_name ilike '%' || $3 || '%')
+                  and ($4::text is null or action ilike '%' || $4 || '%')
+                  and ($5::date is null or occurred_at::date >= $5::date)
+                order by occurred_at desc
+                limit $1 offset $2""",
+            min(limit, 500), offset, actor, action, since))
 
 
 @router.get("/notifications")
