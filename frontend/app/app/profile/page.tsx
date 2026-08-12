@@ -2,12 +2,16 @@ import { repo } from '@/lib/repository';
 import { currentUser } from '@/lib/session';
 import { Icon, Avatar, Chip } from '@/components/ui';
 import { SignOutButton } from './sign-out';
+import { NotifySwitches } from './notify-switches';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Profile() {
   const me = await currentUser();
-  const patient = me!.mrn ? await repo.getPatient(me!.mrn) : null;
+  const [patient, prefs] = await Promise.all([
+    me!.mrn ? repo.getPatient(me!.mrn) : null,
+    repo.notificationPreferences(),
+  ]);
 
   return (
     <>
@@ -64,24 +68,11 @@ export default async function Profile() {
 
         <section className="rounded-card bg-white border border-hairline p-4">
           <h2 className="text-m-section mb-1">Notifications</h2>
-          <p className="text-m-support text-ink-soft mb-3">
-            Results are released to you only after the laboratory has verified them.
+          <p className="text-m-support text-ink-soft mb-2">
+            Results are released to you only after the laboratory has verified
+            them, whatever you choose here.
           </p>
-          {[
-            ['Test results', true],
-            ['Appointment reminders', true],
-            ['Billing and payments', true],
-          ].map(([label, on]) => (
-            <div key={String(label)} className="flex items-center justify-between min-h-[44px]">
-              <span className="text-m-body">{label}</span>
-              <span
-                className={`w-11 h-6 rounded-full flex items-center px-0.5 ${on ? 'bg-primary justify-end' : 'bg-ink-disabled'}`}
-                role="switch" aria-checked={!!on} aria-label={String(label)}
-              >
-                <span className="w-5 h-5 rounded-full bg-white shadow-card" />
-              </span>
-            </div>
-          ))}
+          <NotifySwitches initial={prefs} />
         </section>
 
         <SignOutButton />

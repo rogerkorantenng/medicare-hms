@@ -204,7 +204,14 @@ export function Shell({
             <div className="ml-auto flex items-center gap-3">
               <LiveClock />
               <NotificationBell />
-              <div className="flex items-center gap-2.5 pl-3 border-l border-hairline">
+              {/* The whole block is the link to your account, so the
+                  obvious place to click for "my details" is the one that
+                  already shows them. */}
+              <Link
+                href="/workspace/account"
+                className="flex items-center gap-2.5 pl-3 border-l border-hairline rounded-control py-1 pr-2 hover:bg-surface-row transition"
+                title="Your account"
+              >
                 <Avatar name={fullName} size={34} />
                 <div className="hidden sm:block leading-tight">
                   <p className="text-support font-display font-bold">{fullName}</p>
@@ -212,7 +219,7 @@ export function Shell({
                     {ROLE_LABEL[role]}{department ? ` · ${department}` : ''}
                   </p>
                 </div>
-              </div>
+              </Link>
             </div>
           </header>
 

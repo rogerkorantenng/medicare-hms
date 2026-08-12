@@ -11,7 +11,7 @@ import { NextResponse, type NextRequest } from 'next/server';
  * is app/security/deps.py, and it re-reads the role from the database.
  */
 const SESSION_COOKIE = 'medicare_session';
-const PUBLIC_PATHS = ['/login', '/welcome', '/api/session'];
+const PUBLIC_PATHS = ['/login', '/welcome', '/forgot-password', '/api/session'];
 
 /** The role claim, or null if the cookie is missing, malformed or expired. */
 function readRole(token: string | undefined): string | null {

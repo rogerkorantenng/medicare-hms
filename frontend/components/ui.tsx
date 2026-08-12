@@ -111,17 +111,38 @@ export function EmptyState({ icon = 'inbox', title, hint }: {
   );
 }
 
-export function Stat({ label, value, hint, tone }: {
-  label: string; value: ReactNode; hint?: string; tone?: 'danger' | 'warning' | 'success';
+/**
+ * A single figure.
+ *
+ * The label sits beside the icon rather than above the number, so the tile
+ * is the height of its content instead of a fixed block with air in it.
+ * Eight of these used to occupy a third of the dashboard while saying very
+ * little; the same eight now fit in half the space and read faster.
+ */
+export function Stat({ label, value, hint, tone, icon }: {
+  label: string; value: ReactNode; hint?: string; icon?: string;
+  tone?: 'danger' | 'warning' | 'success';
 }) {
   const toneClass = tone === 'danger' ? 'text-danger-fg'
     : tone === 'warning' ? 'text-warning-fg'
     : tone === 'success' ? 'text-success-fg' : 'text-ink';
+  const iconTint = tone === 'danger' ? 'bg-danger-bg text-danger-fg'
+    : tone === 'warning' ? 'bg-warning-bg text-warning-fg'
+    : tone === 'success' ? 'bg-success-bg text-success-fg'
+    : 'bg-primary-tint text-primary';
+
   return (
-    <div className="card p-4">
-      <p className="label">{label}</p>
-      <p className={`val text-2xl font-bold mt-1 ${toneClass}`}>{value}</p>
-      {hint && <p className="text-support text-ink-soft mt-0.5">{hint}</p>}
+    <div className="card px-4 py-3.5 flex items-center gap-3">
+      {icon && (
+        <span className={`grid place-items-center w-9 h-9 rounded-control shrink-0 ${iconTint}`}>
+          <Icon name={icon} size={19} />
+        </span>
+      )}
+      <div className="min-w-0">
+        <p className="label leading-none">{label}</p>
+        <p className={`val text-xl font-bold mt-1 leading-none ${toneClass}`}>{value}</p>
+        {hint && <p className="text-chip text-ink-soft mt-1">{hint}</p>}
+      </div>
     </div>
   );
 }

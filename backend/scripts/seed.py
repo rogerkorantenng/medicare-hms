@@ -77,6 +77,8 @@ async def main(reset: bool) -> int:
         print("Applying schema")
         await run_file(conn, "001_schema.sql")
         await run_file(conn, "002_functions.sql")
+        # Additive migrations, safe to re-run.
+        await run_file(conn, "005_account_prefs.sql")
         print("Creating accounts")
         await create_accounts(conn, password)
         print("Seeding")

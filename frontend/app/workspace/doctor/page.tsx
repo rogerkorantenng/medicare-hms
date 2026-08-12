@@ -51,11 +51,11 @@ export default async function DoctorDashboard() {
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Stat label="Waiting for you" value={queue.length} />
-        <Stat label="Urgent in queue" value={queue.filter((q) => q.acuity === 'urgent').length}
+        <Stat label="Waiting for you" icon="hourglass_empty" value={queue.length} />
+        <Stat label="Urgent in queue" icon="priority_high" value={queue.filter((q) => q.acuity === 'urgent').length}
               tone={queue.some((q) => q.acuity === 'urgent') ? 'danger' : undefined} />
-        <Stat label="Your open lab orders" value={pendingMine.length} />
-        <Stat label="Critical unread" value={criticals.length} tone={criticals.length ? 'danger' : undefined} />
+        <Stat label="Your open lab orders" icon="science" value={pendingMine.length} />
+        <Stat label="Critical unread" icon="error" value={criticals.length} tone={criticals.length ? 'danger' : undefined} />
       </div>
 
       <Card title={`Patient queue · ${queue.length}`}>

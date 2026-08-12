@@ -34,6 +34,28 @@ export interface Staff {
   isActive?: boolean;
 }
 
+/** Only what reception captured. The MRN is not among them. */
+export interface PatientDemographics {
+  fullName?: string;
+  age?: number;
+  phone?: string;
+  bloodGroup?: string | null;
+  insurance?: string | null;
+}
+
+/** The prescribing guard reads `allergies`, so this is a clinical change. */
+export interface ClinicalFacts {
+  allergies?: string[];
+  conditions?: string[];
+}
+
+/** The three switches in the patient app. */
+export interface NotifyPrefs {
+  results: boolean;
+  appointments: boolean;
+  billing: boolean;
+}
+
 export interface NewStaff {
   email: string;
   fullName: string;
@@ -495,6 +517,16 @@ export interface Repository {
   // ---- notifications ----
   notifications(): Promise<AppNotification[]>;
   markRead(id: number): Promise<void>;
+
+  // ---- your own account ----
+  notificationPreferences(): Promise<NotifyPrefs>;
+  saveNotificationPreferences(prefs: NotifyPrefs): Promise<NotifyPrefs>;
+  requestPasswordReset(email: string): Promise<{ message: string }>;
+  changePassword(currentPassword: string, newPassword: string): Promise<void>;
+
+  // ---- corrections ----
+  correctPatient(mrn: string, patch: PatientDemographics): Promise<Patient>;
+  updateClinicalFacts(mrn: string, patch: ClinicalFacts): Promise<Patient>;
 
   // ---- printable documents ----
   prescriptionSlip(id: number): Promise<PrescriptionSlip | null>;

@@ -102,6 +102,12 @@ export function LoginForm(
         {pending ? 'Signing in' : 'Sign in'}
       </button>
 
+      <p className="text-center">
+        <a href="/forgot-password" className="text-support text-primary hover:underline">
+          Forgotten your password?
+        </a>
+      </p>
+
       <p className="text-support text-ink-faint text-center">
         All data is synthetic. No real patient data appears anywhere.
       </p>

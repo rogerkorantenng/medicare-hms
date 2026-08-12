@@ -2,6 +2,8 @@ import { repo } from '@/lib/repository';
 import { currentUser } from '@/lib/session';
 import { PageHeader, Avatar, Chip, RestrictionNotice } from '@/components/ui';
 import { ChartTabs } from './chart-tabs';
+import { EditPatient } from './edit-patient';
+import { EditClinical } from './edit-clinical';
 import { ROLE_LABEL } from '@/lib/nav';
 
 export const dynamic = 'force-dynamic';
@@ -18,6 +20,12 @@ export default async function PatientChart({ params }: { params: { mrn: string }
   const clinical = ['doctor', 'nurse', 'lab', 'radiology', 'pharmacist', 'admin'].includes(me!.role);
   const p = chart.patient;
 
+  // Who may correct what, matching the API rather than guessing at it:
+  // reception owns the demographics it captured, clinical staff own the
+  // clinical facts. A cashier sees neither control.
+  const mayCorrectDetails = ['receptionist', 'admin'].includes(me!.role);
+  const mayEditClinical = ['doctor', 'nurse', 'receptionist', 'admin'].includes(me!.role);
+
   return (
     <>
       <PageHeader
@@ -27,7 +35,7 @@ export default async function PatientChart({ params }: { params: { mrn: string }
 
       <div className="card p-5 mb-5 flex flex-wrap items-center gap-4">
         <Avatar name={p.fullName} size={52} />
-        <div className="flex flex-wrap gap-1.5 flex-1">
+        <div className="flex flex-wrap gap-1.5 flex-1 min-w-[240px]">
           {p.bloodGroup && <Chip tone="neutral" icon="water_drop">{p.bloodGroup}</Chip>}
           {p.allergies.length === 0
             ? <Chip tone="success">No known allergies</Chip>
@@ -35,6 +43,13 @@ export default async function PatientChart({ params }: { params: { mrn: string }
           {p.conditions.map((c) => <Chip key={c} tone="info">{c}</Chip>)}
           {chart.bed && <Chip tone="warning" icon="bed">{chart.bed.ward} · {chart.bed.bedNo}</Chip>}
         </div>
+
+        {(mayCorrectDetails || mayEditClinical) && (
+          <div className="flex flex-wrap gap-2">
+            {mayEditClinical && <EditClinical patient={p} />}
+            {mayCorrectDetails && <EditPatient patient={p} />}
+          </div>
+        )}
       </div>
 
       {!clinical && (

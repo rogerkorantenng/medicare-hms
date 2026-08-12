@@ -45,6 +45,7 @@ nurse        /workspace/nurse
 nurse        /workspace/nurse/wards
 nurse        /workspace/nurse/mar
 doctor       /workspace/doctor
+doctor       /workspace/account
 doctor       /workspace/doctor/orders
 doctor       /workspace/doctor/consultation/PT-20481
 lab          /workspace/lab

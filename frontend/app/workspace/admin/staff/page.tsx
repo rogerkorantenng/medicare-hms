@@ -23,10 +23,10 @@ export default async function StaffDirectory() {
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Stat label="Active accounts" value={active.length} />
-        <Stat label="On duty" value={onDuty.length} tone="success" />
-        <Stat label="Off duty" value={active.length - onDuty.length} />
-        <Stat label="Departments" value={departments} />
+        <Stat label="Active accounts" icon="groups" value={active.length} />
+        <Stat label="On duty" icon="how_to_reg" value={onDuty.length} tone="success" />
+        <Stat label="Off duty" icon="block" value={active.length - onDuty.length} />
+        <Stat label="Departments" icon="badge" value={departments} />
       </div>
 
       <Card>

@@ -17,15 +17,15 @@ export default async function AdminDashboard() {
       <PageHeader title="Hospital overview" subtitle="Live figures, straight from the database." />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Stat label="Patients registered" value={kpis.patientsTotal} />
-        <Stat label="Appointments today" value={kpis.appointmentsToday} />
-        <Stat label="Revenue collected" value={money(kpis.revenueCollected)} tone="success" />
-        <Stat label="Outstanding" value={money(kpis.revenueOutstanding)}
+        <Stat label="Patients registered" icon="groups" value={kpis.patientsTotal} />
+        <Stat label="Appointments today" icon="event" value={kpis.appointmentsToday} />
+        <Stat label="Revenue collected" icon="payments" value={money(kpis.revenueCollected)} tone="success" />
+        <Stat label="Outstanding" icon="schedule" value={money(kpis.revenueOutstanding)}
               tone={kpis.revenueOutstanding > 0 ? 'warning' : undefined} />
-        <Stat label="Beds occupied" value={`${kpis.bedsOccupied} / ${kpis.bedsTotal}`} />
-        <Stat label="Waiting in queue" value={kpis.queueWaiting} />
-        <Stat label="Laboratory pending" value={kpis.labsPending} />
-        <Stat label="Prescriptions pending" value={kpis.rxPending} />
+        <Stat label="Beds occupied" icon="bed" value={`${kpis.bedsOccupied} / ${kpis.bedsTotal}`} />
+        <Stat label="Waiting in queue" icon="hourglass_empty" value={kpis.queueWaiting} />
+        <Stat label="Laboratory pending" icon="science" value={kpis.labsPending} />
+        <Stat label="Prescriptions pending" icon="pill" value={kpis.rxPending} />
       </div>
 
       <div className="grid xl:grid-cols-[minmax(0,1fr)_380px] gap-5 mt-6">

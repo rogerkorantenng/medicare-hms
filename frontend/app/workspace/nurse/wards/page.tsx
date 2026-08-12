@@ -18,10 +18,10 @@ export default async function Wards() {
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Stat label="Beds occupied" value={`${occupied} / ${total}`} />
-        <Stat label="Free beds" value={total - occupied} tone="success" />
-        <Stat label="Wards" value={wards.length} />
-        <Stat label="Occupancy" value={`${total ? Math.round((occupied / total) * 100) : 0}%`} />
+        <Stat label="Beds occupied" icon="bed" value={`${occupied} / ${total}`} />
+        <Stat label="Free beds" icon="check_circle" value={total - occupied} tone="success" />
+        <Stat label="Wards" icon="home" value={wards.length} />
+        <Stat label="Occupancy" icon="monitor_heart" value={`${total ? Math.round((occupied / total) * 100) : 0}%`} />
       </div>
 
       <div className="flex flex-col gap-5">

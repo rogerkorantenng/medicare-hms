@@ -20,10 +20,10 @@ export default async function Invoices() {
       <PageHeader title="Invoices" subtitle="Status is derived from the total and what has been paid, so the two can never disagree." />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Stat label="Collected" value={money(collected)} tone="success" />
-        <Stat label="Outstanding" value={money(outstanding)} tone={outstanding ? 'warning' : undefined} />
-        <Stat label="Invoices" value={invoices.length} />
-        <Stat label="Unpaid" value={invoices.filter((i) => i.status === 'unpaid').length} />
+        <Stat label="Collected" icon="payments" value={money(collected)} tone="success" />
+        <Stat label="Outstanding" icon="schedule" value={money(outstanding)} tone={outstanding ? 'warning' : undefined} />
+        <Stat label="Invoices" icon="receipt_long" value={invoices.length} />
+        <Stat label="Unpaid" icon="priority_high" value={invoices.filter((i) => i.status === 'unpaid').length} />
       </div>
 
       {invoices.length === 0 ? (

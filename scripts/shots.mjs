@@ -33,6 +33,7 @@ const SCREENS = process.argv[3]
   ? [[process.argv[2], process.argv[3]]]
   : [
     ['admin', '/workspace/admin'],
+    ['doctor', '/workspace/account'],
     ['admin', '/workspace/admin/staff'],
     ['admin', '/workspace/admin/audit'],
     ['admin', '/workspace/patients'],
@@ -130,6 +131,18 @@ const signIn = async (role) => {
     body: JSON.stringify({email:'${EMAIL[role]}', password:'${PASSWORD}'})}).then(r=>r.json())`);
 };
 
+// Every icon that renders wider than a glyph is an unresolved ligature,
+// which means the name is showing as text. The static subset builder
+// should make this impossible; this is the check that it did.
+const ICON_AUDIT = `(() => {
+  const bad = [];
+  for (const el of document.querySelectorAll('span.icon')) {
+    if (el.getBoundingClientRect().width > 40) bad.push(el.textContent.trim());
+  }
+  return JSON.stringify([...new Set(bad)]);
+})()`;
+
+const brokenIcons = new Map();
 let signedInAs = null;
 for (const [role, path] of SCREENS) {
   if (role !== signedInAs) {
@@ -141,10 +154,21 @@ for (const [role, path] of SCREENS) {
   const { data } = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true });
   const name = `${role}${path.replace(/\//g, '_')}.png`;
   writeFileSync(`${OUT}/${name}`, Buffer.from(data, 'base64'));
-  console.log(`  ${name}`);
+
+  const broken = JSON.parse((await evaluate(ICON_AUDIT)) || '[]');
+  if (broken.length) brokenIcons.set(path, broken);
+  console.log(`  ${name}${broken.length ? `   BROKEN ICONS: ${broken.join(', ')}` : ''}`);
 }
 
 console.log(`\n${SCREENS.length} screenshots in ${OUT}`);
+
+if (brokenIcons.size) {
+  console.error('\nIcons rendering as text:');
+  for (const [path, names] of brokenIcons) console.error(`  ${path}: ${names.join(', ')}`);
+  console.error('\nRun: cd frontend && node scripts/build-icon-font.mjs\n');
+  ws.close(); chrome.kill(); process.exit(1);
+}
+console.log('Every icon resolved to a glyph.');
 ws.close();
 chrome.kill();
 process.exit(0);

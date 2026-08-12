@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { repo } from '@/lib/repository';
 import type {
   NewPatient, NewAppointment, NewVitals, SignEncounterInput, LabStatus,
-  ResultInput, MomoProvider, NewStaff, StaffPatch,
+  ResultInput, MomoProvider, NewStaff, StaffPatch, PatientDemographics, ClinicalFacts, NotifyPrefs,
 } from '@/lib/repository/types';
 
 /**
@@ -124,3 +124,21 @@ export const updateStaffAction = (id: string, patch: StaffPatch) =>
 export const resetStaffPasswordAction = (id: string, password: string) =>
   run(() => repo.resetStaffPassword(id, password), 'Password reset. Hand it over in person.',
       ['/workspace/admin/staff']);
+
+// ---- your own account, and corrections ----
+
+export const changePasswordAction = (currentPassword: string, newPassword: string) =>
+  run(() => repo.changePassword(currentPassword, newPassword), 'Password changed.');
+
+export const correctPatientAction = (mrn: string, patch: PatientDemographics) =>
+  run(() => repo.correctPatient(mrn, patch), 'Details corrected.',
+      ['/workspace/patients', `/workspace/patients/${mrn}`]);
+
+// Recording an allergy is what makes the prescribing guard fire for it, so
+// the consultation screen is revalidated too.
+export const updateClinicalFactsAction = (mrn: string, patch: ClinicalFacts) =>
+  run(() => repo.updateClinicalFacts(mrn, patch), 'Clinical record updated.',
+      [`/workspace/patients/${mrn}`, `/workspace/doctor/consultation/${mrn}`]);
+
+export const saveNotifyPrefsAction = (prefs: NotifyPrefs) =>
+  run(() => repo.saveNotificationPreferences(prefs), 'Preferences saved.', ['/app/profile']);

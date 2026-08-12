@@ -5,7 +5,7 @@ import type {
   LabStatus, ResultInput, ImagingOrder, Prescription, InventoryItem, Ward,
   MarEntry, Invoice, Claim, Kpis, AuditEntry, Staff, OpsSnapshot, AppNotification,
   MomoProvider, AppointmentFilter, PrescriptionSlip, ReceiptDocument, DischargeSummary,
-  NewStaff, StaffPatch,
+  NewStaff, StaffPatch, PatientDemographics, ClinicalFacts, NotifyPrefs,
 } from './types';
 
 /**
@@ -119,6 +119,32 @@ export class HttpRepository implements Repository {
   notifications = () => call<AppNotification[]>('/notifications');
   markRead = (id: number) =>
     call<void>(`/notifications/${id}/read`, { method: 'POST' });
+
+  // ---- your own account ----
+  notificationPreferences = () =>
+    call<NotifyPrefs>('/account/notifications');
+
+  saveNotificationPreferences = (prefs: NotifyPrefs) =>
+    call<NotifyPrefs>('/account/notifications', { method: 'PATCH', body: prefs });
+
+  // Unauthenticated, and deliberately incurious: the same answer comes
+  // back whether or not the address is registered.
+  requestPasswordReset = (email: string) =>
+    call<{ message: string }>('/auth/forgot-password', {
+      method: 'POST', body: { email },
+    });
+
+  changePassword = (currentPassword: string, newPassword: string) =>
+    call<void>('/account/password', {
+      method: 'POST', body: { currentPassword, newPassword },
+    });
+
+  // ---- corrections ----
+  correctPatient = (mrn: string, patch: PatientDemographics) =>
+    call<Patient>(`/patients/${mrn}`, { method: 'PATCH', body: patch });
+
+  updateClinicalFacts = (mrn: string, patch: ClinicalFacts) =>
+    call<Patient>(`/patients/${mrn}/clinical`, { method: 'PATCH', body: patch });
 
   // ---- printable documents ----
   // A missing or out-of-scope document becomes null so the page can call
