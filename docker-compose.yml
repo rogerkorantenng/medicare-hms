@@ -1,0 +1,43 @@
+# docker-compose for local development.
+#
+#   docker compose up -d db      # just Postgres, run the API from your shell
+#   docker compose up            # the whole stack
+#
+# The database matches the RDS engine version so nothing behaves
+# differently between here and AWS.
+name: medicare-hms
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: medicare
+      POSTGRES_PASSWORD: medicare
+      POSTGRES_DB: medicare
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medicare -d medicare"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql://medicare:medicare@db:5432/medicare
+      JWT_SECRET: ${JWT_SECRET:-dev-only-change-me}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CORS_ORIGINS: http://localhost:3000
+      ENVIRONMENT: development
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
