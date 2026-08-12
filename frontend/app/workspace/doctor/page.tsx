@@ -36,7 +36,7 @@ export default async function DoctorDashboard() {
         <div className="mb-6 rounded-card border-2 border-danger-br bg-danger-bg p-4 animate-fadeUp">
           <p className="flex items-center gap-2 font-display font-extrabold text-danger-fg">
             <Icon name="e911_emergency" size={22} filled className="animate-breathe" />
-            {criticals.length} critical result{criticals.length > 1 ? 's' : ''} need your attention
+            {criticals.length} critical result{criticals.length > 1 ? 's need' : ' needs'} your attention
           </p>
           <ul className="mt-2.5 flex flex-col gap-1.5">
             {criticals.map((n) => (
