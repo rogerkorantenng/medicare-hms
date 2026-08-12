@@ -169,6 +169,15 @@ Autonomous clinical decision-making is excluded permanently, not pending.
 
 ---
 
+## Where the documents are
+
+The seven submitted documents and `Links.txt` are not in this repository. They
+live one directory up, in the submission package, because they are coursework
+rather than source. The README refers to them by name a few times above;
+`project/` here keeps only the three interface mockups they were drawn from.
+
+---
+
 ## Assets
 
 Fonts and icons are committed to `frontend/public/fonts` and served from this
