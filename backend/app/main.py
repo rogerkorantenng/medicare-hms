@@ -34,7 +34,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="MediCare+ HMS API",
         description=DESCRIPTION,
-        version="2.0.0",
+        version="1.0.0",
         lifespan=lifespan,
         # The interactive docs are useful for an examiner, and expose
         # nothing: every route below /api requires a bearer token.
@@ -62,7 +62,7 @@ def create_app() -> FastAPI:
 
     @app.get("/health", tags=["meta"])
     async def health():
-        return {"status": "ok", "version": "2.0.0"}
+        return {"status": "ok", "version": "1.0.0"}
 
     app.include_router(api_router, prefix="/api")
     return app
