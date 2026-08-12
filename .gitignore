@@ -74,3 +74,8 @@ yarn-error.log*
 # project/ and deploy/ were once ignored wholesale while every file in
 # them was tracked, so the rules did nothing except quietly drop any NEW
 # file added to them. Ignore what should not be committed, by name.
+
+# The working handoff. It names what is still missing against the marking
+# scheme, and the repository link is in the examiner's Links.txt, so it
+# stays on disk rather than in the submission. Remove this line to ship it.
+HANDOFF.md
