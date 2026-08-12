@@ -1,36 +1,76 @@
+# ---------------------------------------------------------------------
+# Dependencies and build output
+# ---------------------------------------------------------------------
 node_modules/
 .next/
 out/
 build/
-.DS_Store
-*.pem
-npm-debug.log*
-.env
-.env*.local
-.vercel
+dist/
+.turbo/
+.cache/
 *.tsbuildinfo
 next-env.d.ts
 
-# backend
-backend/.env
-backend/.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+.venv/
+venv/
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+coverage/
 
-# editors
-.idea/
-.vscode/
+# ---------------------------------------------------------------------
+# Secrets. Nothing here is ever committed.
+#
+# The *.example files ARE committed and must stay that way: they are how
+# somebody knows which variables to set. The negations below are what
+# keeps them, so do not reorder them above the .env.* line.
+# ---------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.local.example
+*.pem
+*.key
+*.p12
 
-# deployment state — holds the database password
+# Written by deploy/aws/01-database.sh. Holds the database password.
 deploy/aws/.state
 
-# browser-automation artefacts. Scoped to the repository root rather than
-# every directory: the screenshot tool drops stray captures here, but a
-# real image asset further down should not be silently skipped.
+# ---------------------------------------------------------------------
+# Platform and tooling
+# ---------------------------------------------------------------------
+.vercel
+.aws-sam/
+.serverless/
+
+# ---------------------------------------------------------------------
+# Editors and operating systems
+# ---------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# ---------------------------------------------------------------------
+# Logs and scratch
+# ---------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Browser automation. The screenshot harness writes to /tmp, but the MCP
+# server drops captures into the working directory. Scoped to the root so
+# a real image asset further down is not silently skipped.
 .playwright-mcp/
 /*.png
 
-# project/ and deploy/ used to be ignored wholesale while every file in
-# them was tracked, so the rules did nothing except silently drop any NEW
+# project/ and deploy/ were once ignored wholesale while every file in
+# them was tracked, so the rules did nothing except quietly drop any NEW
 # file added to them. Ignore what should not be committed, by name.
