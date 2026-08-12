@@ -28,8 +28,19 @@ class Settings(BaseSettings):
     # ---- AI ----
     # Absent is a supported state: every AI feature returns its documented
     # fallback message and the clinical workflow continues manually.
+    #
+    # "bedrock"   — AWS Bedrock via the instance role. No API key to manage,
+    #               but model access must be granted in the Bedrock console
+    #               first, or every call 403s and falls back.
+    # "anthropic" — the Anthropic API directly, with an API key.
+    # "none"      — AI features show their fallback messages.
+    ai_provider: str = "none"
+
+    aws_region: str = "eu-west-1"
+    bedrock_model_id: str = "anthropic.claude-opus-5"
+
     anthropic_api_key: str | None = None
-    anthropic_model: str = "claude-sonnet-4-5"
+    anthropic_model: str = "claude-opus-5"
 
     # ---- CORS ----
     # The Vercel origin, plus local development. Comma-separated.
