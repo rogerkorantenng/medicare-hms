@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { repo } from '@/lib/repository';
-import { currentUser } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 import { PageHeader, Card, Stat, EmptyState, Avatar, Chip, Icon, when } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';

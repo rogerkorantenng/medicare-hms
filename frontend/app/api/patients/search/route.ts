@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { repo } from '@/lib/repository';
-import { currentUser } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 
 /** As-you-type patient search for the top bar and the command palette. */
 export async function GET(req: Request) {

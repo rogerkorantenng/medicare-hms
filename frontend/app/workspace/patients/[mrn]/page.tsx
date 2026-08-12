@@ -1,5 +1,5 @@
 import { repo } from '@/lib/repository';
-import { currentUser } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 import { PageHeader, Avatar, Chip, RestrictionNotice } from '@/components/ui';
 import { ChartTabs } from './chart-tabs';
 import { ROLE_LABEL } from '@/lib/nav';

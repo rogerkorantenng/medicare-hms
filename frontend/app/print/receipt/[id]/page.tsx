@@ -1,28 +1,23 @@
 import { notFound } from 'next/navigation';
-import { supabaseServer } from '@/lib/supabase/server';
+import { repo } from '@/lib/repository';
 import { DocumentShell } from '@/components/document-shell';
 import { money } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Receipt({ params }: { params: { id: string } }) {
-  const { data } = await supabaseServer()
-    .from('invoices')
-    .select('*, patients(full_name), invoice_lines(*)')
-    .eq('id', params.id)
-    .maybeSingle();
+  const invoice = await repo.receipt(params.id);
+  if (!invoice) notFound();
 
-  if (!data) notFound();
-
-  const total = Number(data.total);
-  const paid = Number(data.paid);
+  const total = invoice.total;
+  const paid = invoice.paid;
   const balance = Math.max(0, total - paid);
 
   return (
     <DocumentShell
       title="Receipt"
-      reference={data.id}
-      patient={{ name: data.patients?.full_name ?? '—', mrn: data.mrn }}
+      reference={invoice.id}
+      patient={{ name: invoice.patientName, mrn: invoice.mrn }}
       footerNote="Invoice status is derived from the total and the amount paid, so it cannot disagree with the figures above."
     >
       <table className="w-full text-body">
@@ -33,10 +28,10 @@ export default async function Receipt({ params }: { params: { id: string } }) {
           </tr>
         </thead>
         <tbody>
-          {(data.invoice_lines ?? []).map((l: { id: number; description: string; amount: number }) => (
+          {invoice.lines.map((l) => (
             <tr key={l.id}>
               <td className="td">{l.description}</td>
-              <td className="td val text-right">{money(Number(l.amount))}</td>
+              <td className="td val text-right">{money(l.amount)}</td>
             </tr>
           ))}
         </tbody>

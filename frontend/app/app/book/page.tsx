@@ -1,12 +1,13 @@
 import { repo } from '@/lib/repository';
-import { currentUser } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 import { BookFlow } from './book-flow';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Book({ searchParams }: { searchParams: { specialty?: string } }) {
-  const [me, staff] = await Promise.all([currentUser(), repo.staffDirectory()]);
-  const doctors = staff.filter((s) => s.role === 'doctor' && s.onDuty);
+  // Not the staff directory: a patient chooses a doctor without being able
+  // to enumerate the hospital's staff.
+  const [me, doctors] = await Promise.all([currentUser(), repo.bookableDoctors()]);
 
   return (
     <>

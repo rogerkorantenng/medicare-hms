@@ -3,7 +3,6 @@
 import { useEffect, useState, createContext, useContext, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { supabaseBrowser } from '@/lib/supabase/client';
 import { NAV, ROLE_LABEL, TOUR } from '@/lib/nav';
 import { Icon, Avatar } from '@/components/ui';
 import type { Role } from '@/lib/repository/types';
@@ -128,7 +127,8 @@ export function Shell({
   }, []);
 
   async function signOut() {
-    await supabaseBrowser().auth.signOut();
+    // The session cookie is httpOnly, so only the server can clear it.
+    await fetch('/api/session', { method: 'DELETE' });
     router.replace('/login');
     router.refresh();
   }

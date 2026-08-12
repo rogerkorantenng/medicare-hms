@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { repo } from '@/lib/repository';
-import { currentUser } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 
 export async function GET() {
   const user = await currentUser();

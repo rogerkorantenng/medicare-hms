@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { repo } from '@/lib/repository';
-import { currentUser, supabaseServer } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 import { Icon, Avatar, Chip, onlyDate } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
@@ -8,18 +8,15 @@ export const dynamic = 'force-dynamic';
 /** Next appointment hero, four quick actions, symptom-checker banner, active medications. */
 export default async function PatientHome() {
   const me = await currentUser();
-  const db = supabaseServer();
 
-  const [{ data: appts }, chart] = await Promise.all([
-    db.from('appointments')
-      .select('*, staff:doctor_id(full_name, department)')
-      .gte('appt_date', new Date().toISOString().slice(0, 10))
-      .in('status', ['confirmed', 'checked_in'])
-      .order('appt_date').order('appt_time').limit(1),
+  // The API forces a patient to their own MRN regardless of what is asked
+  // for, so this list can only ever be theirs.
+  const [appts, chart] = await Promise.all([
+    repo.listAppointments({ since: new Date().toISOString().slice(0, 10) }),
     me!.mrn ? repo.getPatientChart(me!.mrn) : null,
   ]);
 
-  const next = appts?.[0];
+  const next = appts.find((a) => a.status === 'confirmed' || a.status === 'checked_in');
   const meds = (chart?.prescriptions ?? []).filter((r) => r.status === 'pending');
   const firstName = me!.fullName.split(' ')[0];
 
@@ -48,17 +45,17 @@ export default async function PatientHome() {
             <>
               <p className="text-m-chip uppercase tracking-wider text-white/70 font-bold">Next appointment</p>
               <p className="font-display font-extrabold text-lg mt-1">
-                {next.staff?.full_name}
+                {next.doctorName}
               </p>
-              <p className="text-m-support text-white/80">{next.specialty ?? next.staff?.department}</p>
+              <p className="text-m-support text-white/80">{next.specialty ?? next.doctorDepartment}</p>
               <div className="flex items-center gap-3 mt-3 text-m-support">
                 <span className="flex items-center gap-1.5">
                   <Icon name="event" size={16} />
-                  <span className="val">{onlyDate(next.appt_date)}</span>
+                  <span className="val">{onlyDate(next.apptDate)}</span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Icon name="schedule" size={16} />
-                  <span className="val">{String(next.appt_time).slice(0, 5)}</span>
+                  <span className="val">{next.apptTime.slice(0, 5)}</span>
                 </span>
               </div>
             </>

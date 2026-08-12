@@ -1,17 +1,12 @@
 import { repo } from '@/lib/repository';
-import { supabaseServer } from '@/lib/supabase/server';
 import { PageHeader, Card, EmptyState, StatusChip, onlyDate } from '@/components/ui';
 import { BookingPanel } from './booking-panel';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Appointments() {
-  const db = supabaseServer();
-  const [{ data: appts }, staff] = await Promise.all([
-    db.from('appointments')
-      .select('*, patients(full_name), staff:doctor_id(full_name, department)')
-      .gte('appt_date', new Date().toISOString().slice(0, 10))
-      .order('appt_date').order('appt_time').limit(60),
+  const [appts, staff] = await Promise.all([
+    repo.listAppointments({ since: new Date().toISOString().slice(0, 10) }),
     repo.staffDirectory(),
   ]);
 
@@ -26,7 +21,7 @@ export default async function Appointments() {
 
       <div className="grid xl:grid-cols-[minmax(0,1fr)_380px] gap-5">
         <Card title="Schedule">
-          {(appts ?? []).length === 0 ? (
+          {appts.length === 0 ? (
             <EmptyState icon="event" title="Nothing booked" />
           ) : (
             <div className="overflow-x-auto -mx-5">
@@ -42,19 +37,19 @@ export default async function Appointments() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(appts ?? []).map((a) => (
+                  {appts.map((a) => (
                     <tr key={a.id} className="row-hover">
-                      <td className="td pl-5 val text-support">{onlyDate(a.appt_date)}</td>
-                      <td className="td val font-bold">{String(a.appt_time).slice(0, 5)}</td>
+                      <td className="td pl-5 val text-support">{onlyDate(a.apptDate)}</td>
+                      <td className="td val font-bold">{a.apptTime.slice(0, 5)}</td>
                       <td className="td">
-                        <p className="font-display font-semibold">{a.patients?.full_name}</p>
+                        <p className="font-display font-semibold">{a.patientName}</p>
                         <p className="val text-chip text-ink-soft">{a.mrn}</p>
                       </td>
                       <td className="td">
-                        <p>{a.staff?.full_name}</p>
-                        <p className="text-chip text-ink-soft">{a.specialty ?? a.staff?.department}</p>
+                        <p>{a.doctorName}</p>
+                        <p className="text-chip text-ink-soft">{a.specialty ?? a.doctorDepartment}</p>
                       </td>
-                      <td className="td text-ink-soft">{a.appt_type}</td>
+                      <td className="td text-ink-soft">{a.apptType}</td>
                       <td className="td pr-5"><StatusChip value={a.status} /></td>
                     </tr>
                   ))}

@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { supabaseBrowser } from '@/lib/supabase/client';
 import { Icon } from '@/components/ui';
 
 export function SignOutButton() {
@@ -11,7 +10,7 @@ export function SignOutButton() {
     <button
       className="btn-ghost w-full min-h-[50px] text-danger-fg"
       onClick={async () => {
-        await supabaseBrowser().auth.signOut();
+        await fetch('/api/session', { method: 'DELETE' });
         router.replace('/login');
         router.refresh();
       }}

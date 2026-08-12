@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { supabaseServer } from '@/lib/supabase/server';
+import { repo } from '@/lib/repository';
 import { DocumentShell } from '@/components/document-shell';
 import { onlyDate } from '@/components/ui';
 
@@ -12,28 +12,23 @@ export const dynamic = 'force-dynamic';
  * was recorded.
  */
 export default async function DischargeSummary({ params }: { params: { id: string } }) {
-  const { data } = await supabaseServer()
-    .from('documents')
-    .select('*, patients(full_name, age, sex)')
-    .eq('id', Number(params.id))
-    .maybeSingle();
-
-  if (!data) notFound();
+  const doc = await repo.dischargeSummary(Number(params.id));
+  if (!doc) notFound();
 
   return (
     <DocumentShell
       title="Discharge summary"
-      reference={`DOC-${String(data.id).padStart(5, '0')}`}
+      reference={`DOC-${String(doc.id).padStart(5, '0')}`}
       patient={{
-        name: data.patients?.full_name ?? '—',
-        mrn: data.mrn,
-        extra: onlyDate(data.doc_date),
+        name: doc.patientName,
+        mrn: doc.mrn,
+        extra: onlyDate(doc.docDate),
       }}
       footerNote="Written at the moment of discharge, in the same transaction that freed the bed."
     >
-      <h2 className="text-section mb-3">{data.title}</h2>
+      <h2 className="text-section mb-3">{doc.title}</h2>
       <pre className="whitespace-pre-wrap font-body text-body leading-relaxed">
-        {data.body ?? 'No content recorded.'}
+        {doc.body ?? 'No content recorded.'}
       </pre>
     </DocumentShell>
   );

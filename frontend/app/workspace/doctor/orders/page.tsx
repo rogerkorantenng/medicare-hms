@@ -1,5 +1,5 @@
 import { repo } from '@/lib/repository';
-import { currentUser } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 import { PageHeader, Card, EmptyState, StatusChip, Chip, when } from '@/components/ui';
 import { ExplainResult } from '@/components/explain-result';
 

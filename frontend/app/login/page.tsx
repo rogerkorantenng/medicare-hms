@@ -7,8 +7,8 @@ export const metadata = { title: 'Sign in — MediCare+' };
 /**
  * The nine role accounts from the design. Selecting one fills the email so an
  * examiner can move between roles quickly; the password is still required,
- * because the accounts are real Supabase Auth users now rather than a
- * hardcoded list.
+ * because the accounts are real rows in the users table with argon2 hashes,
+ * rather than the hardcoded list v1.0 used.
  */
 const ROLES = [
   { email: 'doctor@medicare.com',    label: 'Doctor',       icon: 'stethoscope',      dept: 'Cardiology' },

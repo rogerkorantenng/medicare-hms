@@ -62,6 +62,21 @@ async def test_patient_sees_only_verified_results(api, auth):
         assert lab["status"] == "verified", f"unverified result leaked: {lab['testName']}"
 
 
+async def test_patient_can_book_without_reading_the_staff_directory(api, auth):
+    """
+    A patient must choose a doctor to book, which is a much smaller thing
+    than enumerating the hospital's staff. Two routes, two audiences.
+    """
+    assert (await api.get("/api/staff", headers=auth("patient"))).status_code == 403
+
+    bookable = await api.get("/api/staff/bookable", headers=auth("patient"))
+    assert bookable.status_code == 200
+    doctors = bookable.json()
+    assert doctors, "a patient with no doctors to choose from cannot book"
+    # Only what the booking screen renders — no staff numbers, no roles.
+    assert set(doctors[0]) == {"id", "fullName", "department", "onDuty"}
+
+
 async def test_audit_log_is_admin_only(api, auth):
     assert (await api.get("/api/audit", headers=auth("admin"))).status_code == 200
     for role in ("doctor", "cashier", "nurse", "patient"):

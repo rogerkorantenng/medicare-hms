@@ -2,20 +2,15 @@
   "name": "medicare-hms",
   "version": "2.0.0",
   "private": true,
-  "description": "MediCare+ Hospital Management System — staff workspace and patient app",
+  "description": "MediCare+ Hospital Management System \u2014 staff workspace and patient app",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "create-users": "node scripts/create-users.mjs",
-    "verify:db": "./supabase/verify/run.sh"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
-    "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.46.1",
     "next": "14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

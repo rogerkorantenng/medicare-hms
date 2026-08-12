@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { supabaseBrowser } from '@/lib/supabase/client';
 import { Icon } from '@/components/ui';
 
 type RoleOption = { email: string; label: string; icon: string; dept: string };
@@ -19,24 +18,23 @@ export function LoginForm({ roles }: { roles: RoleOption[] }) {
     e.preventDefault();
     setError(null);
 
-    const supabase = supabaseBrowser();
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    // Posted to this application, not to the API. The route handler puts the
+    // token in an httpOnly cookie, so it never reaches this component.
+    const res = await fetch('/api/session', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const json = await res.json().catch(() => null);
 
-    if (error) {
-      setError(
-        /invalid login credentials/i.test(error.message)
-          ? 'That email and password do not match an account.'
-          : error.message,
-      );
+    if (!res.ok) {
+      setError(json?.error ?? 'Could not reach the server. Try again.');
       return;
     }
 
-    const role = (data.user?.app_metadata?.role as string) ?? 'patient';
     const next = params.get('next');
-    const home = role === 'patient' ? '/app' : `/workspace/${role}`;
-
     start(() => {
-      router.replace(next && next !== '/' ? next : home);
+      router.replace(next && next !== '/' ? next : json.home);
       router.refresh();
     });
   }

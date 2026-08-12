@@ -1,10 +1,15 @@
-# docker-compose for local development.
+# The whole system, locally.
 #
-#   docker compose up -d db      # just Postgres, run the API from your shell
-#   docker compose up            # the whole stack
+#   docker compose up -d db          # just Postgres; run the API from a shell
+#   docker compose up --build        # database, API and frontend together
+#   docker compose run --rm seed     # build the schema and load the seed data
 #
 # The database matches the RDS engine version so nothing behaves
-# differently between here and AWS.
+# differently between here and AWS, and the API image is the one App
+# Runner runs — what is tested here is what deploys.
+#
+# Host ports are overridable, because 3000 and 8000 are popular:
+#   API_PORT=8010 WEB_PORT=3010 docker compose up
 name: medicare-hms
 
 services:
@@ -30,14 +35,44 @@ services:
     environment:
       DATABASE_URL: postgresql://medicare:medicare@db:5432/medicare
       JWT_SECRET: ${JWT_SECRET:-dev-only-change-me}
+      AI_PROVIDER: ${AI_PROVIDER:-none}
+      AWS_REGION: ${AWS_REGION:-eu-west-1}
+      BEDROCK_MODEL_ID: ${BEDROCK_MODEL_ID:-eu.anthropic.claude-opus-4-6-v1}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       CORS_ORIGINS: http://localhost:3000
       ENVIRONMENT: development
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
     depends_on:
       db:
         condition: service_healthy
+
+  # One-shot. Builds the schema, the functions, the nine accounts and the
+  # seed data, then exits. `--reset` drops everything first.
+  seed:
+    build:
+      context: ./backend
+    profiles: ["tools"]
+    environment:
+      DATABASE_URL: postgresql://medicare:medicare@db:5432/medicare
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-MediCare2026!Demo}
+    entrypoint: ["python", "scripts/seed.py"]
+    command: ["--reset"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+    environment:
+      # Container-to-container, so this is the service name rather than
+      # localhost. No NEXT_PUBLIC_ prefix: the browser never sees it.
+      API_URL: http://api:8000
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
 
 volumes:
   db_data:

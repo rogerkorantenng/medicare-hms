@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { currentUser } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 import { Shell } from '@/components/shell/shell';
 
 export default async function WorkspaceLayout({ children }: { children: React.ReactNode }) {

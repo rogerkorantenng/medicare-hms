@@ -1,5 +1,5 @@
 import { repo } from '@/lib/repository';
-import { currentUser } from '@/lib/supabase/server';
+import { currentUser } from '@/lib/session';
 import { Icon, Avatar, Chip } from '@/components/ui';
 import { SignOutButton } from './sign-out';
 

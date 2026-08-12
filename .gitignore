@@ -17,3 +17,7 @@ backend/.venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# editors
+.idea/
+.vscode/

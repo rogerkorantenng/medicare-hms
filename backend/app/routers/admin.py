@@ -27,12 +27,6 @@ async def snapshot(user: Admin):
         return await conn.fetchval("select hospital_snapshot()")
 
 
-@router.get("/staff")
-async def staff_directory(user: AnyStaff):
-    async with connection() as conn:
-        return rows(await conn.fetch("select * from staff order by staff_no"))
-
-
 @router.get("/audit")
 async def audit_log(user: Admin, limit: int = 300):
     """

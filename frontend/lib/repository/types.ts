@@ -60,11 +60,19 @@ export interface Appointment {
   patientName?: string;
   doctorId: string;
   doctorName?: string;
+  doctorDepartment?: string | null;
   specialty: string | null;
   apptDate: string;
   apptTime: string;
   apptType: string;
   status: ApptStatus;
+}
+
+export interface AppointmentFilter {
+  /** Omitted for staff; the API forces a patient to their own record anyway. */
+  mrn?: string;
+  /** ISO date. Defaults to everything the API will return. */
+  since?: string;
 }
 
 export interface NewAppointment {
@@ -359,6 +367,50 @@ export type SafetyResult =
   | { ok: false; kind: 'allergy'; message: string }
   | { ok: false; kind: 'interaction'; message: string };
 
+/**
+ * The printable documents. Each is a record as it was stored, not a
+ * reconstruction — a receipt reprinted next year must show what was
+ * charged then.
+ */
+export interface PrescriptionSlip {
+  id: number;
+  mrn: string;
+  patientName: string;
+  age: number;
+  sex: 'M' | 'F';
+  allergies: string[];
+  drug: string;
+  dose: string;
+  frequency: string;
+  duration: string;
+  quantity: number;
+  prescriberName: string;
+  staffNo: string | null;
+  department: string | null;
+}
+
+export interface ReceiptDocument {
+  id: string;
+  mrn: string;
+  patientName: string;
+  total: number;
+  paid: number;
+  status: Invoice['status'];
+  lines: { id: number; description: string; amount: number }[];
+}
+
+export interface DischargeSummary {
+  id: number;
+  mrn: string;
+  patientName: string;
+  age: number;
+  sex: 'M' | 'F';
+  title: string;
+  kind: string;
+  body: string | null;
+  docDate: string;
+}
+
 export interface Repository {
   // ---- patients ----
   registerPatient(input: NewPatient): Promise<Patient>;
@@ -367,6 +419,7 @@ export interface Repository {
   getPatientChart(mrn: string): Promise<PatientChart>;
 
   // ---- appointments and queue ----
+  listAppointments(filter?: AppointmentFilter): Promise<Appointment[]>;
   freeSlots(doctorId: string, date: string): Promise<string[]>;
   bookAppointment(input: NewAppointment): Promise<Appointment>;
   checkIn(appointmentId: number): Promise<void>;
@@ -410,9 +463,16 @@ export interface Repository {
   dashboardKpis(): Promise<Kpis>;
   liveActivity(limit: number): Promise<AuditEntry[]>;
   staffDirectory(): Promise<Staff[]>;
+  /** Doctors on duty, for the booking screens. Readable by a patient. */
+  bookableDoctors(): Promise<Staff[]>;
   hospitalSnapshot(): Promise<OpsSnapshot>;
 
   // ---- notifications ----
   notifications(): Promise<AppNotification[]>;
   markRead(id: number): Promise<void>;
+
+  // ---- printable documents ----
+  prescriptionSlip(id: number): Promise<PrescriptionSlip | null>;
+  receipt(invoiceId: string): Promise<ReceiptDocument | null>;
+  dischargeSummary(id: number): Promise<DischargeSummary | null>;
 }
