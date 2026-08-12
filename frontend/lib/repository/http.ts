@@ -11,11 +11,10 @@ import type {
 /**
  * The Repository, implemented over HTTP against the FastAPI backend.
  *
- * The interface is unchanged from the design handoff — it was satisfied by
- * a browser-storage adapter in v1.0, and by a database client before
- * this one. Swapping
- * the implementation is still one line in ./index.ts, which is the whole
- * point of keeping the boundary.
+ * The interface is unchanged from the one the submitted design specifies.
+ * It was satisfied by a browser-storage adapter in v1.0, and by a database
+ * client before this one. Swapping the implementation is still one line in
+ * ./index.ts, which is the whole point of keeping the boundary.
  */
 export class HttpRepository implements Repository {
   // ---- patients ----

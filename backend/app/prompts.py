@@ -1,6 +1,6 @@
 """
 The six AI system prompts and their fallback messages, verbatim from the
-design handoff's ai-routes.md.
+submitted design.
 
 Kept in one file so an examiner can compare them against the submitted
 document without reading route code, and so a wording change is a single

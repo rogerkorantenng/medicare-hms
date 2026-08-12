@@ -1,9 +1,10 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Every value here comes from design-tokens.md, which was extracted from the
- * working v1.0 applications. The handoff is explicit: "Use these values, not a
- * component library's defaults."
+ * Every value here comes from the design system the submitted Design
+ * Documentation describes, extracted from the working v1.0 applications.
+ * These are the values, not a component library's defaults: a colour or a
+ * radius that disagrees with the documents is a defect, not a preference.
  */
 const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],

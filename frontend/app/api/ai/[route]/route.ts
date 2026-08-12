@@ -8,8 +8,8 @@ import { cookies } from 'next/headers';
  * There is no model call, no prompt and no role check in this file, and that
  * is the point. All three live in the FastAPI service — the prompts in
  * app/prompts.py, the role guards on the routes themselves — so an examiner
- * comparing the implementation against ai-routes.md reads one file rather
- * than six, and a cashier cannot reach the consultation drafter by calling
+ * checking the prompts against the submitted design reads one file instead
+ * of six, and a cashier cannot reach the consultation drafter by calling
  * this proxy directly.
  *
  * The route exists at all because the browser must not hold the token: it is

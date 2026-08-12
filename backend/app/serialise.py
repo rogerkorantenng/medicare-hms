@@ -1,8 +1,8 @@
 """
 Postgres speaks snake_case; the frontend's Repository types speak
-camelCase. Converting here means the TypeScript interface from the
-original design handoff carries over unchanged, which is the whole
-point of that contract.
+camelCase. Converting here means the TypeScript interface the submitted
+design specifies carries over unchanged, which is the whole point of
+having a contract at all.
 
 Also flattens the joined names asyncpg returns, and renders numerics as
 floats rather than Decimal so they survive JSON.
