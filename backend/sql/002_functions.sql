@@ -2,7 +2,7 @@
 -- MediCare+ HMS — application functions
 -- ================================================================
 -- The operations that must be atomic, or that belong in the database
--- rather than in application code. Ported from the Supabase version;
+-- rather than in application code;
 -- the only change is that the acting user arrives as a parameter now
 -- that auth.uid() is gone.
 --

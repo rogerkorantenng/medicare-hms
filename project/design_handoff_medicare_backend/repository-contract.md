@@ -1,8 +1,9 @@
 # Repository contract
 
-The single boundary between the UI and the database. In v1.0 this interface was
-satisfied by a browser-storage adapter. Implement it against Supabase and the UI
-does not care which one it is talking to.
+The single boundary between the UI and its storage. In v1.0 this interface was
+satisfied by a browser-storage adapter. Implement it against anything else and
+the UI does not care which one it is talking to. It is now satisfied by an HTTP
+client against the FastAPI service.
 
 **This is migration steps 3 and 4.** Keep the interface identical to what is
 described here, then switch which implementation is constructed. That is the whole
@@ -74,9 +75,9 @@ export interface Repository {
 
 ```ts
 // lib/repository/index.ts
-import { SupabaseRepository } from './supabase';
+import { HttpRepository } from './http';
 
-export const repo: Repository = new SupabaseRepository();
+export const repo: Repository = new HttpRepository();
 // The ONLY line that changes when swapping storage. No screen imports
 // anything else.
 ```
@@ -163,7 +164,8 @@ result value, and release fires on verification alone.
 ### dispense calls the database function
 
 ```ts
-await supabase.rpc('dispense_prescription', { p_rx_id: id, p_staff: userId });
+// The route calls the database function; the client never does arithmetic.
+await call(`/pharmacy/prescriptions/${id}/dispense`, { method: 'POST' });
 ```
 
 Do not read stock, subtract in JavaScript and write it back. That was defect D-05.

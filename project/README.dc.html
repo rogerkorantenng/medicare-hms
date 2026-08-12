@@ -39,7 +39,7 @@
 
 <doc-page margin="0.85in">
   <div slot="footer" style="display:flex;justify-content:space-between;align-items:center;font-family:'Inter',sans-serif;font-size:8.5pt;color:#94A3B8;border-top:1px solid #DBE4F3;padding-top:6px">
-    <span>README, MediCare+ HMS v1.0</span>
+    <span>README, MediCare+ HMS v2.0</span>
     <span>CSCD602 Capstone Project</span>
   </div>
 
@@ -63,7 +63,7 @@
         <tr><th style="background:#F6F9FE">Version</th><td>1.0 final, August 2026</td></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px">The system replaces the fragmented paper process of a district hospital with one shared patient record that every department reads from and writes to. It covers the full journey from registration through triage, consultation, laboratory and imaging, pharmacy, ward admission, discharge and billing, and it gives patients a mobile application for their own part of the record.</p>
+    <p style="margin:0 0 10px">The reference facility is the University of Ghana Medical Centre, a teaching hospital of the size and structure the system is designed for. It was not commissioned by the Centre and is not deployed there. The system replaces the fragmented paper process of such a hospital with one shared patient record that every department reads from and writes to. It covers the full journey from registration through triage, consultation, laboratory and imaging, pharmacy, ward admission, discharge and billing, and it gives patients a mobile application for their own part of the record.</p>
     <p style="margin:0 0 10px">Two applications are served from one deployment: a staff workspace for eight roles, and a patient application. Both run on the same domain model, so a booking made on a phone is the same record the front desk sees.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">2. Main system features</h2>
@@ -132,33 +132,38 @@
       </tbody>
     </table>
 
-    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">5. Technology stack</h2>
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">5. Technology stack</h2>
     <table>
-      <thead><tr><th style="width:26%">Layer</th><th>Technology</th></tr></thead>
+      <thead><tr><th style="width:22%">Layer</th><th>Technology</th></tr></thead>
       <tbody>
-        <tr><td>Interface</td><td>HTML5, CSS3, component-based JavaScript. No installation or plugin required on client machines.</td></tr>
-        <tr><td>Application logic</td><td>JavaScript classes with explicit state and lifecycle, holding all business rules</td></tr>
-        <tr><td>Domain model</td><td>Sixteen entities with their invariants, plus state machines for order, invoice and claim lifecycles</td></tr>
-        <tr><td>Persistence</td><td>Browser storage behind a repository interface owned by the domain. PostgreSQL adapter planned for v2.0.</td></tr>
-        <tr><td>AI services</td><td>Large language model over HTTPS, called through a single adapter</td></tr>
-        <tr><td>Printing</td><td>Browser print pipeline with print stylesheets</td></tr>
-        <tr><td>Hosting</td><td>Static hosting with automatic builds from the source repository, served over HTTPS</td></tr>
+        <tr><td>Interface</td><td>Next.js 14 with the App Router, TypeScript and Tailwind CSS. Screens render on the server, so a chart is assembled where the authorisation is rather than in the browser. No installation or plugin on client machines.</td></tr>
+        <tr><td>Application logic</td><td>FastAPI on Python 3.12 with Pydantic v2. Sixty-three operations, each carrying a role guard.</td></tr>
+        <tr><td>Domain model</td><td>Sixteen entities with their invariants, plus state machines for the order, invoice and claim lifecycles. Held by the database rather than by application code.</td></tr>
+        <tr><td>Persistence</td><td>PostgreSQL 16 on Amazon RDS, behind the same repository interface the domain owns.</td></tr>
+        <tr><td>Session</td><td>A JSON Web Token issued by the API, held in an httpOnly cookie the browser cannot read. Passwords are argon2id hashes.</td></tr>
+        <tr><td>AI services</td><td>Amazon Bedrock, Claude Opus 4.6, reached through the compute role. There is no API key anywhere in the system.</td></tr>
+        <tr><td>Printing</td><td>Browser print pipeline with print stylesheets.</td></tr>
+        <tr><td>Hosting</td><td>Interface on Vercel, API on AWS App Runner, database on Amazon RDS. Continuous deployment from the source repository.</td></tr>
         <tr><td>Version control</td><td>Git. Branch per feature or defect, pull requests reviewed, releases tagged.</td></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px">Architecture is four layers with dependencies pointing downward only: presentation, application logic, domain model, persistence. Because the persistence interface belongs to the domain, the storage implementation can be replaced without touching any layer above it.</p>
+    <p style="margin:0 0 10px">Four layers, dependencies pointing downward only: presentation, application logic, domain model, persistence. Because the persistence interface belongs to the domain, the storage implementation can be replaced without touching any layer above it. That interface has now been satisfied three ways, and no screen changed for any of them.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">6. Deployment information</h2>
     <table>
-      <thead><tr><th style="width:26%">Item</th><th>Detail</th></tr></thead>
+      <thead><tr><th style="width:24%">Item</th><th>Detail</th></tr></thead>
       <tbody>
-        <tr><td>Method</td><td>Continuous deployment. Every push to the main branch triggers a build and deploy.</td></tr>
-        <tr><td>Transport</td><td>HTTPS only. Certificate managed by the hosting platform.</td></tr>
-        <tr><td>Environment variables</td><td>Used for all service configuration. No key or password is committed to the repository.</td></tr>
-        <tr><td>Seed data</td><td>28 synthetic patients, 9 staff accounts, 6 wards with 34 beds, 12 laboratory catalogue entries, 14 inventory items, 3 open claims. All synthetic; no real patient data.</td></tr>
-        <tr><td>Supported browsers</td><td>Chrome 127, Edge 127, Firefox 128, Safari 17. Tested on all four.</td></tr>
+        <tr><td>Web tier</td><td>Next.js on Vercel. Every push to the main branch produces a deployment.</td></tr>
+        <tr><td>Application tier</td><td>FastAPI on AWS App Runner in eu-west-1, from a container image in Elastic Container Registry. The image is the one the local stack runs, so what was tested is what deploys.</td></tr>
+        <tr><td>Data tier</td><td>Amazon RDS for PostgreSQL 16, encrypted at rest, seven-day automated backups, deletion protection on. Not reachable from the internet: the security group admits the App Runner connector and nothing else.</td></tr>
+        <tr><td>Region</td><td>eu-west-1, because the AI model is reached through an EU inference profile that is not offered elsewhere.</td></tr>
+        <tr><td>Transport</td><td>HTTPS only. Certificates managed by the platforms.</td></tr>
+        <tr><td>Configuration</td><td>Environment variables. The two secret values live in AWS Secrets Manager and are read at start-up, so neither appears in the service configuration or in the repository. No key or password is committed anywhere.</td></tr>
+        <tr><td>Running it yourself</td><td><code>docker compose up --build</code> starts all three tiers on a laptop. The database image matches the RDS engine version.</td></tr>
+        <tr><td>Seed data</td><td>28 synthetic patients, 11 staff accounts, 6 wards with 34 beds, 14 inventory items, 3 open claims, four patients in the queue and three consultations already on the charts. All synthetic; no real patient data.</td></tr>
+        <tr><td>Supported browsers</td><td>Chrome 127, Edge 127, Firefox 128, Safari 17.</td></tr>
         <tr><td>Screen sizes</td><td>Staff workspace from 1280 pixels wide. Patient application from 360 pixels wide.</td></tr>
-        <tr><td>Internet requirement</td><td>Required for the six AI features only. Every other function works without it.</td></tr>
+        <tr><td>Internet requirement</td><td>Required throughout, because the record is now shared rather than held on the device.</td></tr>
       </tbody>
     </table>
 
@@ -168,7 +173,7 @@
 ├── Project_Documentation.pdf     25 sections, the master document
 ├── SRS.pdf                       74 functional, 20 non-functional requirements
 ├── Design_Documentation.pdf      architecture, UML, ERD, wireframes, 10 figures
-├── Testing_Report.pdf            110 test cases, 14-entry defect log
+├── Testing_Report.pdf            124 test cases, 23-entry defect log
 ├── User_Manual.pdf               all nine roles plus the mobile application
 ├── Maintenance_and_Evolution.pdf maintenance types, migration plan, roadmap
 ├── README.pdf                    this document
@@ -177,16 +182,15 @@
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">8. Known limitations</h2>
     <p style="margin:0 0 10px">Stated up front so you do not have to find them.</p>
     <table>
-      <thead><tr><th style="width:32%">Limitation</th><th>Detail</th></tr></thead>
+      <thead><tr><th style="width:28%">Limitation</th><th>Detail</th></tr></thead>
       <tbody>
-        <tr><td>No server database</td><td>Version 1.0 persists to browser storage. Records do not follow a patient between devices, so two browsers hold two separate datasets. The migration to PostgreSQL is specified in six steps with acceptance criteria in the maintenance plan.</td></tr>
-        <tr><td>Authorisation in the application layer</td><td>Role-based access works as tested, but it is enforced by code the client runs rather than by the database. Treat this deployment as a demonstration, not a live clinical system holding real records. Moving authorisation into row-level security policies is the first item of post-submission work.</td></tr>
-        <tr><td>Mobile Money is modelled</td><td>The provider request and approval sequence is faithful and the records it produces are correct, but no real money moves. Live collection needs a merchant agreement a student project cannot obtain. The replacement point is documented.</td></tr>
-        <tr><td>No automated test suite</td><td>All 110 test cases were executed manually. Automating the rules layer is the first roadmap item.</td></tr>
-        <tr><td>Interaction checking is a fixed list</td><td>Covers common high-risk drug pairs and recorded allergies, not a full pharmacological database. Scheduled for six-monthly review by a qualified pharmacist.</td></tr>
-        <tr><td>AI features need internet</td><td>They degrade gracefully with a plain message and never block a workflow, but they are unavailable offline.</td></tr>
-        <tr><td>Single facility, English only</td><td>No multi-site operation and no local-language interface yet. Both are on the roadmap.</td></tr>
-        <tr><td>Performance measured to 5,000 records</td><td>Behaviour above that is projected rather than measured.</td></tr>
+        <tr><td>Authorisation is enforced by the API, not the database</td><td>This closes the v1.0 weakness, where access control ran in code the client could inspect. It carries its own cost, stated plainly: the database will hand any row to whatever connects to it, so a route without a guard is a data leak rather than a bug. Nineteen automated tests exist for exactly that reason.</td></tr>
+        <tr><td>Mobile Money is modelled</td><td>The provider request and approval sequence is faithful and the records it produces are correct, but no real money moves. Live collection needs a merchant agreement a student project cannot obtain.</td></tr>
+        <tr><td>No outbound email</td><td>A forgotten password raises a request for reception to settle in person against photo identification, rather than promising a reset link the system cannot send.</td></tr>
+        <tr><td>Interaction checking is a fixed list</td><td>It covers common, high-risk pairs, not a full pharmacological database. A commercial drug database is the intended replacement.</td></tr>
+        <tr><td>Restore has not been rehearsed</td><td>Automated backups and point-in-time recovery are configured, but the acceptance criterion in the maintenance plan is a restore actually performed onto a fresh instance, and that has not been done.</td></tr>
+        <tr><td>Deployed from an account root</td><td>Convenient for a capstone and wrong for anything else. An identity scoped to this project is the first item of post-submission work.</td></tr>
+        <tr><td>No independent security review</td><td>The automated suites prove the controls this team thought to test. They are not a penetration test.</td></tr>
       </tbody>
     </table>
 

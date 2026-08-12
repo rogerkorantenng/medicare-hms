@@ -638,11 +638,11 @@
     <table>
       <thead><tr><th style="width:20%">Layer</th><th style="width:28%">Technology</th><th>Why</th></tr></thead>
       <tbody>
-        <tr><td>Interface</td><td>Next.js 14 (App Router), TypeScript, Tailwind CSS</td><td>Server components render clinical screens on the server, so a chart is assembled where the authorisation is rather than in the browser. Runs on any hospital machine with no installation.</td></tr>
+        <tr><td>Interface</td><td>Next.js 14 (App Router), TypeScript, Tailwind CSS</td><td>Server components render clinical screens on the server, so a chart is assembled where the authorisation is, not in the browser. Runs on any hospital machine with no installation.</td></tr>
         <tr><td>Application logic</td><td>FastAPI on Python 3.12, Pydantic v2</td><td>Every rule that matters (role guards, the prescribing safety checks, charge capture) lives in one process the hospital can audit, restart and version independently of the interface.</td></tr>
-        <tr><td>Persistence</td><td>PostgreSQL 16 with asyncpg</td><td>Constraints, generated columns and triggers hold the invariants in §8.1 whatever calls the database. A record now follows the patient rather than the device.</td></tr>
+        <tr><td>Persistence</td><td>PostgreSQL 16 with asyncpg</td><td>Constraints, generated columns and triggers hold the invariants in §8.1 whatever calls the database. A record now follows the patient, not the device.</td></tr>
         <tr><td>Session</td><td>JSON Web Token issued by the API; argon2id password hashing</td><td>The token is signed by the one process that also decides what it permits. argon2id is the current password-hashing recommendation.</td></tr>
-        <tr><td>AI services</td><td>Amazon Bedrock, Claude Opus 4.6 through an EU inference profile</td><td>Reached through the compute role rather than an API key, so there is no long-lived AI credential to store or rotate. See §9.5.</td></tr>
+        <tr><td>AI services</td><td>Amazon Bedrock, Claude Opus 4.6 through an EU inference profile</td><td>Reached through the compute role, so there is no API key, so there is no long-lived AI credential to store or rotate. See §9.5.</td></tr>
         <tr><td>Printing</td><td>Browser print pipeline with print stylesheets</td><td>Works with any printer already on the hospital network.</td></tr>
         <tr><td>Typography</td><td>Plus Jakarta Sans, Inter, JetBrains Mono, self-hosted</td><td>Screen legibility at small sizes, and a monospaced face for clinical values so digits align. Self-hosted, so no screen depends on a third party being reachable.</td></tr>
       </tbody>
@@ -760,7 +760,7 @@
       </tbody>
     </table>
 
-    <p style="margin:0 0 8px">The decision follows the architecture rather than the other way round. Once the clients are a server-rendered web tier and, in future, an integration or a native application, they all arrive through one API, and an authorisation model that protects only direct database connections then protects nothing that actually exists. The API became the single door, so the lock went on the door.</p>
+    <p style="margin:0 0 8px">The architecture came first and the decision followed from it. Once the clients are a server-rendered web tier and, in future, an integration or a native application, they all arrive through one API, and an authorisation model that protects only direct database connections then protects nothing that actually exists. The API became the single door, so the lock went on the door.</p>
     <p style="margin:0 0 8px">What carries the guarantee is <code>tests/test_authorisation.py</code>, which exercises the cases the Testing Report lists as TC-95 to TC-99 against the API. Its header states the standard plainly: if one of those tests fails, it is a data leak, not a failing test. The database keeps every constraint, trigger and state machine it had those protect the integrity of the record, which is a different job from deciding who may read it.</p>
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.5 The AI credential that does not exist</h3>
     <p style="margin:0 0 8px">In v1.0 the model was called from the browser with a key the browser could read. The plan was to move that call server-side so the key stayed on the server. What was built removes the key entirely: the App Runner instance role carries <code>bedrock:InvokeModel</code> scoped to one inference profile, and the AWS SDK obtains short-lived credentials from the instance metadata service at call time.</p>

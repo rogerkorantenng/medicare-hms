@@ -33,7 +33,7 @@ Patient Mobile    : Same address. Open on a phone, or narrow the
                     browser window to about 400 pixels wide.
 
 Source Code Repo  : https://github.com/rogerkorantenng/medicare-hms
-                    Branch: feat/supabase-migration
+                    Branch: main
 
 API                : https://qvfrhkd9yw.eu-west-1.awsapprunner.com
                     /health   answers without signing in

@@ -51,7 +51,7 @@
     <div style="border-bottom:3px solid #0D1B3E;padding-bottom:20px;margin-bottom:24px">
       <p style="margin:0 0 5px;font-family:'Inter',sans-serif;font-size:9pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1D4ED8">Complete Project Documentation</p>
       <h1 style="margin:0 0 8px;font-size:25pt;font-weight:700;line-height:1.12;letter-spacing:-.025em">MediCare+ Hospital Management System</h1>
-      <p style="margin:0 0 16px;font-family:'Inter',sans-serif;font-size:11pt;color:#64748B">An integrated clinical, operational and financial management system for a Ghanaian hospital, with an AI-assisted clinical layer and a patient mobile application.</p>
+      <p style="margin:0 0 16px;font-family:'Inter',sans-serif;font-size:11pt;color:#64748B">An integrated clinical, operational and financial management system for a Ghanaian teaching hospital, with an AI-assisted clinical layer and a patient mobile application. The reference facility throughout is the University of Ghana Medical Centre: a hospital of that size and structure, running the same departments and the same outpatient flow. We did not build this under instruction from the Centre, and it is not deployed there. It is the case we designed against.</p>
       <table>
         <tbody>
           <tr><th style="background:#F6F9FE;width:170px">Course</th><td>CSCD602 Capstone Project, Department of Computer Science, University of Ghana</td></tr>
@@ -76,7 +76,7 @@
     </div>
 
     <h3 style="margin:0 0 8px;font-size:12pt;font-weight:700">Companion documents</h3>
-    <p style="margin:0 0 10px">Five sections are delivered as separate documents as well. They are summarised here and cross-referenced rather than duplicated.</p>
+    <p style="margin:0 0 10px">Five sections are delivered as separate documents as well. They are summarised here and cross-referenced, never duplicated.</p>
     <table>
       <thead><tr><th style="width:12%">§</th><th style="width:36%">Section</th><th>Full document</th></tr></thead>
       <tbody>
@@ -93,7 +93,7 @@
     <p style="margin:0 0 10px">A district hospital in Ghana handles a few hundred outpatients on a busy day, and almost every one of them is recorded on paper. The folder is retrieved from a shelf, carried by hand between the front desk, the consulting room, the laboratory and the pharmacy, and returned to the shelf at the end of the day, assuming it comes back at all.</p>
     <p style="margin:0 0 10px">Around that folder sits a set of parallel records that do not talk to each other. Billing lives in a cash book or a spreadsheet. Pharmacy stock lives in a stock register. Laboratory requests are slips of paper. Insurance claims are compiled at month end from whatever documentation can be found. Each of these is maintained carefully by somebody, and none of them can be reconciled with the others without a person sitting down and doing it by hand.</p>
     <p style="margin:0 0 10px">This project builds the system that replaces that arrangement: one shared record that every department writes to and reads from, with a patient-facing application so patients are not the last to know what is happening in their own care.</p>
-    <p style="margin:0 0 10px">We chose this problem for three reasons. It is real, so we could observe it rather than imagine it. It is broad enough to exercise the whole software engineering process from requirements to deployment. And the consequences of getting it wrong are serious enough to force discipline: a system that confuses two patients' records is worse than no system at all.</p>
+    <p style="margin:0 0 10px">We chose this problem for three reasons. It is real, so we could go and watch it happen. It is broad enough to exercise the whole software engineering process from requirements to deployment. And the consequences of getting it wrong are serious enough to force discipline: a system that confuses two patients' records is worse than no system at all.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">3. Problem statement</h2>
     <p style="margin:0 0 10px">Hospital information at facility level is fragmented across paper and disconnected records, and the fragmentation itself causes harm.</p>
@@ -157,7 +157,7 @@
       <tbody>
         <tr><td>Functional requirements</td><td>67, across authentication, patient administration, appointments, triage, consultation, diagnostics, pharmacy, inpatient, billing, administration and mobile</td></tr>
         <tr><td>Non-functional requirements</td><td>20, covering performance, usability, accessibility, security, privacy, auditability, reliability, availability, scalability, maintainability, portability, localisation, safety and error handling, each with a measurable target</td></tr>
-        <tr><td>Constraints and assumptions</td><td>7 constraints and 6 assumptions, stated rather than implied</td></tr>
+        <tr><td>Constraints and assumptions</td><td>7 constraints and 6 assumptions, all stated outright</td></tr>
         <tr><td>Traceability</td><td>Every requirement group traced from source, through module, to test case</td></tr>
       </tbody>
     </table>
@@ -175,7 +175,7 @@
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">9. System design, summary</h2>
     <div class="xref"><b>Full document:</b> Design_Documentation.pdf, eleven sections, ten figures: architecture, use case, class, three sequence diagrams, swimlane activity, component, entity relationship and wireframes.</div>
-    <p style="margin:0 0 10px">Twenty-two use cases across nine actors. The most complex, conducting a consultation, is specified in full with three alternate flows: a blocked prescription, a missing diagnosis, and an unavailable AI service. Each alternate flow corresponds to a rule the system enforces rather than an error it merely reports.</p>
+    <p style="margin:0 0 10px">Twenty-two use cases across nine actors. The most complex, conducting a consultation, is specified in full with three alternate flows: a blocked prescription, a missing diagnosis, and an unavailable AI service. Each alternate flow corresponds to a rule the system enforces, not an error it merely reports.</p>
     <p style="margin:0 0 10px">The class model is composed from Patient, which owns its clinical history. Order lifecycles are modelled as forward-only state machines, so a laboratory sample cannot jump from ordered to verified without passing through collection and processing. That constraint exists because the record must be honest about where a sample actually is.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">10. Architecture</h2>
@@ -199,24 +199,24 @@
         <text x="28" y="230" font-size="9.5" font-weight="700" fill="#B45309">PERSISTENCE</text>
         <text x="150" y="230" font-size="8.5" fill="#334155">Repository interface owned by the domain. Satisfied by an HTTP adapter over FastAPI and PostgreSQL.</text>
       </svg>
-      <figcaption>Figure 1. Architecture in summary. In v2.0 the lower three layers run in a FastAPI service rather than the browser; the layering itself is unchanged. The full figure set, including the deployment topology, is in the design document.</figcaption>
+      <figcaption>Figure 1. Architecture in summary. In v2.0 the lower three layers run in a FastAPI service instead of the browser; the layering itself is unchanged. The full figure set, including the deployment topology, is in the design document.</figcaption>
     </figure>
     <p style="margin:0 0 10px">We chose a layered design over microservices deliberately. Signing a consultation stages a laboratory order, a prescription and an invoice line in one action. Splitting that across services would require distributed transactions for an ordinary clinical event, and would produce a deployment a hospital IT office could not reasonably run. The module boundaries are drawn so a service split remains possible if patient volume ever demands it.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">11. Database and data design</h2>
-    <p style="margin:0 0 10px">Sixteen entities: fourteen tables plus two log tables. Patient is the hub of the clinical record and Invoice the hub of the financial record. Five design decisions encode requirements rather than preferences.</p>
+    <p style="margin:0 0 10px">Sixteen entities: fourteen tables plus two log tables. Patient is the hub of the clinical record and Invoice the hub of the financial record. Five design decisions encode requirements, not preferences.</p>
     <ul>
       <li>MRN is the patient key, because staff already speak in MRNs and translating between the system and the folder label invites error.</li>
       <li>Invoice status is derived from total and paid, never stored, so the two cannot disagree after a partial payment.</li>
-      <li>Bed occupancy is a nullable patient reference on the bed row with a unique constraint, so double allocation is impossible at the data level rather than only in the interface.</li>
-      <li>Allergies sit on the patient row rather than in a separate table, because they are read on every prescription check and never queried independently. A join on the hottest safety path is a cost with no benefit.</li>
+      <li>Bed occupancy is a nullable patient reference on the bed row with a unique constraint, so double allocation is impossible at the data level, and not only in the interface.</li>
+      <li>Allergies sit on the patient row instead of a separate table, because they are read on every prescription check and never queried independently. A join on the hottest safety path is a cost with no benefit.</li>
       <li>The audit table is append-only. No update or delete permission is granted on it, including to administrators.</li>
     </ul>
     <p style="margin:0 0 10px">Every order, whether a test, a scan or a prescription, references the encounter that created it. That is what an auditor or an insurer asks for, and reconstructing it later from timestamps is unreliable.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">12. User interface design</h2>
-    <p style="margin:0 0 10px">Seven principles governed the interface. The two that shaped it most: every clinical role lands on the work waiting for them rather than a menu of links, and every status carries both a colour and a word so it survives printing and colour blindness. Clinical values use a monospaced typeface so digits align and misreadings are less likely. AI output is always purple, so an assistive suggestion is never visually confusable with recorded fact.</p>
-    <p style="margin:0 0 10px">Safety warnings interrupt rather than inform. An allergy conflict blocks the action and states the reason in place; a critical result appears as a banner at the top of the ordering doctor's dashboard. A warning that can be scrolled past is not a warning.</p>
+    <p style="margin:0 0 10px">Seven principles governed the interface. The two that shaped it most: every clinical role lands on the work waiting for them, not a menu of links, and every status carries both a colour and a word so it survives printing and colour blindness. Clinical values use a monospaced typeface so digits align and misreadings are less likely. AI output is always purple, so an assistive suggestion is never visually confusable with recorded fact.</p>
+    <p style="margin:0 0 10px">Safety warnings interrupt. They do not merely inform. An allergy conflict blocks the action and states the reason in place; a critical result appears as a banner at the top of the ordering doctor's dashboard. A warning that can be scrolled past is not a warning.</p>
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">13. Implementation</h2>
 
@@ -226,7 +226,7 @@
       <tbody>
         <tr><td>Interface</td><td>Next.js 14 (App Router), TypeScript, Tailwind CSS</td><td>Runs on existing hospital machines with no installation and no plugin. Screens render on the server, so a chart is assembled where the authorisation is rather than in the browser.</td></tr>
         <tr><td>Application logic</td><td>FastAPI on Python 3.12, Pydantic v2</td><td>Rules stay in one place, testable independently of the screens, and now in one process the hospital can audit and version on its own.</td></tr>
-        <tr><td>Persistence</td><td>PostgreSQL 16 on Amazon RDS, behind the same repository interface</td><td>A record follows the patient rather than the device. Constraints and triggers hold the clinical invariants whatever calls the database.</td></tr>
+        <tr><td>Persistence</td><td>PostgreSQL 16 on Amazon RDS, behind the same repository interface</td><td>A record follows the patient, not the device. Constraints and triggers hold the clinical invariants whatever calls the database.</td></tr>
         <tr><td>Session</td><td>JSON Web Token issued by the API, argon2id password hashing, httpOnly cookie</td><td>The token is signed by the process that also decides what it permits, and no script on any page can read it.</td></tr>
         <tr><td>AI services</td><td>Amazon Bedrock, Claude Opus 4.6</td><td>No model training or hosting; the hospital pays per use. Reached through the compute role, so there is no API key anywhere in the system.</td></tr>
         <tr><td>Printing</td><td>Browser print pipeline with print stylesheets</td><td>Works with any printer already on the hospital network.</td></tr>
@@ -256,7 +256,7 @@
       <thead><tr><th style="width:30%">Problem</th><th>Implementation that addresses it</th></tr></thead>
       <tbody>
         <tr><td>Lost or duplicated records</td><td>One record keyed on a system-allocated MRN. Search by name or MRN returns matches as the user types, so a duplicate registration is visible before it is created.</td></tr>
-        <tr><td>Results arriving late</td><td>Verification releases the result simultaneously to the chart, the ordering doctor and the patient's application. A critical flag raises a banner on the doctor's dashboard rather than waiting to be noticed.</td></tr>
+        <tr><td>Results arriving late</td><td>Verification releases the result simultaneously to the chart, the ordering doctor and the patient's application. A critical flag raises a banner on the doctor's dashboard instead of waiting to be noticed.</td></tr>
         <tr><td>Misread prescriptions and unchecked allergies</td><td>Electronic prescribing removes handwriting. A deterministic rule engine blocks any drug matching a recorded allergy and warns on drug-drug interactions before the order can be staged.</td></tr>
         <tr><td>Missed charges</td><td>Charge capture fires from the clinical event itself. Ordering a test, signing a consultation and dispensing a drug each append an invoice line at that moment.</td></tr>
         <tr><td>Late or incomplete claims</td><td>A claim record exists per insured invoice from the outset and moves through submitted, authorised and paid, with an AI-drafted justification available.</td></tr>
@@ -266,7 +266,7 @@
     </table>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">13.4 AI implementation and its boundaries</h3>
-    <p style="margin:0 0 8px">Six features call a language model. Two further safety checks are deterministic rule engines rather than AI, and that distinction is deliberate: a safety block must be predictable and reproducible, never probabilistic.</p>
+    <p style="margin:0 0 8px">Six features call a language model. Two further safety checks are deterministic rule engines, not AI, and that distinction is deliberate: a safety block must be predictable and reproducible, never probabilistic.</p>
     <table>
       <thead><tr><th style="width:26%">Feature</th><th style="width:14%">Kind</th><th>Behaviour and constraint</th></tr></thead>
       <tbody>
@@ -345,7 +345,7 @@
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">16. User manual, summary</h2>
     <div class="xref"><b>Full document:</b> User_Manual.pdf, twelve sections covering all nine roles.</div>
-    <p style="margin:0 0 10px">Written for staff with no technical background, in task order rather than menu order. Each role section states which screens belong to that role and what their job in the system is, then gives numbered procedures. Warnings are used sparingly and only where getting it wrong has a consequence: never share a login, tell the doctor in person as well as through the system when triage says urgent, verify a laboratory result only after reading it, and treat every AI suggestion as something to check. The manual closes with a troubleshooting table and eight rules that apply to everybody.</p>
+    <p style="margin:0 0 10px">Written for staff with no technical background, in the order the work happens, not the order the menu lists it. Each role section states which screens belong to that role and what their job in the system is, then gives numbered procedures. Warnings are used sparingly and only where getting it wrong has a consequence: never share a login, tell the doctor in person as well as through the system when triage says urgent, verify a laboratory result only after reading it, and treat every AI suggestion as something to check. The manual closes with a troubleshooting table and eight rules that apply to everybody.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">17. System administration and maintenance guide, summary</h2>
     <div class="xref"><b>Full document:</b> Maintenance_and_Evolution.pdf §3 and §10.</div>
@@ -367,7 +367,7 @@
       <tbody>
         <tr><td>Authentication</td><td>Accounts are rows with argon2id password hashes. Sign-in returns a signed token with a twelve-hour lifetime; a wrong password and an unknown address give the same message, so the system cannot be used to discover which accounts exist.</td></tr>
         <tr><td>Session handling</td><td>The browser posts credentials to the web tier, not the API, and the token is stored in an httpOnly cookie. No script on any page can read it. Signing out clears it server-side.</td></tr>
-        <tr><td>Authorisation</td><td>A guard on every API route, checked against a role re-read from the database on each request rather than trusted from the token. Non-clinical roles receive an explicit restriction notice in place of clinical data, not merely a hidden menu item.</td></tr>
+        <tr><td>Authorisation</td><td>A guard on every API route, checked against a role re-read from the database on each request, never trusted from the token. Non-clinical roles receive an explicit restriction notice in place of clinical data, not merely a hidden menu item.</td></tr>
         <tr><td>Least privilege</td><td>Receptionist and cashier see billing but not charts the same chart request returns demographics and invoices for them and the full record for a clinician. A patient sees only their own record, and only results a technician has verified.</td></tr>
         <tr><td>Audit trail</td><td>Every state-changing action recorded with actor, action, target and timestamp. Append-only by construction: the API exposes no update or delete route on the resource anywhere, and a test asserts that none appears.</td></tr>
         <tr><td>Credential hygiene</td><td>Passwords masked by default and never written to logs. No secret in the repository; the two that exist live in Secrets Manager. There is no AI key at all, because Bedrock is reached through the compute role.</td></tr>
@@ -379,15 +379,15 @@
         <tr><td>AI data minimisation</td><td>Only the clinical context needed for the task is sent. No bulk record transfer. The claims assistant is sent billed lines and never the clinical record.</td></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px"><strong>What changed since v1.0, and what it cost.</strong> The previous revision named this section as the honest weakness: authorisation was enforced by code the client ran, so the deployment had to be treated as a demonstration rather than a system that could hold real patient data. That weakness is closed. The client now holds nothing but a cookie it cannot read, and every decision about who may see what is taken in a process the user has no access to.</p>
-    <p style="margin:0 0 10px">The enforcement point is the API rather than the database. Row-level security was built first, tested against a real PostgreSQL instance, and then deliberately replaced. §9.4 of the design document sets out the reasoning. The cost of that choice is specific and worth stating: the database will now hand any row to whatever connects to it, so a route without a guard is a data leak rather than a bug. That is why the authorisation tests are not an afterthought but the artefact that carries the guarantee, and why their file says so in its opening lines.</p>
+    <p style="margin:0 0 10px"><strong>What changed since v1.0, and what it cost.</strong> The previous revision named this section as the honest weakness: authorisation was enforced by code the client ran, so the deployment had to be treated as a demonstration, not a system that could hold real patient data. That weakness is closed. The client now holds nothing but a cookie it cannot read, and every decision about who may see what is taken in a process the user has no access to.</p>
+    <p style="margin:0 0 10px">The enforcement point is the API, not the database. Row-level security was built first, tested against a real PostgreSQL instance, and then deliberately replaced. §9.4 of the design document sets out the reasoning. The cost of that choice is specific and worth stating: the database will now hand any row to whatever connects to it, so a route without a guard is a data leak rather than a bug. That is why the authorisation tests are not an afterthought but the artefact that carries the guarantee, and why their file says so in its opening lines.</p>
     <p style="margin:0 0 10px"><strong>What remains true.</strong> The system holds synthetic data only. A production deployment for real patients would need penetration testing by someone who did not write it, a documented breach procedure, and and a review against Act 843 by someone qualified to give it. A capstone can supply none of those, and we claim none of them.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">19. Challenges and solutions</h2>
     <table>
       <thead><tr><th style="width:28%">Challenge</th><th style="width:34%">What went wrong or was hard</th><th>How we resolved it</th></tr></thead>
       <tbody>
-        <tr><td>Scope for a single semester</td><td>A hospital system can absorb unlimited scope. Our first requirement list included payroll and procurement.</td><td>Applied MoSCoW ruthlessly and declared the excluded modules out of scope in the SRS rather than half-building them.</td></tr>
+        <tr><td>Scope for a single semester</td><td>A hospital system can absorb unlimited scope. Our first requirement list included payroll and procurement.</td><td>Applied MoSCoW ruthlessly and declared the excluded modules out of scope in the SRS instead of half-building them.</td></tr>
         <tr><td>Nine roles without nine disjointed applications</td><td>Early screens duplicated logic per role and drifted apart.</td><td>Moved to one domain model with role-based routing over shared screens. Every role reads the same record.</td></tr>
         <tr><td>Data lost on refresh</td><td>State lived only in memory, so a browser refresh destroyed a session's work. Logged as D-14.</td><td>Introduced the repository interface and a debounced persistence adapter. This also created the seam the database migration now uses.</td></tr>
         <tr><td>External assets unreachable after deployment</td><td>Icons and photographs loaded in development and failed in the deployed build. Logged as D-01 and D-09.</td><td>Replaced both with self-contained alternatives. Lesson recorded: test the deployed build, not just the development build.</td></tr>
@@ -412,7 +412,7 @@
         <tr><td>Single facility</td><td>No hospital-group or multi-site operation.</td><td>§22, v3.0</td></tr>
         <tr><td>No device integration</td><td>Laboratory and imaging results are typed in by hand, so transcription error remains possible.</td><td>§22, v3.0, HL7 and DICOM</td></tr>
         <tr><td>English only</td><td>Patient-facing screens assume English literacy.</td><td>§22, v2.5, Twi and Ga</td></tr>
-        <tr><td>Performance tested to 5,000 records</td><td>Behaviour above that is projected rather than measured.</td><td>Load testing before any expansion</td></tr>
+        <tr><td>Performance tested to 5,000 records</td><td>Behaviour above that is projected, not measured.</td><td>Load testing before any expansion</td></tr>
       </tbody>
     </table>
 
@@ -434,11 +434,11 @@
       </tbody>
     </table>
     <p style="margin:0 0 10px">The sequencing is deliberate and not negotiable: nothing in v2.5 or v3.0 begins before v2.0 is complete. Every later item increases the volume of real patient data flowing through the system, and increasing that flow while authorisation still lives in the application layer would multiply exposure rather than benefit. Infrastructure before visible features, in this domain, is a safety decision.</p>
-    <p style="margin:0 0 10px">Further AI candidates are ranked by how well the value is understood rather than how impressive they sound. No-show prediction and stock demand forecasting are high confidence and low clinical risk, so they come first. Deterioration early warning is valuable and genuinely risky, and would require validation against real outcomes and a clinician's sign-off. Autonomous clinical decision-making is excluded at every release; the requirement for a human to accept every AI output is a permanent design constraint, not a temporary limitation.</p>
+    <p style="margin:0 0 10px">Further AI candidates are ranked by how well the value is understood, not by how impressive they sound. No-show prediction and stock demand forecasting are high confidence and low clinical risk, so they come first. Deterioration early warning is valuable and genuinely risky, and would require validation against real outcomes and a clinician's sign-off. Autonomous clinical decision-making is excluded at every release; the requirement for a human to accept every AI output is a permanent design constraint, not a temporary limitation.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">23. Conclusion</h2>
     <p style="margin:0 0 10px">We set out to replace a fragmented paper process with one shared record, and the system does that. All nine roles work end to end: a patient can be registered at the front desk, triaged, consulted, sent for tests, given drugs, admitted, discharged and billed, with every department reading and writing the same record and every action attributable to a named user.</p>
-    <p style="margin:0 0 10px">Two parts are worth more than the feature count. The first is that the safety-critical paths are enforced rather than advised: a contraindicated drug cannot be staged, a result cannot reach a patient before it is verified, a bed cannot hold two patients, and a consultation cannot be signed without a diagnosis. Those constraints came directly from the problems we observed. The second is that the architecture anticipated its own biggest gap. The persistence seam was built before we needed it, which is why moving to a real database is a documented swap rather than a rewrite.</p>
+    <p style="margin:0 0 10px">Two parts are worth more than the feature count. The first is that the safety-critical paths are enforced, not advised: a contraindicated drug cannot be staged, a result cannot reach a patient before it is verified, a bed cannot hold two patients, and a consultation cannot be signed without a diagnosis. Those constraints came directly from the problems we observed. The second is that the architecture anticipated its own biggest gap. The persistence seam was built before we needed it, which is why moving to a real database is a documented swap rather than a rewrite.</p>
     <p style="margin:0 0 10px">The system is not finished, and §20 says where. Authorisation belongs in a database and is not there yet; Mobile Money settlement is modelled; the test suite is manual. None of these is hidden in this documentation, because a maintainer who inherits an honest account of a system's weaknesses is in a far better position than one who inherits a confident one.</p>
     <p style="margin:0 0 10px">What we would tell the next group doing this: build the persistence layer before the screens depend on it, test the deployed build from the first week, and decide early which safety checks must be deterministic. Those three choices accounted for most of the rework we did and most of the confidence we ended with.</p>
 

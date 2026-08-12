@@ -6,7 +6,7 @@ rather than nine copies of it.
 
 Next.js on the front, FastAPI over PostgreSQL behind it. This is version 2.0 —
 the migration of a working browser-storage prototype onto a real database and a
-real API, which is what makes it a system rather than a demonstration.
+real API, which is what makes it a system and not a demonstration.
 
 > All data in this system is synthetic. No real patient data appears anywhere.
 
@@ -88,7 +88,7 @@ Row-level security *was* built first and tested against a real PostgreSQL
 instance before it was replaced. That work found four defects in the original
 handoff SQL, three of which stopped it executing at all, and the two worth
 knowing about are recorded as D-15 and D-16 in the Testing Report: policy
-helper functions that recursed during query *planning* rather than execution,
+helper functions that recursed during query *planning*, not execution,
 and a trigger that could never fire because it inserted into a table whose
 policies forbade it. The reasoning for the replacement is in Design
 Documentation §9.4.
@@ -189,7 +189,7 @@ to a box: the ligature fails and the browser prints the name.
 ./deploy/aws/04-service.sh    # VPC connector, App Runner service, health check
 ```
 
-Each is idempotent: re-running finds what exists rather than failing. The
+Each is idempotent: re-running finds what exists instead of failing. The
 frontend deploys to Vercel from the repository with one environment variable,
 `API_URL`.
 

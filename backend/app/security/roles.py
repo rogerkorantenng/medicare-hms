@@ -1,9 +1,9 @@
 """
 Role sets — the vocabulary the guards are written in.
 
-These mirror the helper functions from the Supabase row-level security
-policies one for one, so the authorisation model is unchanged even
-though its enforcement point moved into the application.
+These mirror the row-level security helper functions they replaced, one
+for one, so the authorisation model is unchanged even though its
+enforcement point moved into the application.
 """
 
 Role = str

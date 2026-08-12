@@ -1,10 +1,10 @@
 """
 THE AUTHORISATION BOUNDARY.
 
-In the Supabase version these rules lived in PostgreSQL row-level
-security, so the database itself refused a cashier reading a
-consultation note. That enforcement point was moved here by an explicit
-design decision.
+These rules were first built as PostgreSQL row-level security, where the
+database itself refused a cashier reading a consultation note. That
+enforcement point was moved here by an explicit design decision, set out
+in Design Documentation section 9.4.
 
 The consequence is worth stating plainly: the database will now hand any
 row to anyone who asks. Every restriction that matters is a guard on a

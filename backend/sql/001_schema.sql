@@ -2,25 +2,27 @@
 -- MediCare+ HMS — PostgreSQL schema for AWS RDS
 -- 16 entities, taken from the submitted entity relationship diagram
 -- ================================================================
--- This is the Supabase schema ported to plain PostgreSQL. Two things
--- changed, and nothing else:
+-- Two things about this schema are worth knowing before reading it.
 --
---   1. auth.users is gone. Supabase provided it; RDS does not. An
---      app-owned `users` table takes its place, carrying the password
---      hash that FastAPI verifies at sign-in.
+--   1. Accounts are an ordinary table. `users` carries the email, the
+--      role and the argon2 password hash that FastAPI verifies at
+--      sign-in, and `staff` and `patients` both point at it. There is
+--      no separate identity service to keep in step.
 --
---   2. Row-level security is not enabled. Authorisation now lives in
---      the FastAPI layer, which was a deliberate decision. Every
---      policy that used to live here has an equivalent role guard on
---      the route. See backend/app/security.py.
+--   2. Row-level security is not enabled, by decision rather than by
+--      omission. Authorisation is enforced by a guard on every API
+--      route instead. The reasoning, and what it costs, is set out in
+--      Design Documentation section 9.4 and in app/security/deps.py.
 --
--- Everything that made the data trustworthy is unchanged: the
--- constraints, the forward-only state machines, the unique partial
--- indexes, the generated column, the atomic dispense, and the release
--- trigger. Those never depended on Supabase.
+-- Everything that makes the data trustworthy is here rather than in
+-- application code: the constraints, the forward-only state machines,
+-- the unique partial indexes, the generated invoice status, the atomic
+-- dispense and the result release trigger. None of that depends on who
+-- is calling.
 --
--- auth.uid() is also gone, so the functions that used it now take the
--- acting user as an explicit parameter. FastAPI passes it from the JWT.
+-- The functions take the acting user as an explicit parameter, because
+-- the database has no notion of the signed-in person; FastAPI passes it
+-- from the verified token.
 
 -- ---------- enums ----------
 
@@ -40,7 +42,7 @@ create type acuity_enum as enum ('routine','semi_urgent','urgent');
 create extension if not exists pgcrypto;
 
 -- ---------- 0. users ----------
--- Replaces Supabase's auth.users. Password hashes are argon2, produced
+-- The identity table. Password hashes are argon2id, produced
 -- and verified by the API; this table never sees a plaintext password.
 -- A NULL hash means the account cannot be signed in to, which is how
 -- the roster doctors exist as schedulable staff without being logins.
