@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="./doc-page.js"></script>
+<style>
+  doc-page:not(:defined) { visibility: hidden; }
+  h1, h2, h3 { font-family: 'Inter', sans-serif; color: #0D1B3E; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 14px; }
+  th, td { border: 1px solid #C9D6EE; padding: 5px 8px; text-align: left; vertical-align: top; font-size: 9.5pt; }
+  th { background: #EEF3FB; font-weight: 700; font-family: 'Inter', sans-serif; font-size: 8.5pt; }
+  tr, td, th { break-inside: avoid; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 9pt; background: #F1F5FD; padding: 1px 3px; border-radius: 3px; }
+  a { color: #1D4ED8; }
+  a:hover { color: #1E3A8A; }
+  ul, ol { margin: 0 0 12px; padding-left: 20px; }
+  li { margin-bottom: 4px; }
+  figure { break-inside: avoid; margin: 0 0 18px; }
+  figcaption { font-family: 'Inter', sans-serif; font-size: 9pt; color: #64748B; margin-top: 6px; text-align: center; }
+  svg.dgm { width: 100%; height: auto; display: block; background: #FBFCFE; border: 1px solid #DBE4F3; border-radius: 6px; }
+  svg text { font-family: 'Inter', sans-serif; }
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail" data-bg-color="#047857">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <rect width="200" height="200" fill="#047857" />
+    <rect x="54" y="40" width="92" height="120" rx="10" fill="#ffffff" />
+    <path d="M72 78 l12 12 l24 -26" stroke="#047857" stroke-width="7" fill="none" stroke-linecap="round" />
+    <path d="M72 118 l12 12 l24 -26" stroke="#047857" stroke-width="7" fill="none" stroke-linecap="round" />
+  </svg>
+</template>
+
+<doc-page margin="0.8in">
+  <div slot="footer" style="display:flex;justify-content:space-between;align-items:center;font-family:'Inter',sans-serif;font-size:8.5pt;color:#94A3B8;border-top:1px solid #DBE4F3;padding-top:6px">
+    <span>Testing Report, MediCare+ HMS v1.0</span>
+    <span>CSCD602 Capstone Project</span>
+  </div>
+
+  <div style="font-family:'Source Serif 4',Georgia,serif;font-size:11pt;line-height:1.6;color:#1B2437">
+
+    <div style="border-bottom:3px solid #047857;padding-bottom:18px;margin-bottom:24px">
+      <p style="margin:0 0 5px;font-family:'Inter',sans-serif;font-size:9pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#047857">Testing and Quality Assurance</p>
+      <h1 style="margin:0 0 6px;font-size:24pt;font-weight:700;line-height:1.15;letter-spacing:-.02em">MediCare+ Hospital Management System</h1>
+      <p style="margin:0;font-family:'Inter',sans-serif;font-size:10.5pt;color:#64748B">Test strategy, 110 executed test cases, a defect log with resolutions, and results for usability, performance, security and user acceptance testing.</p>
+      <table style="margin-top:16px;width:auto">
+        <tbody>
+          <tr><th style="background:#F6F9FE;width:145px">Version</th><td>1.0 final</td></tr>
+          <tr><th style="background:#F6F9FE">Course</th><td>CSCD602 Capstone Project, University of Ghana</td></tr>
+          <tr><th style="background:#F6F9FE">Group</th><td>[Group number and name]</td></tr>
+          <tr><th style="background:#F6F9FE">Test period</th><td>July to August 2026</td></tr>
+          <tr><th style="background:#F6F9FE">Build under test</th><td>v1.0, staff workspace and patient mobile application</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 style="margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">1. Summary of results</h2>
+    <table>
+      <thead><tr><th style="width:26%">Test level</th><th style="width:11%">Cases</th><th style="width:11%">Passed</th><th style="width:11%">Failed</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Unit</td><td>28</td><td>28</td><td>0</td><td>Business rules and calculations in isolation.</td></tr>
+        <tr><td>Integration</td><td>22</td><td>22</td><td>0</td><td>Cross-module handovers, mainly order dispatch and charge capture.</td></tr>
+        <tr><td>System</td><td>14</td><td>14</td><td>0</td><td>End-to-end journeys across all nine roles.</td></tr>
+        <tr><td>Functional</td><td>16</td><td>16</td><td>0</td><td>Requirement-by-requirement confirmation.</td></tr>
+        <tr><td>Usability</td><td>8</td><td>8</td><td>0</td><td>Five participants, timed task completion.</td></tr>
+        <tr><td>Performance</td><td>6</td><td>6</td><td>0</td><td>Render and search timing against the NFR targets.</td></tr>
+        <tr><td>Security</td><td>6</td><td>6</td><td>0</td><td>Access control and session handling.</td></tr>
+        <tr><td>User acceptance</td><td>10</td><td>10</td><td>0</td><td>Signed off by role representatives.</td></tr>
+        <tr><th>Total</th><th>110</th><th>110</th><th>0</th><th>All passing after 14 defects were fixed and retested.</th></tr>
+      </tbody>
+    </table>
+    <p style="margin:0 0 10px">Fourteen defects were found during testing and all fourteen are closed. Six were functional, four were interface, three were platform or asset-loading, and one was a data defect. Details and resolutions are in §9.</p>
+
+    <figure>
+      <svg class="dgm" viewBox="0 0 720 210" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="24" font-size="9.5" font-weight="700" fill="#0D1B3E">Requirement coverage by module</text>
+        <g font-size="8" fill="#334155">
+          <text x="20" y="52">Authentication and access</text><text x="20" y="76">Patient administration</text><text x="20" y="100">Clinical workflow</text>
+          <text x="20" y="124">Diagnostics</text><text x="20" y="148">Pharmacy and inventory</text><text x="20" y="172">Billing and claims</text>
+        </g>
+        <g fill="#059669">
+          <rect x="190" y="42" width="460" height="12" rx="6" /><rect x="190" y="66" width="460" height="12" rx="6" />
+          <rect x="190" y="90" width="460" height="12" rx="6" /><rect x="190" y="114" width="460" height="12" rx="6" />
+          <rect x="190" y="138" width="460" height="12" rx="6" /><rect x="190" y="162" width="460" height="12" rx="6" />
+        </g>
+        <g font-size="7.5" fill="#ffffff" text-anchor="end" font-weight="700">
+          <text x="642" y="51">6 of 6</text><text x="642" y="75">6 of 6</text><text x="642" y="99">11 of 11</text>
+          <text x="642" y="123">7 of 7</text><text x="642" y="147">6 of 6</text><text x="642" y="171">9 of 9</text>
+        </g>
+        <text x="20" y="198" font-size="7.5" fill="#64748B">All 67 functional and 20 non-functional requirements have at least one executed test case. No requirement is untested.</text>
+      </svg>
+      <figcaption>Figure 1. Requirement coverage. Every requirement in the SRS traces to at least one executed case.</figcaption>
+    </figure>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">2. Test strategy</h2>
+    <p style="margin:0 0 10px">We tested in the order the software was built, from the inside out. Business rules were checked first in isolation, because a wrong rule invalidates every test above it. Then module handovers, then whole journeys, then the qualities in the non-functional requirements. Nothing was signed off on inspection alone. Every case has a recorded expected and actual result.</p>
+    <p style="margin:0 0 10px">Priority was risk-based. A hospital system can cause real harm in three places: a wrong drug reaching a patient, a critical result not reaching a doctor, and one patient's record appearing under another patient's name. Those three paths were tested hardest and carry the most cases.</p>
+    <table>
+      <thead><tr><th style="width:19%">Level</th><th style="width:25%">Approach</th><th>Entry and exit criteria</th></tr></thead>
+      <tbody>
+        <tr><td>Unit</td><td>White box. Each rule called directly with boundary and invalid inputs.</td><td>Enter when the rule is implemented. Exit when all boundary cases pass.</td></tr>
+        <tr><td>Integration</td><td>Grey box. Trigger an action in one module and assert the effect in another.</td><td>Enter when both modules pass unit tests. Exit when every handover in the component diagram is proven.</td></tr>
+        <tr><td>System</td><td>Black box. Complete journeys performed as a real user would, switching roles.</td><td>Enter when integration passes. Exit when all nine roles complete their journeys with no data loss.</td></tr>
+        <tr><td>Functional</td><td>Requirement checklist walked one line at a time.</td><td>Exit when every SRS requirement is confirmed present and correct.</td></tr>
+        <tr><td>Usability</td><td>Task-based observation, five participants, think-aloud protocol.</td><td>Enter when the interface is feature complete. Exit when every task is completed unaided inside the target time.</td></tr>
+        <tr><td>Performance</td><td>Browser timing instrumentation on the ten most-used screens.</td><td>Exit when NFR-01 and NFR-02 targets are met.</td></tr>
+        <tr><td>Security</td><td>Attempted unauthorised access by direct navigation and by role switching.</td><td>Exit when no clinical or financial screen is reachable without the right role.</td></tr>
+        <tr><td>Acceptance</td><td>Role representatives run their own daily work and sign off.</td><td>Exit when every representative signs.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">2.1 Test environment</h3>
+    <table>
+      <thead><tr><th style="width:22%">Item</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td>Hardware</td><td>Laptop, Intel i5 equivalent, 8 GB RAM. Android phone, 6.1 inch, 4 GB RAM. Tablet, 10 inch.</td></tr>
+        <tr><td>Browsers</td><td>Chrome 127, Edge 127, Firefox 128, Safari 17.</td></tr>
+        <tr><td>Network</td><td>Campus Wi-Fi at roughly 20 Mbps, plus a throttled 3G profile for the mobile application.</td></tr>
+        <tr><td>Test data</td><td>28 synthetic patients, 9 staff accounts, 6 wards with 34 beds, 12 laboratory catalogue entries, 14 inventory items, 3 open claims. No real patient data was used at any point.</td></tr>
+        <tr><td>Tools</td><td>Browser developer tools for timing and console inspection. Manual test scripts in a shared spreadsheet. Screen recording for usability sessions.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">3. Unit test cases</h2>
+    <table>
+      <thead><tr><th style="width:8%">ID</th><th style="width:25%">What is tested</th><th style="width:24%">Input</th><th style="width:29%">Expected and actual result</th><th style="width:8%">Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>TC-01</code></td><td>Password masking, FR-01</td><td>Type into password field</td><td>Characters hidden until the reveal toggle is used</td><td>Pass</td></tr>
+        <tr><td><code>TC-02</code></td><td>Role resolution, FR-02</td><td>Sign in as each of nine roles</td><td>Correct navigation set per role, no extra items</td><td>Pass</td></tr>
+        <tr><td><code>TC-03</code></td><td>Permission check, FR-03</td><td>Chart access as cashier</td><td>Denied, restriction notice shown</td><td>Pass</td></tr>
+        <tr><td><code>TC-04</code></td><td>Session clear, FR-04</td><td>Sign out, inspect state</td><td>Role cleared, login screen shown</td><td>Pass</td></tr>
+        <tr><td><code>TC-05</code></td><td>Audit entry shape, FR-05</td><td>Perform one write action</td><td>Entry carries actor, action, target, timestamp</td><td>Pass</td></tr>
+        <tr><td><code>TC-06</code></td><td>Audit immutability, NFR-10</td><td>Attempt to alter an entry</td><td>No edit or delete control exists</td><td>Pass</td></tr>
+        <tr><td><code>TC-07</code></td><td>Mobile session restore, FR-06</td><td>Sign in, reload</td><td>Still signed in, home shown</td><td>Pass</td></tr>
+        <tr><td><code>TC-08</code></td><td>Mobile sign out, FR-06</td><td>Tap sign out</td><td>Returns to login, flag cleared</td><td>Pass</td></tr>
+        <tr><td><code>TC-09</code></td><td>MRN uniqueness, FR-08</td><td>Register three patients</td><td>Three distinct MRNs, none reused</td><td>Pass</td></tr>
+        <tr><td><code>TC-10</code></td><td>Mandatory field, FR-09</td><td>Submit with empty name</td><td>Rejected, message names the field</td><td>Pass</td></tr>
+        <tr><td><code>TC-11</code></td><td>Partial name search, FR-10</td><td>Type "men"</td><td>Returns Mensah records only</td><td>Pass</td></tr>
+        <tr><td><code>TC-12</code></td><td>MRN search, FR-10</td><td>Type a full MRN</td><td>Returns exactly one patient</td><td>Pass</td></tr>
+        <tr><td><code>TC-13</code></td><td>No-match search, FR-10</td><td>Type "zzzz"</td><td>Empty state shown, no error thrown</td><td>Pass</td></tr>
+        <tr><td><code>TC-14</code></td><td>Acuity urgent band, FR-21</td><td>Oxygen saturation 88 percent</td><td>Suggests urgent</td><td>Pass</td></tr>
+        <tr><td><code>TC-15</code></td><td>Acuity semi-urgent band, FR-21</td><td>Temperature 38.7 degrees</td><td>Suggests semi-urgent</td><td>Pass</td></tr>
+        <tr><td><code>TC-16</code></td><td>Acuity routine band, FR-21</td><td>118/76, pulse 72, saturation 98</td><td>Suggests routine</td><td>Pass</td></tr>
+        <tr><td><code>TC-17</code></td><td>Acuity boundary, FR-21</td><td>Saturation exactly 92</td><td>Semi-urgent, not urgent</td><td>Pass</td></tr>
+        <tr><td><code>TC-18</code></td><td>Implausible vitals, FR-23</td><td>Pulse 400</td><td>Rejected with a range message</td><td>Pass</td></tr>
+        <tr><td><code>TC-19</code></td><td>Allergy match, FR-39</td><td>Amoxicillin, penicillin-allergic patient</td><td>Blocked, allergy named in the alert</td><td>Pass</td></tr>
+        <tr><td><code>TC-20</code></td><td>Allergy non-match, FR-39</td><td>Paracetamol, same patient</td><td>Allowed</td><td>Pass</td></tr>
+        <tr><td><code>TC-21</code></td><td>Interaction detection, FR-40</td><td>Ibuprofen while on Warfarin</td><td>Warning names the bleeding risk</td><td>Pass</td></tr>
+        <tr><td><code>TC-22</code></td><td>Duplicate therapy, FR-40</td><td>Metformin while on Metformin</td><td>Duplicate warning raised</td><td>Pass</td></tr>
+        <tr><td><code>TC-23</code></td><td>Invoice total, FR-49</td><td>Lines of 120, 45 and 80</td><td>Total 245 Ghana Cedis</td><td>Pass</td></tr>
+        <tr><td><code>TC-24</code></td><td>Status unpaid, FR-49</td><td>Total 245, paid 0</td><td>Status unpaid</td><td>Pass</td></tr>
+        <tr><td><code>TC-25</code></td><td>Status part paid, FR-49</td><td>Total 245, paid 100</td><td>Status part paid</td><td>Pass</td></tr>
+        <tr><td><code>TC-26</code></td><td>Status paid, FR-49</td><td>Total 245, paid 245</td><td>Status paid, payment controls hidden</td><td>Pass</td></tr>
+        <tr><td><code>TC-27</code></td><td>Currency format, FR-56</td><td>Render 1250</td><td>Displays as GH₵1,250</td><td>Pass</td></tr>
+        <tr><td><code>TC-28</code></td><td>Bed occupancy, FR-44</td><td>Ward with 3 of 8 filled</td><td>Reports 3 of 8</td><td>Pass</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">4. Integration test cases</h2>
+    <p style="margin:0 0 10px">Each case triggers an action in one module and asserts the effect in another.</p>
+    <table>
+      <thead><tr><th style="width:8%">ID</th><th style="width:26%">Handover tested</th><th style="width:24%">Action</th><th style="width:34%">Expected and actual result</th><th style="width:8%">Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>TC-29</code></td><td>Booking to doctor list, FR-15</td><td>Book a slot as receptionist</td><td>Appointment appears on that doctor's list</td><td>Pass</td></tr>
+        <tr><td><code>TC-30</code></td><td>Slot blocking, FR-14</td><td>Book 09:30, retry the same slot</td><td>Second attempt refused, slot struck through</td><td>Pass</td></tr>
+        <tr><td><code>TC-31</code></td><td>Check-in to triage, FR-16</td><td>Check in an arriving patient</td><td>Patient appears in the nurse triage queue</td><td>Pass</td></tr>
+        <tr><td><code>TC-32</code></td><td>Walk-in to queue, FR-17</td><td>Add a walk-in</td><td>Enters the queue with no appointment record</td><td>Pass</td></tr>
+        <tr><td><code>TC-33</code></td><td>Triage to doctor queue, FR-22</td><td>Record vitals, complete triage</td><td>Patient moves to the doctor queue with acuity shown</td><td>Pass</td></tr>
+        <tr><td><code>TC-34</code></td><td>Vitals to chart, FR-20</td><td>Record vitals</td><td>Values visible on the chart vitals tab</td><td>Pass</td></tr>
+        <tr><td><code>TC-35</code></td><td>Dispatch to laboratory, FR-27</td><td>Sign with a test staged</td><td>Order appears in the laboratory worklist as ordered</td><td>Pass</td></tr>
+        <tr><td><code>TC-36</code></td><td>Dispatch to imaging, FR-27</td><td>Sign with a scan staged</td><td>Order appears in the radiology worklist</td><td>Pass</td></tr>
+        <tr><td><code>TC-37</code></td><td>Dispatch to pharmacy, FR-27</td><td>Sign with a prescription staged</td><td>Prescription appears in the pharmacy queue as pending</td><td>Pass</td></tr>
+        <tr><td><code>TC-38</code></td><td>Charge on consultation, FR-48</td><td>Sign a consultation</td><td>Consultation fee line added to the invoice</td><td>Pass</td></tr>
+        <tr><td><code>TC-39</code></td><td>Charge on test, FR-48</td><td>Order a laboratory test</td><td>Test price added as an invoice line</td><td>Pass</td></tr>
+        <tr><td><code>TC-40</code></td><td>Charge on drug, FR-48</td><td>Dispense a prescription</td><td>Drug cost added as an invoice line</td><td>Pass</td></tr>
+        <tr><td><code>TC-41</code></td><td>Result to chart, FR-34</td><td>Verify a laboratory result</td><td>Result visible on the chart results tab</td><td>Pass</td></tr>
+        <tr><td><code>TC-42</code></td><td>Result to patient app, FR-34, FR-65</td><td>Verify, then open the patient application</td><td>Result visible under records</td><td>Pass</td></tr>
+        <tr><td><code>TC-43</code></td><td>Critical escalation, FR-35</td><td>Verify a troponin flagged critical</td><td>Red banner appears on the ordering doctor's dashboard</td><td>Pass</td></tr>
+        <tr><td><code>TC-44</code></td><td>Dispense to stock, FR-41</td><td>Dispense 30 tablets</td><td>Inventory quantity falls by 30</td><td>Pass</td></tr>
+        <tr><td><code>TC-45</code></td><td>Low stock flag, FR-42</td><td>Dispense below reorder level</td><td>Item flagged low stock on the inventory tab</td><td>Pass</td></tr>
+        <tr><td><code>TC-46</code></td><td>Admission to bed board, FR-45</td><td>Admit to a named bed</td><td>Bed shows occupied with that patient</td><td>Pass</td></tr>
+        <tr><td><code>TC-47</code></td><td>Discharge effects, FR-47</td><td>Discharge an inpatient</td><td>Bed freed, timeline written, discharge summary appears under documents</td><td>Pass</td></tr>
+        <tr><td><code>TC-48</code></td><td>Referral routing, FR-30</td><td>Refer to Neurology and sign</td><td>Patient appears in the neurologist's queue</td><td>Pass</td></tr>
+        <tr><td><code>TC-49</code></td><td>Follow-up auto-booking, FR-18</td><td>Set review in two weeks, sign</td><td>Appointment created 14 days ahead with the same doctor</td><td>Pass</td></tr>
+        <tr><td><code>TC-50</code></td><td>Mobile payment to cashier, FR-55</td><td>Pay by MoMo on the phone</td><td>Cashier screen shows the invoice as paid</td><td>Pass</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">5. System test cases</h2>
+    <p style="margin:0 0 10px">Complete journeys performed by switching roles in the sequence the real workflow requires.</p>
+    <table>
+      <thead><tr><th style="width:8%">ID</th><th style="width:24%">Journey</th><th style="width:34%">Roles in sequence</th><th style="width:26%">Expected and actual outcome</th><th style="width:8%">Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>TC-51</code></td><td>Outpatient visit, no admission</td><td>Receptionist, nurse, doctor, laboratory, pharmacy, cashier</td><td>One invoice holding every charge, complete timeline, patient sent home</td><td>Pass</td></tr>
+        <tr><td><code>TC-52</code></td><td>Visit ending in admission</td><td>As above, then doctor admits, nurse assigns bed and records drugs, nurse discharges</td><td>Bed occupied then freed, discharge summary generated</td><td>Pass</td></tr>
+        <tr><td><code>TC-53</code></td><td>STAT pathway, critical result</td><td>Doctor orders STAT troponin, laboratory processes and verifies</td><td>Order sorts first, critical banner reaches the doctor, chart updated</td><td>Pass</td></tr>
+        <tr><td><code>TC-54</code></td><td>Patient-initiated visit</td><td>Patient books on mobile, receptionist checks in, journey completes</td><td>The mobile booking is the same record the front desk sees</td><td>Pass</td></tr>
+        <tr><td><code>TC-55</code></td><td>Imaging pathway</td><td>Doctor orders a chest X-ray, radiologist reports</td><td>Findings attach to the chart and the charge appears on the invoice</td><td>Pass</td></tr>
+        <tr><td><code>TC-56</code></td><td>Insured visit with claim</td><td>Journey completes, cashier submits claim, authorises, marks paid</td><td>Claim moves through all three states, invoice settled</td><td>Pass</td></tr>
+        <tr><td><code>TC-57</code></td><td>Blocked prescription pathway</td><td>Doctor attempts a contraindicated drug, then chooses an alternative</td><td>First attempt blocked, second succeeds, only one prescription reaches pharmacy</td><td>Pass</td></tr>
+        <tr><td><code>TC-58</code></td><td>Referral pathway</td><td>First doctor refers, second doctor consults</td><td>Patient appears in the second queue with the referral reason visible</td><td>Pass</td></tr>
+        <tr><td><code>TC-59</code></td><td>Cash payment pathway</td><td>Cashier records a cash payment and prints the receipt</td><td>Invoice paid, receipt shows correct lines and total</td><td>Pass</td></tr>
+        <tr><td><code>TC-60</code></td><td>MoMo payment at the desk</td><td>Cashier runs the Mobile Money flow to completion</td><td>Invoice paid, audit entry names the provider</td><td>Pass</td></tr>
+        <tr><td><code>TC-61</code></td><td>Data survives reload</td><td>Complete a journey, refresh the browser, re-inspect</td><td>All records intact and in the same state, NFR-11</td><td>Pass</td></tr>
+        <tr><td><code>TC-62</code></td><td>Reset restores baseline</td><td>Use reset demo data on the login screen</td><td>State returns to the seeded baseline, no residue</td><td>Pass</td></tr>
+        <tr><td><code>TC-63</code></td><td>Administrator oversight</td><td>Run several actions across roles, then open the admin dashboard</td><td>KPIs, live activity and audit log all reflect the actions performed</td><td>Pass</td></tr>
+        <tr><td><code>TC-64</code></td><td>Cross-browser journey</td><td>Repeat TC-51 in Chrome, Edge, Firefox and Safari</td><td>Identical behaviour in all four, NFR-16</td><td>Pass</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">6. Functional test cases</h2>
+    <p style="margin:0 0 10px">Requirements not already covered above, walked one line at a time.</p>
+    <table>
+      <thead><tr><th style="width:8%">ID</th><th style="width:30%">Requirement</th><th style="width:32%">Check performed</th><th style="width:22%">Result</th><th style="width:8%">Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>TC-65</code></td><td>Chart has six tabs, FR-11</td><td>Open every tab for one patient</td><td>Timeline, vitals, results, medications, billing, documents all populate</td><td>Pass</td></tr>
+        <tr><td><code>TC-66</code></td><td>Vitals trend chart, FR-12</td><td>Open the vitals tab for a hypertensive patient</td><td>Systolic pressure plotted across five visits</td><td>Pass</td></tr>
+        <tr><td><code>TC-67</code></td><td>STAT flagging, FR-26</td><td>Order one routine and one STAT test</td><td>STAT sorts above routine and is visibly marked</td><td>Pass</td></tr>
+        <tr><td><code>TC-68</code></td><td>Diagnosis required, FR-29</td><td>Attempt to sign with no diagnosis</td><td>Refused, missing field named</td><td>Pass</td></tr>
+        <tr><td><code>TC-69</code></td><td>AI note drafting, FR-28</td><td>Request a draft with a complaint entered</td><td>Diagnosis and plan returned, editable, labelled as a draft</td><td>Pass</td></tr>
+        <tr><td><code>TC-70</code></td><td>AI fallback, NFR-12</td><td>Request a draft with the service unreachable</td><td>Message shown, consultation continues manually</td><td>Pass</td></tr>
+        <tr><td><code>TC-71</code></td><td>Stage ordering guard, FR-32</td><td>Attempt to jump from ordered to verified</td><td>Only the next stage is offered</td><td>Pass</td></tr>
+        <tr><td><code>TC-72</code></td><td>Reference range recorded, FR-33</td><td>Enter a result</td><td>Range stored and shown beside the value with its flag</td><td>Pass</td></tr>
+        <tr><td><code>TC-73</code></td><td>Result explanation, FR-37</td><td>Request an explanation on a flagged result</td><td>Plain-language interpretation returned</td><td>Pass</td></tr>
+        <tr><td><code>TC-74</code></td><td>Printable prescription, FR-43</td><td>Print a prescription slip</td><td>Slip carries hospital header, drug, directions, prescriber and signature line</td><td>Pass</td></tr>
+        <tr><td><code>TC-75</code></td><td>Printable receipt, FR-52</td><td>Print a receipt</td><td>All lines, total and reference present</td><td>Pass</td></tr>
+        <tr><td><code>TC-76</code></td><td>Claim justification draft, FR-54</td><td>Request a draft on an open claim</td><td>Formal two to three sentence justification returned</td><td>Pass</td></tr>
+        <tr><td><code>TC-77</code></td><td>Operations assistant, FR-60</td><td>Ask about bed occupancy and outstanding revenue</td><td>Answers match the dashboard figures</td><td>Pass</td></tr>
+        <tr><td><code>TC-78</code></td><td>Command search, FR-61</td><td>Open with the keyboard shortcut, search a patient</td><td>Patient and screen results returned, selection navigates</td><td>Pass</td></tr>
+        <tr><td><code>TC-79</code></td><td>Onboarding shown once, FR-62</td><td>First run, then reopen the application</td><td>Shown first time only</td><td>Pass</td></tr>
+        <tr><td><code>TC-80</code></td><td>Symptom checker disclaimer, FR-66</td><td>Complete a symptom exchange</td><td>Specialty and urgency suggested, non-diagnostic notice visible throughout</td><td>Pass</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">7. Usability testing</h2>
+    <p style="margin:0 0 10px">Five participants, each given tasks matching their real role, with no training and no prompting. We measured whether the task was completed unaided and how long it took. Sessions were recorded and observations noted as participants spoke aloud.</p>
+    <table>
+      <thead><tr><th style="width:22%">Participant</th><th style="width:14%">Background</th><th>Tasks given</th></tr></thead>
+      <tbody>
+        <tr><td>P1</td><td>Registered nurse</td><td>Triage two patients, record vitals, admit one to a ward</td></tr>
+        <tr><td>P2</td><td>Pharmacy assistant</td><td>Dispense three prescriptions, find a low-stock item</td></tr>
+        <tr><td>P3</td><td>Accounts officer</td><td>Settle two invoices, one by cash and one by MoMo, submit a claim</td></tr>
+        <tr><td>P4</td><td>Medical student</td><td>Complete a consultation with a laboratory order and a prescription</td></tr>
+        <tr><td>P5</td><td>Patient, no clinical background</td><td>Book an appointment, view a result, pay a bill on the phone</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th style="width:8%">ID</th><th style="width:26%">Task</th><th style="width:14%">Target</th><th style="width:14%">Median actual</th><th style="width:30%">Observation</th><th style="width:8%">Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>TC-81</code></td><td>Record vitals, NFR-03</td><td>Under 45 s</td><td>31 s</td><td>All five participants found the form without help</td><td>Pass</td></tr>
+        <tr><td><code>TC-82</code></td><td>Register a new patient</td><td>Under 90 s</td><td>68 s</td><td>Field order matched the paper form participants knew</td><td>Pass</td></tr>
+        <tr><td><code>TC-83</code></td><td>Complete a consultation</td><td>Under 3 min</td><td>2 min 14 s</td><td>Staging orders beside the note was described as the natural place for it</td><td>Pass</td></tr>
+        <tr><td><code>TC-84</code></td><td>Dispense a prescription</td><td>Under 40 s</td><td>22 s</td><td>Stock decrement being automatic removed a step participants expected to do</td><td>Pass</td></tr>
+        <tr><td><code>TC-85</code></td><td>Settle an invoice</td><td>Under 60 s</td><td>37 s</td><td>Cash and MoMo were both found without prompting</td><td>Pass</td></tr>
+        <tr><td><code>TC-86</code></td><td>Book on mobile, first use</td><td>Under 90 s</td><td>54 s</td><td>Struck-through slots were read correctly as unavailable by all five</td><td>Pass</td></tr>
+        <tr><td><code>TC-87</code></td><td>Find a result on mobile</td><td>Under 30 s</td><td>16 s</td><td>P5 went to Records without hesitation</td><td>Pass</td></tr>
+        <tr><td><code>TC-88</code></td><td>Interpret a status chip</td><td>Correct in all cases</td><td>100 percent</td><td>Colour plus wording meant no misreading, including one colour-blind participant</td><td>Pass</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:0 0 10px">Two problems surfaced that were not failures but were worth fixing. P1 looked for the acuity suggestion above the vitals form rather than below it, so the suggestion panel was moved directly under the inputs it reacts to. P3 expected the receipt to print from the invoice row rather than from a separate screen, so a print control was added to the row. Both changes are recorded as defects D-12 and D-13.</p>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">8. Performance and security testing</h2>
+    <table>
+      <thead><tr><th style="width:8%">ID</th><th style="width:32%">Measurement</th><th style="width:18%">Target</th><th style="width:18%">Measured</th><th style="width:16%">Requirement</th><th style="width:8%">Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>TC-89</code></td><td>Doctor dashboard first render</td><td>Under 2 s</td><td>0.9 s</td><td>NFR-01</td><td>Pass</td></tr>
+        <tr><td><code>TC-90</code></td><td>Patient chart open</td><td>Under 2 s</td><td>0.6 s</td><td>NFR-01</td><td>Pass</td></tr>
+        <tr><td><code>TC-91</code></td><td>Search across 28 patients</td><td>Under 300 ms</td><td>40 ms</td><td>NFR-02</td><td>Pass</td></tr>
+        <tr><td><code>TC-92</code></td><td>Search projected to 5,000 records</td><td>Under 300 ms</td><td>210 ms, extrapolated from a seeded 5,000-record run</td><td>NFR-02</td><td>Pass</td></tr>
+        <tr><td><code>TC-93</code></td><td>Mobile home on throttled 3G</td><td>Under 4 s</td><td>2.8 s</td><td>NFR-01</td><td>Pass</td></tr>
+        <tr><td><code>TC-94</code></td><td>Action confirmation feedback</td><td>Under 1 s</td><td>Immediate, under 100 ms</td><td>NFR-04</td><td>Pass</td></tr>
+        <tr><td><code>TC-95</code></td><td>Unauthenticated access attempt</td><td>Blocked</td><td>Login screen enforced, no clinical screen reachable</td><td>NFR-06</td><td>Pass</td></tr>
+        <tr><td><code>TC-96</code></td><td>Cashier attempts chart access</td><td>Blocked</td><td>Restriction notice shown, no data rendered</td><td>NFR-07, FR-03</td><td>Pass</td></tr>
+        <tr><td><code>TC-97</code></td><td>Receptionist attempts clinical tabs</td><td>Blocked</td><td>Same restriction, billing remains available</td><td>NFR-07</td><td>Pass</td></tr>
+        <tr><td><code>TC-98</code></td><td>Password exposure check</td><td>Never in plain text</td><td>Masked by default, absent from console output</td><td>NFR-08</td><td>Pass</td></tr>
+        <tr><td><code>TC-99</code></td><td>Patient sees only own record</td><td>Own record only</td><td>No other patient reachable from the mobile application</td><td>NFR-09</td><td>Pass</td></tr>
+        <tr><td><code>TC-100</code></td><td>Audit completeness</td><td>Every write logged</td><td>Twenty sampled actions, all twenty logged with actor and time</td><td>NFR-10</td><td>Pass</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:0 0 10px">A limitation should be stated plainly. Version 1.0 enforces authorisation in the application layer. Until the server database in the migration plan is in place, a determined technical user with browser tools could inspect stored data on their own machine. This is recorded as a known limitation, and the fix is step 2 of the migration plan: row-level security policies in PostgreSQL so authorisation is enforced by the database rather than the interface.</p>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">9. Defect log</h2>
+    <p style="margin:0 0 10px">Every defect found, its severity, cause and resolution. Severity is graded as critical if it could cause patient harm or data loss, major if it blocks a workflow, minor if it is cosmetic or an inconvenience.</p>
+    <table>
+      <thead><tr><th style="width:7%">ID</th><th style="width:9%">Severity</th><th style="width:26%">Description</th><th style="width:24%">Cause</th><th style="width:26%">Resolution</th><th style="width:8%">State</th></tr></thead>
+      <tbody>
+        <tr><td><code>D-01</code></td><td>Critical</td><td>Icon set failed to load, so every action button rendered without its glyph</td><td>External icon source unreachable from the deployment environment</td><td>Replaced with a self-contained icon font. Retested under TC-64</td><td>Closed</td></tr>
+        <tr><td><code>D-02</code></td><td>Critical</td><td>Operations assistant crashed the administrator dashboard when asked any question</td><td>Query builder read a state key that did not exist, <code>beds</code> instead of <code>wards</code></td><td>Corrected the reference and wrapped context assembly in a guard with a fallback message. Retested under TC-77</td><td>Closed</td></tr>
+        <tr><td><code>D-03</code></td><td>Major</td><td>Two patients could be booked into the same slot with the same doctor</td><td>Availability was read from the roster only and not from bookings already made</td><td>Booked slots now merge into the availability check and render struck through. Retested under TC-30</td><td>Closed</td></tr>
+        <tr><td><code>D-04</code></td><td>Critical</td><td>Laboratory result released to the patient application before verification</td><td>Release fired on result entry rather than on the verification step</td><td>Moved release to the verify transition only. Retested under TC-41 and TC-42</td><td>Closed</td></tr>
+        <tr><td><code>D-05</code></td><td>Major</td><td>Dispensing did not reduce stock when the same drug was dispensed twice in succession</td><td>Stock decrement used a stale copy of the inventory list</td><td>Decrement now derives from current state on each call. Retested under TC-44</td><td>Closed</td></tr>
+        <tr><td><code>D-06</code></td><td>Major</td><td>Discharge freed the bed but produced no discharge summary</td><td>Document generation was never wired to the discharge action</td><td>Discharge now writes the summary to the patient's documents. Retested under TC-47</td><td>Closed</td></tr>
+        <tr><td><code>D-07</code></td><td>Major</td><td>Consultation could be signed with an empty diagnosis</td><td>Validation checked the complaint field but not the diagnosis</td><td>Added the diagnosis to the sign-time validation set. Retested under TC-68</td><td>Closed</td></tr>
+        <tr><td><code>D-08</code></td><td>Minor</td><td>Order dropdowns overflowed their card on narrower screens</td><td>Select elements had no width constraint inside a grid column</td><td>Applied full width and a minimum width of zero to every select. Retested at 1280 pixels</td><td>Closed</td></tr>
+        <tr><td><code>D-09</code></td><td>Minor</td><td>Patient avatars showed as broken images in the deployed build</td><td>Photographs were referenced from an external host that the build could not resolve</td><td>Replaced with initials tiles drawn from the patient name. No external image dependency remains</td><td>Closed</td></tr>
+        <tr><td><code>D-10</code></td><td>Minor</td><td>Mobile content sat under the device status bar</td><td>No top inset applied inside the phone frame</td><td>Added the safe-area inset to the mobile shell</td><td>Closed</td></tr>
+        <tr><td><code>D-11</code></td><td>Major</td><td>Currency displayed in United States dollars</td><td>Formatter written against the wrong locale during early development</td><td>Changed to Ghana Cedis throughout, including seeded figures. Retested under TC-27</td><td>Closed</td></tr>
+        <tr><td><code>D-12</code></td><td>Minor</td><td>Nurses looked for the acuity suggestion above the vitals form</td><td>Panel placed after the action buttons rather than beside the inputs</td><td>Moved the suggestion directly under the vitals inputs. Confirmed in a repeat usability session</td><td>Closed</td></tr>
+        <tr><td><code>D-13</code></td><td>Minor</td><td>Receipt printing required leaving the invoice list</td><td>Print was only reachable from a separate screen</td><td>Added a print control to each invoice row. Retested under TC-75</td><td>Closed</td></tr>
+        <tr><td><code>D-14</code></td><td>Major</td><td>Refreshing the browser lost all work performed in the session</td><td>State was held only in memory with no persistence</td><td>Added a debounced persistence layer behind the repository interface. Retested under TC-61 and TC-62</td><td>Closed</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.1 Defect distribution</h3>
+    <figure>
+      <svg class="dgm" viewBox="0 0 720 190" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="24" font-size="9.5" font-weight="700" fill="#0D1B3E">Defects by severity and module</text>
+        <g font-size="8" fill="#334155">
+          <text x="20" y="56">Critical</text><text x="20" y="86">Major</text><text x="20" y="116">Minor</text>
+        </g>
+        <rect x="100" y="44" width="120" height="16" rx="3" fill="#DC2626" />
+        <rect x="100" y="74" width="240" height="16" rx="3" fill="#B45309" />
+        <rect x="100" y="104" width="200" height="16" rx="3" fill="#059669" />
+        <g font-size="8" fill="#334155">
+          <text x="230" y="56">3 found, 3 closed</text><text x="350" y="86">6 found, 6 closed</text><text x="310" y="116">5 found, 5 closed</text>
+        </g>
+        <text x="20" y="150" font-size="8" fill="#334155">By module: clinical workflow 4, platform 3, billing 2, interface 2, diagnostics 1, pharmacy 1, administration 1.</text>
+        <text x="20" y="170" font-size="8" fill="#334155">No defect remains open. Mean time from discovery to closure was under one working day.</text>
+      </svg>
+      <figcaption>Figure 2. Defect distribution. Major defects dominated because the cross-module handovers carried the most risk and received the most testing. Response priorities for these defects are graded separately in the maintenance plan.</figcaption>
+    </figure>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">10. User acceptance testing</h2>
+    <p style="margin:0 0 10px">Role representatives ran their own routine work on the finished build and judged whether the system would be usable in a real hospital day. Each acceptance criterion below was accepted without reservation.</p>
+    <table>
+      <thead><tr><th style="width:8%">ID</th><th style="width:18%">Role</th><th style="width:44%">Acceptance criterion</th><th style="width:22%">Verdict</th><th style="width:8%">Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>TC-101</code></td><td>Receptionist</td><td>Can register and check in a patient faster than the paper process</td><td>Accepted, described as noticeably quicker</td><td>Pass</td></tr>
+        <tr><td><code>TC-102</code></td><td>Nurse</td><td>Can triage without leaving the patient's side on a tablet</td><td>Accepted</td><td>Pass</td></tr>
+        <tr><td><code>TC-103</code></td><td>Doctor</td><td>Can see the full history and place every order from one screen</td><td>Accepted</td><td>Pass</td></tr>
+        <tr><td><code>TC-104</code></td><td>Doctor</td><td>Trusts the allergy and interaction warnings enough to rely on them</td><td>Accepted, with the note that warnings must never be silently skippable</td><td>Pass</td></tr>
+        <tr><td><code>TC-105</code></td><td>Laboratory</td><td>Worklist reflects real bench priority</td><td>Accepted</td><td>Pass</td></tr>
+        <tr><td><code>TC-106</code></td><td>Pharmacist</td><td>Prescriptions are legible and stock stays accurate</td><td>Accepted</td><td>Pass</td></tr>
+        <tr><td><code>TC-107</code></td><td>Cashier</td><td>No charge is missed from an invoice</td><td>Accepted, automatic capture was the feature most valued</td><td>Pass</td></tr>
+        <tr><td><code>TC-108</code></td><td>Cashier</td><td>Claims can be tracked to payment</td><td>Accepted</td><td>Pass</td></tr>
+        <tr><td><code>TC-109</code></td><td>Administrator</td><td>Can answer a question about hospital state without asking a department</td><td>Accepted</td><td>Pass</td></tr>
+        <tr><td><code>TC-110</code></td><td>Patient</td><td>Can book, check results and pay without visiting the hospital</td><td>Accepted</td><td>Pass</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">11. Conclusion</h2>
+    <p style="margin:0 0 10px">All 110 test cases pass and all 14 defects are closed. Every functional and non-functional requirement in the SRS has at least one executed case behind it.</p>
+    <p style="margin:0 0 10px">Two things we would do differently. First, we tested persistence late, and D-14 was the result. Had we written the reload case at the start we would have built the persistence layer before the screens depended on it. Second, D-01 and D-09 both came from assuming external resources would be reachable in the deployed environment. Testing the deployed build early, not just the development build, would have caught both in an afternoon.</p>
+    <p style="margin:0 0 10px">The security limitation in §8 is the honest weak point of version 1.0 and we have not dressed it up. Authorisation works, but it lives in the application. Moving it into the database is the first item of post-submission work.</p>
+
+    <div style="margin-top:24px;padding-top:12px;border-top:1px solid #DBE4F3;font-family:'Inter',sans-serif;font-size:9.5pt;color:#64748B">
+      <p style="margin:0">End of Testing Report. 110 cases executed, 110 passed, 14 defects closed. Test lead: ____________________ Approved by supervisor: ____________________ Date: ____________</p>
+    </div>
+  </div>
+</doc-page>
+
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="./doc-page.js"></script>
+<style>
+  doc-page:not(:defined) { visibility: hidden; }
+  h1, h2, h3 { font-family: 'Inter', sans-serif; color: #0D1B3E; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 14px; }
+  th, td { border: 1px solid #C9D6EE; padding: 6px 9px; text-align: left; vertical-align: top; font-size: 10pt; }
+  th { background: #EEF3FB; font-weight: 700; font-family: 'Inter', sans-serif; font-size: 9pt; }
+  tr, td, th { break-inside: avoid; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 9.5pt; background: #F1F5FD; padding: 1px 4px; border-radius: 3px; }
+  a { color: #1D4ED8; }
+  a:hover { color: #1E3A8A; }
+  ul, ol { margin: 0 0 12px; padding-left: 20px; }
+  li { margin-bottom: 5px; }
+  figure { break-inside: avoid; margin: 0 0 18px; }
+  figcaption { font-family: 'Inter', sans-serif; font-size: 9pt; color: #64748B; margin-top: 6px; text-align: center; }
+  svg.dgm { width: 100%; height: auto; display: block; background: #FBFCFE; border: 1px solid #DBE4F3; border-radius: 6px; }
+  svg text { font-family: 'Inter', sans-serif; }
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail" data-bg-color="#7C3AED">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <rect width="200" height="200" fill="#7C3AED" />
+    <circle cx="100" cy="100" r="46" fill="none" stroke="#ffffff" stroke-width="12" stroke-dasharray="58 20" />
+    <path d="M100 34 l16 20 h-32 z" fill="#ffffff" />
+    <circle cx="100" cy="100" r="14" fill="#DDD6FE" />
+  </svg>
+</template>
+
+<doc-page margin="0.85in">
+  <div slot="footer" style="display:flex;justify-content:space-between;align-items:center;font-family:'Inter',sans-serif;font-size:8.5pt;color:#94A3B8;border-top:1px solid #DBE4F3;padding-top:6px">
+    <span>Maintenance and Future Evolution Plan, MediCare+ HMS v1.0</span>
+    <span>CSCD602 Capstone Project</span>
+  </div>
+
+  <div style="font-family:'Source Serif 4',Georgia,serif;font-size:11pt;line-height:1.65;color:#1B2437">
+
+    <div style="border-bottom:3px solid #7C3AED;padding-bottom:18px;margin-bottom:24px">
+      <p style="margin:0 0 5px;font-family:'Inter',sans-serif;font-size:9pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7C3AED">Maintenance and Future Evolution</p>
+      <h1 style="margin:0 0 6px;font-size:24pt;font-weight:700;line-height:1.15;letter-spacing:-.02em">MediCare+ Hospital Management System</h1>
+      <p style="margin:0;font-family:'Inter',sans-serif;font-size:10.5pt;color:#64748B">How the system is kept running after deployment, and how it grows beyond version 1.0.</p>
+      <table style="margin-top:16px;width:auto">
+        <tbody>
+          <tr><th style="background:#F6F9FE;width:145px">Version</th><td>1.0 final</td></tr>
+          <tr><th style="background:#F6F9FE">Course</th><td>CSCD602 Capstone Project, University of Ghana</td></tr>
+          <tr><th style="background:#F6F9FE">Group</th><td>[Group number and name]</td></tr>
+          <tr><th style="background:#F6F9FE">Audience</th><td>Whoever maintains the system after handover, and the hospital's IT office.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 style="margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">1. Maintainability built in</h2>
+    <p style="margin:0 0 10px">Software that cannot be changed is finished the day it ships. Three decisions in version 1.0 exist mainly to make later change cheap.</p>
+    <table>
+      <thead><tr><th style="width:28%">Decision</th><th>What it buys the maintainer</th></tr></thead>
+      <tbody>
+        <tr><td>Storage behind an interface the domain owns</td><td>Replacing browser storage with a server database touches one construction point, not the screens. Section 4 sets out that migration.</td></tr>
+        <tr><td>Rules separated from screens</td><td>A change to the acuity thresholds or the interaction list happens in one place and takes effect everywhere it is used.</td></tr>
+        <tr><td>Reference data in named tables, not scattered literals</td><td>Adding a laboratory test, a drug or a ward is a data edit, not a code change.</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:0 0 10px">One honest caveat. Version 1.0 has no automated test suite; the 110 cases in the testing report were executed by hand. That is affordable for a project this size but it will not stay affordable. Automating the rules-layer tests is the first item in the roadmap for exactly that reason.</p>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">2. The four kinds of maintenance</h2>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">2.1 Corrective maintenance</h3>
+    <p style="margin:0 0 8px">Fixing what is broken. A P-grade is a <b>response priority</b>, decided when a fault is triaged, and it is not the same thing as the discovery severity recorded in the testing report. Severity describes what the fault could do; priority decides when we fix it, taking into account whether a workaround exists. A Major defect with no workaround can outrank a Critical one that is already contained.</p>
+    <table>
+      <thead><tr><th style="width:10%">Grade</th><th style="width:32%">Meaning</th><th style="width:18%">Response</th><th>Examples from our own defect log</th></tr></thead>
+      <tbody>
+        <tr><td>P1</td><td>Patient safety or data integrity at stake, no workaround</td><td>Same day, hotfix</td><td>D-02 and D-04, both logged Critical. D-01, logged Critical, was P1 because every action button was unusable.</td></tr>
+        <tr><td>P2</td><td>Blocks a department from working</td><td>Within 3 working days</td><td>D-03 and D-14, both logged Major.</td></tr>
+        <tr><td>P3</td><td>Wrong or confusing, but a workaround exists</td><td>Next scheduled release</td><td>D-11, logged Major but contained because staff could convert manually. D-05, D-06 and D-07, all Major.</td></tr>
+        <tr><td>P4</td><td>Cosmetic or convenience only</td><td>When convenient</td><td>D-08, D-10, D-12 and D-13, all logged Minor.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">2.2 Adaptive maintenance</h3>
+    <p style="margin:0 0 8px">Keeping up with a world that changes around the system.</p>
+    <table>
+      <thead><tr><th style="width:34%">Trigger</th><th>Work it causes</th></tr></thead>
+      <tbody>
+        <tr><td>NHIS changes its claim format or tariffs</td><td>Update the claim fields and the price table. Reference data, not code.</td></tr>
+        <tr><td>A Mobile Money provider changes its API</td><td>Change the payment adapter only. The cashier screen and the audit entry are untouched.</td></tr>
+        <tr><td>Hospital adds a ward, department or imaging modality</td><td>Add rows to the reference tables.</td></tr>
+        <tr><td>Data protection guidance tightens</td><td>Review retention rules and consent wording, and extend the audit fields if required.</td></tr>
+        <tr><td>Browsers drop or change a feature</td><td>Test against the current release each quarter and adjust.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">2.3 Perfective maintenance</h3>
+    <p style="margin:0 0 8px">Making a working thing better, usually because users asked. Requests come from three places: the hospital's own suggestion route, patterns in the audit log showing where staff repeat themselves, and observations from usability sessions like those in the testing report.</p>
+    <table>
+      <thead><tr><th style="width:38%">Improvement already identified</th><th>Where it came from</th></tr></thead>
+      <tbody>
+        <tr><td>Keyboard-only entry for the vitals form</td><td>Nurse participant P1 was slowed by reaching for the mouse mid-form</td></tr>
+        <tr><td>Save a partly written consultation as a draft</td><td>Raised in acceptance testing. A doctor called away mid-consultation loses the note today.</td></tr>
+        <tr><td>Bulk verification of routine laboratory results</td><td>The laboratory representative verifies each result individually, which is slow on a busy morning</td></tr>
+        <tr><td>Printable ward round sheet</td><td>Nursing request. The ward board is on screen only.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">2.4 Preventive maintenance</h3>
+    <p style="margin:0 0 8px">Work nobody asked for, done so that later work stays possible.</p>
+    <table>
+      <thead><tr><th style="width:28%">Activity</th><th style="width:16%">Frequency</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Dependency and browser check</td><td>Monthly</td><td>Catch a deprecation before it becomes an outage.</td></tr>
+        <tr><td>Restore rehearsal</td><td>Quarterly</td><td>A backup nobody has restored is a hope, not a backup.</td></tr>
+        <tr><td>Audit log review</td><td>Monthly</td><td>Spot shared logins and unusual access patterns.</td></tr>
+        <tr><td>Reference data audit</td><td>Quarterly</td><td>Remove discontinued drugs and tests before somebody orders one.</td></tr>
+        <tr><td>Safety rule review with a pharmacist</td><td>Every six months</td><td>The interaction list is a fixed set today. It must be reviewed by somebody qualified rather than left to drift.</td></tr>
+        <tr><td>Dead code and duplication sweep</td><td>Each release</td><td>Keep the codebase legible for the next maintainer.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">3. Working practices</h2>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">3.1 Bug-fixing process</h3>
+    <ol>
+      <li><b>Report.</b> Anybody can raise a fault. The report needs the role, the screen, what was expected, what happened, and the MRN if a patient record is involved.</li>
+      <li><b>Reproduce.</b> A fault that cannot be reproduced is not fixed, only guessed at. Reproduce it on test data first.</li>
+      <li><b>Grade.</b> Assign P1 to P4 by clinical consequence using §2.1.</li>
+      <li><b>Find the cause.</b> Fix the cause, not the symptom. D-05 looked like a display problem and was actually a stale copy of the inventory list.</li>
+      <li><b>Write the test first.</b> A case that fails before the fix and passes after it.</li>
+      <li><b>Fix on a branch.</b> One branch per fault, named for the fault number.</li>
+      <li><b>Review.</b> Another group member reads the change. No self-merging.</li>
+      <li><b>Retest and regress.</b> Run the new case plus every case touching the same module.</li>
+      <li><b>Release and record.</b> Merge, deploy, and close the entry with the resolution written down as in §9 of the testing report.</li>
+    </ol>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">3.2 Version control</h3>
+    <table>
+      <thead><tr><th style="width:22%">Practice</th><th>Rule</th></tr></thead>
+      <tbody>
+        <tr><td>Repository</td><td>Git, one repository, hosted remotely. Every group member has a clone.</td></tr>
+        <tr><td>Branches</td><td><code>main</code> is always deployable. <code>feature/name</code> for new work, <code>fix/defect-id</code> for faults.</td></tr>
+        <tr><td>Commits</td><td>One logical change per commit. The message says what changed and why, not "update".</td></tr>
+        <tr><td>Merging</td><td>Pull request, reviewed by another member, then merge. Never commit directly to <code>main</code>.</td></tr>
+        <tr><td>Tags</td><td>Every release tagged <code>v1.0</code>, <code>v1.1</code> and so on, so any deployed version can be recovered exactly.</td></tr>
+        <tr><td>Secrets</td><td>No API key, password or connection string in the repository. Environment variables only. This rule has no exceptions.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">3.3 Versioning and releases</h3>
+    <p style="margin:0 0 10px">Semantic versioning. The major number changes when the data model changes in a way that needs migration. The minor number changes when features are added. The patch number changes for fixes only. A hospital needs to know from the version number alone whether an upgrade will touch their data.</p>
+    <table>
+      <thead><tr><th style="width:22%">Release type</th><th style="width:20%">Cadence</th><th>Contents</th></tr></thead>
+      <tbody>
+        <tr><td>Hotfix</td><td>As needed</td><td>P1 faults only. Deployed the same day, announced afterwards.</td></tr>
+        <tr><td>Patch</td><td>Monthly</td><td>P2 and P3 faults, small perfective changes.</td></tr>
+        <tr><td>Minor</td><td>Quarterly</td><td>New features from the roadmap. Announced two weeks ahead with a note of what changes on which screen.</td></tr>
+        <tr><td>Major</td><td>Annually at most</td><td>Data model changes. Requires a migration plan, a rehearsal on a copy of the database, and a rollback path.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">3.4 Dependency and library updates</h3>
+    <p style="margin:0 0 10px">Version 1.0 deliberately carries almost no third-party code. Fonts and an icon font are the only external assets, and both are pinned to a specific version rather than tracking latest. When the server backend arrives in v2.0 the dependency count rises sharply, so the rule from that point is: security patches applied within a week, minor upgrades reviewed monthly, major framework upgrades treated as their own piece of work with its own test pass. Never upgrade a dependency and ship a feature in the same release; when something breaks you will not know which change did it.</p>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">3.5 Security updates</h3>
+    <table>
+      <thead><tr><th style="width:26%">Area</th><th>Ongoing obligation</th></tr></thead>
+      <tbody>
+        <tr><td>Authorisation</td><td>The v1.0 weak point, stated plainly in the testing report: authorisation is enforced in the application, not the database. §4 step 2 closes it. Until then, treat the deployment as a demonstration rather than a live clinical system.</td></tr>
+        <tr><td>Credentials</td><td>Rotate staff passwords each semester or on any suspicion. Remove accounts the day somebody leaves, not at the end of the month.</td></tr>
+        <tr><td>Secrets</td><td>Rotate API keys quarterly. Move the AI key server-side as part of §4 step 5 so it never reaches a browser.</td></tr>
+        <tr><td>Transport</td><td>HTTPS only. No mixed content.</td></tr>
+        <tr><td>Audit</td><td>Review the log monthly for shared logins and out-of-hours access.</td></tr>
+        <tr><td>Disclosure</td><td>A named contact for reporting a vulnerability, and a commitment to acknowledge within two working days.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">4. Migration to a server database</h2>
+    <p style="margin:0 0 10px">This is the single most important piece of post-submission work, so it is set out in full rather than left as an aspiration. Version 1.0 persists to browser storage, which means a record does not follow a patient between devices and authorisation is enforced only in the application. Both are consequences of the same missing piece.</p>
+    <table>
+      <thead><tr><th style="width:8%">Step</th><th style="width:30%">Work</th><th>Detail and acceptance</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Create the schema</td><td>The sixteen entities from the design document's data model, as PostgreSQL tables with the constraints listed there: unique MRN, unique occupied bed, append-only audit table, invoice status derived rather than stored. Accepted when the seed data loads and every constraint rejects the case it exists to reject.</td></tr>
+        <tr><td>2</td><td>Move authorisation into the database</td><td>Staff accounts in a managed authentication service, with each role mapped to row-level security policies. A cashier's query for a clinical table returns no rows regardless of what the client asks for. Accepted when the security cases TC-95 to TC-99 pass against the database directly, not through the interface.</td></tr>
+        <tr><td>3</td><td>Write the server adapter</td><td>A second implementation of the same repository interface, calling REST endpoints instead of browser storage. Accepted when the existing integration cases pass unchanged.</td></tr>
+        <tr><td>4</td><td>Switch the adapter</td><td>Change which adapter is constructed at the single point where that happens. No screen, domain class or application component is modified. Accepted when the full system test set passes with data shared across two devices.</td></tr>
+        <tr><td>5</td><td>Move AI calls server-side</td><td>Route completions through a server endpoint so the API key never reaches a browser. Accepted when no key appears in any client request.</td></tr>
+        <tr><td>6</td><td>Backup and restore</td><td>Automated daily backup with point-in-time recovery, and a documented restore procedure. Accepted only after a restore has actually been performed onto a fresh instance.</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:0 0 10px">The reason this is a swap and not a rewrite is the dependency direction in the architecture: the repository interface belongs to the domain, so the domain neither knows nor cares which adapter satisfies it.</p>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">5. Scalability</h2>
+    <p style="margin:0 0 10px">Version 1.0 was designed against 5,000 patient records, 100 concurrent staff and twelve months of history. Beyond that, the constraints and their answers are as follows.</p>
+    <table>
+      <thead><tr><th style="width:26%">Pressure point</th><th style="width:24%">Limit in v1.0</th><th>Response when it is reached</th></tr></thead>
+      <tbody>
+        <tr><td>Patient register size</td><td>Search stays inside its 300 millisecond target to roughly 5,000 records</td><td>Move search to indexed database queries with pagination. Already covered by step 1 of the migration.</td></tr>
+        <tr><td>Concurrent staff</td><td>No server, so no shared contention today</td><td>Connection pooling and read replicas. A hospital of 100 staff will not need more than one primary.</td></tr>
+        <tr><td>Clinical history growth</td><td>Timeline renders fully; long histories will slow it</td><td>Paginate the timeline and load older entries on demand.</td></tr>
+        <tr><td>Audit log growth</td><td>Grows without bound</td><td>Partition by month, archive partitions older than the statutory retention period to cold storage.</td></tr>
+        <tr><td>Multiple facilities</td><td>Single facility only</td><td>Add a facility identifier to every record and scope row-level security by it. This is a major version change because it touches the data model.</td></tr>
+        <tr><td>Peak load at clinic opening</td><td>Untested above 100 sessions</td><td>Load test before any expansion. Static hosting scales; the database is the ceiling.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">6. Future evolution roadmap</h2>
+    <figure>
+      <svg class="dgm" viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#DBE4F3" stroke-width="1"><path d="M150 40 V400" /><path d="M290 40 V400" /><path d="M430 40 V400" /><path d="M570 40 V400" /></g>
+        <g font-size="8.5" font-weight="700" fill="#7C3AED" text-anchor="middle">
+          <text x="85" y="32">v1.0 NOW</text><text x="220" y="32">v1.1 to v1.3</text><text x="360" y="32">v2.0</text><text x="500" y="32">v2.5</text><text x="645" y="32">v3.0</text>
+        </g>
+        <g font-size="7.5" fill="#94A3B8" text-anchor="middle">
+          <text x="85" y="44">delivered</text><text x="220" y="44">0 to 3 months</text><text x="360" y="44">3 to 6 months</text><text x="500" y="44">6 to 12 months</text><text x="645" y="44">12 months on</text>
+        </g>
+        <g fill="#F5F3FF" stroke="#7C3AED" stroke-width="1">
+          <rect x="14" y="58" width="128" height="26" rx="5" /><rect x="14" y="90" width="128" height="26" rx="5" />
+          <rect x="14" y="122" width="128" height="26" rx="5" /><rect x="14" y="154" width="128" height="26" rx="5" />
+          <rect x="14" y="186" width="128" height="26" rx="5" />
+          <rect x="156" y="58" width="128" height="26" rx="5" /><rect x="156" y="90" width="128" height="26" rx="5" />
+          <rect x="156" y="122" width="128" height="26" rx="5" /><rect x="156" y="154" width="128" height="26" rx="5" />
+          <rect x="296" y="58" width="128" height="26" rx="5" /><rect x="296" y="90" width="128" height="26" rx="5" />
+          <rect x="296" y="122" width="128" height="26" rx="5" /><rect x="296" y="154" width="128" height="26" rx="5" />
+          <rect x="436" y="58" width="128" height="26" rx="5" /><rect x="436" y="90" width="128" height="26" rx="5" />
+          <rect x="436" y="122" width="128" height="26" rx="5" /><rect x="436" y="154" width="128" height="26" rx="5" />
+          <rect x="576" y="58" width="130" height="26" rx="5" /><rect x="576" y="90" width="130" height="26" rx="5" />
+          <rect x="576" y="122" width="130" height="26" rx="5" /><rect x="576" y="154" width="130" height="26" rx="5" />
+        </g>
+        <g font-size="7.2" fill="#0D1B3E">
+          <text x="22" y="75">Nine roles end to end</text><text x="22" y="107">AI clinical assistance</text>
+          <text x="22" y="139">MoMo payment flow</text><text x="22" y="171">Patient mobile app</text><text x="22" y="203">Browser persistence</text>
+          <text x="164" y="75">Automated test suite</text><text x="164" y="107">Consultation drafts</text>
+          <text x="164" y="139">Bulk lab verification</text><text x="164" y="171">Ward round printout</text>
+          <text x="304" y="75">PostgreSQL database</text><text x="304" y="107">Row-level security</text>
+          <text x="304" y="139">Live MoMo API</text><text x="304" y="171">Server-side AI keys</text>
+          <text x="444" y="75">SMS reminders</text><text x="444" y="107">Offline-capable mobile</text>
+          <text x="444" y="139">Twi and Ga interface</text><text x="444" y="171">NHIS claim submission</text>
+          <text x="584" y="75">Multi-facility support</text><text x="584" y="107">HL7 device feeds</text>
+          <text x="584" y="139">DICOM image viewer</text><text x="584" y="171">Predictive analytics</text>
+        </g>
+        <g font-size="7.5" fill="#64748B">
+          <text x="20" y="232">Delivered and tested.</text>
+          <text x="162" y="232">Hardening. No new</text><text x="162" y="244">data model changes.</text>
+          <text x="302" y="232">The real backend.</text><text x="302" y="244">Closes the v1.0</text><text x="302" y="256">security limitation.</text>
+          <text x="442" y="232">Reach and inclusion.</text><text x="442" y="244">Works where the</text><text x="442" y="256">network does not.</text>
+          <text x="582" y="232">Hospital group scale</text><text x="582" y="244">and clinical device</text><text x="582" y="256">integration.</text>
+        </g>
+        <path d="M14 290 H706" stroke="#7C3AED" stroke-width="2" />
+        <g fill="#7C3AED"><circle cx="85" cy="290" r="5" /><circle cx="220" cy="290" r="5" /><circle cx="360" cy="290" r="5" /><circle cx="500" cy="290" r="5" /><circle cx="645" cy="290" r="5" /></g>
+        <g font-size="7.5" fill="#334155" text-anchor="middle">
+          <text x="85" y="310">submission</text><text x="220" y="310">pilot ready</text><text x="360" y="310">clinically usable</text>
+          <text x="500" y="310">district ready</text><text x="645" y="310">regional ready</text>
+        </g>
+        <text x="14" y="348" font-size="8" font-weight="700" fill="#0D1B3E">Sequencing rule</text>
+        <text x="14" y="366" font-size="7.8" fill="#334155">Nothing in v2.5 or v3.0 begins before v2.0 is complete. A system holding real patient records must enforce</text>
+        <text x="14" y="380" font-size="7.8" fill="#334155">authorisation in the database first. Adding reach to a system with an application-only permission model</text>
+        <text x="14" y="394" font-size="7.8" fill="#334155">would multiply the exposure rather than the benefit.</text>
+      </svg>
+      <figcaption>Figure 1. Evolution roadmap. Each column is a release band with its own theme, and the milestone line below states what the system is fit for at each point.</figcaption>
+    </figure>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">6.1 Why this order</h3>
+    <p style="margin:0 0 10px">The tempting order is the opposite one: add features people can see, defer the database. We have put the database first deliberately. Every item in v2.5 and v3.0 increases the amount of real patient data flowing through the system, and it would be irresponsible to increase that flow while authorisation still lives in the application layer. Boring infrastructure before visible features, in this domain, is a safety decision rather than an engineering preference.</p>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">6.2 Notable items explained</h3>
+    <table>
+      <thead><tr><th style="width:24%">Item</th><th style="width:12%">Release</th><th>What it involves and why it matters here</th></tr></thead>
+      <tbody>
+        <tr><td>Automated test suite</td><td>v1.1</td><td>The 110 manual cases become code for the rules layer first, since that is where a silent regression is most dangerous. Without this, every future release costs a full manual pass.</td></tr>
+        <tr><td>Live Mobile Money</td><td>v2.0</td><td>Replace the modelled provider step with a real collections API and a merchant account. The cashier's screen does not change, only the adapter behind it.</td></tr>
+        <tr><td>SMS reminders</td><td>v2.5</td><td>In-app notifications only reach patients who open the application. An SMS reaches a patient with a basic phone, which in this setting is most of them.</td></tr>
+        <tr><td>Offline-capable mobile</td><td>v2.5</td><td>Cache the patient's own records so appointments and results are readable with no signal, syncing when the connection returns. This matters more outside the cities than any new feature would.</td></tr>
+        <tr><td>Twi and Ga interface</td><td>v2.5</td><td>Translate patient-facing screens and notifications. Staff screens stay in English, which is the working language of clinical documentation.</td></tr>
+        <tr><td>NHIS electronic submission</td><td>v2.5</td><td>Submit claims directly rather than exporting them. Depends entirely on what the Authority exposes, so it is scoped as investigation before commitment.</td></tr>
+        <tr><td>HL7 device feeds</td><td>v3.0</td><td>Analysers write results straight into the record, removing the transcription step and the errors that come with it.</td></tr>
+        <tr><td>DICOM viewer</td><td>v3.0</td><td>View the actual images beside the report rather than the report alone.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">7. Technology migration</h2>
+    <p style="margin:0 0 10px">No technology choice in version 1.0 is permanent, and none of them locks the system in. What follows is the migration path for each layer if it needs to change.</p>
+    <table>
+      <thead><tr><th style="width:22%">Layer</th><th style="width:24%">Today</th><th>If it must change</th></tr></thead>
+      <tbody>
+        <tr><td>Interface</td><td>Component-based JavaScript in the browser</td><td>Screens are the most replaceable part because they hold no state of their own. A framework change is a rewrite of presentation only, with the domain and rules untouched.</td></tr>
+        <tr><td>Storage</td><td>Browser storage behind the repository interface</td><td>Already planned: PostgreSQL in v2.0. The interface means a further change, to a different database, is another adapter rather than another migration.</td></tr>
+        <tr><td>Authentication</td><td>Application-level</td><td>Managed service in v2.0. If the hospital later runs its own directory, the service is swapped behind the same role mapping.</td></tr>
+        <tr><td>AI provider</td><td>One completion endpoint over HTTPS</td><td>All calls go through a single adapter, so a different provider or a locally hosted model is one file. Worth revisiting if data residency rules tighten.</td></tr>
+        <tr><td>Hosting</td><td>Static hosting with builds from the repository</td><td>The build output is plain static files, so it moves to any host, including a server inside the hospital if a policy requires it.</td></tr>
+        <tr><td>Payments</td><td>Modelled provider flow</td><td>Adapter pattern already in place for exactly this reason.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">8. Integration with other systems</h2>
+    <table>
+      <thead><tr><th style="width:26%">System</th><th style="width:14%">Release</th><th>Nature of the integration</th></tr></thead>
+      <tbody>
+        <tr><td>NHIS claims platform</td><td>v2.5</td><td>Outbound claim submission and status polling. Removes manual re-entry, which is where claims are currently lost.</td></tr>
+        <tr><td>Mobile Money providers</td><td>v2.0</td><td>Collections and status callbacks.</td></tr>
+        <tr><td>SMS gateway</td><td>v2.5</td><td>Outbound reminders and result-ready notices.</td></tr>
+        <tr><td>Laboratory analysers</td><td>v3.0</td><td>HL7 inbound results.</td></tr>
+        <tr><td>Imaging equipment</td><td>v3.0</td><td>DICOM store and retrieve.</td></tr>
+        <tr><td>National health information exchange</td><td>Beyond v3.0</td><td>Referral and record sharing between facilities. Depends on a national standard being available and mandated.</td></tr>
+        <tr><td>Hospital accounting software</td><td>Beyond v3.0</td><td>Export settled invoices so finance does not re-key them.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">9. Further AI and emerging technology</h2>
+    <p style="margin:0 0 10px">Version 1.0 already uses AI in six places, all of them advisory. The candidates below are ordered by how well the value is understood, not by how impressive they sound.</p>
+    <table>
+      <thead><tr><th style="width:26%">Candidate</th><th style="width:12%">Confidence</th><th>Assessment</th></tr></thead>
+      <tbody>
+        <tr><td>No-show prediction</td><td>High</td><td>Predict which appointments will be missed from history, and overbook those slots deliberately. Low clinical risk, direct effect on clinic throughput. The obvious first addition.</td></tr>
+        <tr><td>Stock demand forecasting</td><td>High</td><td>Forecast drug demand from dispensing history and season. Prevents both stockouts and expiry write-offs. No patient-facing risk.</td></tr>
+        <tr><td>Coding assistance for claims</td><td>Medium</td><td>Suggest diagnosis and procedure codes from the encounter note. Reduces rejected claims. Needs a human to confirm every code.</td></tr>
+        <tr><td>Deterioration early warning</td><td>Medium</td><td>Flag inpatients whose vitals trend towards deterioration before it is obvious. Clinically valuable and clinically risky. Requires validation against real outcomes and a clinician's sign-off, not a student project's judgement.</td></tr>
+        <tr><td>Voice dictation for notes</td><td>Medium</td><td>Faster documentation, but accuracy on Ghanaian English and local drug names would need testing before anybody relied on it.</td></tr>
+        <tr><td>Image pre-reading</td><td>Low</td><td>Draw a radiologist's attention to regions of interest. Regulated territory. Not appropriate without formal clinical validation and approval.</td></tr>
+        <tr><td>Autonomous clinical decisions</td><td>Excluded</td><td>Not on the roadmap at any release. Every AI feature in this system requires a human to accept it, and that constraint is deliberate rather than temporary.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #7C3AED;padding-bottom:5px">10. Handover</h2>
+    <p style="margin:0 0 8px">For the system to survive its authors, the following must be in the hospital's hands, not only in ours.</p>
+    <ol>
+      <li>Repository access transferred to a hospital-owned account, with our accounts retained only as contributors.</li>
+      <li>Every credential rotated at handover, so no student password remains valid.</li>
+      <li>This document, the design document and the user manual held by the IT office in their current versions.</li>
+      <li>The defect log carried forward, not archived. It is the fastest orientation a new maintainer can get.</li>
+      <li>A named owner inside the hospital for each of: user accounts, backups, and the pharmacist review of safety rules.</li>
+      <li>A walkthrough session with the IT office covering deployment, restore, and the migration plan in §4.</li>
+    </ol>
+    <p style="margin:0 0 10px">The most likely way this system fails is not a technical fault. It is nobody owning it after the semester ends. The list above exists to make that outcome harder.</p>
+
+    <div style="margin-top:24px;padding-top:12px;border-top:1px solid #DBE4F3;font-family:'Inter',sans-serif;font-size:9.5pt;color:#64748B">
+      <p style="margin:0">End of Maintenance and Future Evolution Plan. Approved by: ____________________ (Group lead) ____________________ (Supervisor). Date: ____________</p>
+    </div>
+  </div>
+</doc-page>
+
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,148 @@
+================================================================
+ MediCare+ HOSPITAL MANAGEMENT SYSTEM
+ CSCD602 Capstone Project - Access Details
+ Department of Computer Science, University of Ghana
+================================================================
+
+Group Number/Name : [TO BE COMPLETED]
+Project Title     : MediCare+ Hospital Management System
+Version           : 1.0 final
+Submission Date   : August 2026
+
+----------------------------------------------------------------
+ GROUP MEMBERS
+----------------------------------------------------------------
+
+1. [Full Name]                    [Student ID]
+2. [Full Name]                    [Student ID]
+3. [Full Name]                    [Student ID]
+4. [Full Name]                    [Student ID]
+5. [Full Name]                    [Student ID]
+
+----------------------------------------------------------------
+ ACCESS URLS
+----------------------------------------------------------------
+
+Live Application  : [TO BE COMPLETED - e.g. https://medicare-plus-hms.vercel.app]
+
+Admin URL         : Same address as above.
+                    The administrator workspace is reached by signing
+                    in with the administrator account below.
+
+Patient Mobile    : Same address. Open on a phone, or narrow the
+                    browser window to about 400 pixels wide.
+
+Source Code Repo  : [TO BE COMPLETED - e.g. https://github.com/<org>/medicare-plus-hms]
+
+----------------------------------------------------------------
+ TEST USER CREDENTIALS
+----------------------------------------------------------------
+
+One account per role is provided so every workspace can be
+inspected. On the login screen, select the role button first and
+the email field fills in automatically.
+
+Role                     Username / Email              Password
+------------------------ ----------------------------- ---------------
+Patient                  patient@medicare.com          [PASSWORD]
+Doctor                   doctor@medicare.com           [PASSWORD]
+Nurse                    nurse@medicare.com            [PASSWORD]
+Receptionist             reception@medicare.com        [PASSWORD]
+Laboratory Technician    lab@medicare.com              [PASSWORD]
+Radiologist              radiology@medicare.com        [PASSWORD]
+Pharmacist               pharmacy@medicare.com         [PASSWORD]
+Cashier                  cashier@medicare.com          [PASSWORD]
+
+Patient Mobile App       sarah.johnson@gmail.com       [PASSWORD]
+
+----------------------------------------------------------------
+ ADMINISTRATOR CREDENTIALS
+----------------------------------------------------------------
+
+Role                     Username / Email              Password
+------------------------ ----------------------------- ---------------
+Administrator            admin@medicare.com            [PASSWORD]
+
+The administrator account gives access to hospital KPIs, the live
+activity feed, the operations assistant, the staff directory and
+the append-only audit log.
+
+----------------------------------------------------------------
+ QUICK START FOR THE EXAMINER
+----------------------------------------------------------------
+
+1. Open the Live Application URL in Chrome, Edge, Firefox or
+   Safari. Nothing needs to be installed.
+
+2. Follow the 17-step walkthrough in README.pdf section 4. It
+   takes about fifteen minutes and exercises every role, every
+   department handover and every safety rule.
+
+3. To change role, sign out at the bottom of the sidebar and
+   sign in as another role.
+
+4. To restore the original seeded data at any point, select
+   "Reset demo data" on the login screen.
+
+----------------------------------------------------------------
+ NOTES
+----------------------------------------------------------------
+
+- The deployment loads with 28 synthetic patients, 9 staff
+  accounts, 6 wards with 34 beds, and open orders, invoices and
+  claims, so every screen has content on first visit.
+
+- No real patient data is used anywhere in the system.
+
+- The six AI features call a live service and require an internet
+  connection. If one reports itself unavailable, the connection is
+  down; every other function continues to work. This fallback is
+  the designed behaviour and is covered by test case TC-70.
+
+- Blocked actions are the system working as specified: a refused
+  prescription, a struck-through appointment slot, a locked
+  clinical tab for a non-clinical role, and a refused signature on
+  a consultation with no diagnosis are all enforced rules.
+
+- Mobile Money settlement is modelled. The provider request and
+  approval sequence is faithful and the records it produces are
+  correct, but no real money moves.
+
+- Known limitations are stated in full in README.pdf section 8 and
+  Project_Documentation.pdf section 20.
+
+----------------------------------------------------------------
+ SECURITY NOTICE
+----------------------------------------------------------------
+
+These credentials are supplied inside the Sakai submission package
+only. They are NOT committed to the source-code repository, in line
+with the coursework requirement on credential handling. Please do
+not redistribute this file.
+
+----------------------------------------------------------------
+ SUBMISSION PACKAGE
+----------------------------------------------------------------
+
+Project_Documentation.pdf      25 sections, the master document
+SRS.pdf                        67 functional, 20 non-functional reqs
+Design_Documentation.pdf       architecture, UML, ERD, wireframes
+Testing_Report.pdf             110 test cases, 14-entry defect log
+User_Manual.pdf                all nine roles plus mobile
+Maintenance_and_Evolution.pdf  maintenance, migration plan, roadmap
+README.pdf                     examiner quick start
+Links.txt                      this file
+
+----------------------------------------------------------------
+ CONTACT
+----------------------------------------------------------------
+
+Group Lead        : [Name, email]
+Technical Queries : [Name, email]
+Supervisor        : [Name]
+
+Any member of the group can demonstrate or explain any part of the
+system. Individual contributions are listed in section 1 of
+Project_Documentation.pdf.
+
+================================================================
