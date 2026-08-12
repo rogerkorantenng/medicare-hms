@@ -3,10 +3,18 @@ The one place the application talks to a language model.
 
 Two providers, chosen by configuration rather than by code:
 
-  bedrock    AWS Bedrock via the Mantle client. No API key — the App Runner
-             instance role carries bedrock:InvokeModel, so there is no
-             long-lived secret to leak or rotate. Requires model access to
-             have been granted in the Bedrock console first.
+  bedrock    AWS Bedrock. No API key — the App Runner instance role carries
+             bedrock:InvokeModel, so there is no long-lived secret to leak
+             or rotate.
+
+             Uses the InvokeModel client (AnthropicBedrock), not the newer
+             Mantle client, and an EU *inference profile* id rather than a
+             bare model id. That combination was picked by testing, not
+             preference: on this account Mantle 404s on inference profiles
+             and 403s on bare ids, and bare ids on InvokeModel report
+             "on-demand throughput isn't supported". Only
+             AnthropicBedrock + eu.anthropic.* actually returns a
+             completion.
   anthropic  The Anthropic API directly, with ANTHROPIC_API_KEY.
 
 Absent or misconfigured is a supported state, not an error: complete()
@@ -41,10 +49,10 @@ def _configure() -> None:
 
     try:
         if provider == "bedrock":
-            from anthropic import AnthropicBedrockMantle
+            from anthropic import AnthropicBedrock
 
-            _client = AnthropicBedrockMantle(aws_region=settings.aws_region)
-            # Bedrock model ids carry an "anthropic." prefix.
+            _client = AnthropicBedrock(aws_region=settings.aws_region)
+            # An inference-profile id, e.g. eu.anthropic.claude-opus-4-6-v1.
             _model = settings.bedrock_model_id
         elif provider == "anthropic" and settings.anthropic_api_key:
             from anthropic import Anthropic

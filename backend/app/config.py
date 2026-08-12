@@ -37,7 +37,9 @@ class Settings(BaseSettings):
     ai_provider: str = "none"
 
     aws_region: str = "eu-west-1"
-    bedrock_model_id: str = "anthropic.claude-opus-5"
+    # An inference-profile id (eu.* or global.*), not a bare model id —
+    # bare ids are rejected with "on-demand throughput isn't supported".
+    bedrock_model_id: str = "eu.anthropic.claude-opus-4-6-v1"
 
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-opus-5"
