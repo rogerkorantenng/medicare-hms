@@ -66,7 +66,8 @@ export default function LoginPage(
         </div>
 
         <p className="text-white/50 text-support">
-          All data in this system is synthetic. No real patient data appears anywhere.
+          Presented by the Tech Scholars for the Advanced Software Engineering
+          capstone project, Department of Computer Science, University of Ghana.
         </p>
       </section>
 
