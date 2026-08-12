@@ -81,13 +81,24 @@ async def main(reset: bool) -> int:
         await create_accounts(conn, password)
         print("Seeding")
         await run_file(conn, "003_seed.sql")
+        # A hospital mid-morning rather than one that has just opened: a
+        # queue, vitals half taken, consultations already on the charts.
+        # Without it the receptionist, nurse and doctor dashboards are
+        # empty, which is three of the nine.
+        await run_file(conn, "004_seed_activity.sql")
 
         counts = await conn.fetchrow(
             """select (select count(*) from patients) as patients,
                       (select count(*) from staff) as staff,
-                      (select count(*) from ward_beds) as beds"""
+                      (select count(*) from ward_beds) as beds,
+                      (select count(*) from appointments
+                        where status = 'checked_in'
+                          and appt_date = current_date) as queue,
+                      (select count(*) from encounters) as encounters"""
         )
-        print(f"\nDone. {counts['patients']} patients, {counts['staff']} staff, {counts['beds']} beds.")
+        print(f"\nDone. {counts['patients']} patients, {counts['staff']} staff, "
+              f"{counts['beds']} beds, {counts['queue']} in the queue, "
+              f"{counts['encounters']} consultations on record.")
     finally:
         await conn.close()
     return 0

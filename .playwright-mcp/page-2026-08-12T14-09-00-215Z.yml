@@ -1,0 +1,58 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: health_and_safety
+        - generic [ref=e7]: MediCare+
+      - generic [ref=e8]:
+        - heading "One hospital, one record." [level=1] [ref=e9]
+        - paragraph [ref=e10]: Reception, triage, consultation, laboratory, radiology, pharmacy, wards and billing — sharing a single patient record rather than nine copies of it.
+        - list [ref=e11]:
+          - listitem [ref=e12]:
+            - generic [ref=e13]: verified_user
+            - generic [ref=e14]: Access is enforced in the database, not the interface
+          - listitem [ref=e15]:
+            - generic [ref=e16]: lab_profile
+            - generic [ref=e17]: A result reaches nobody until a technician verifies it
+          - listitem [ref=e18]:
+            - generic [ref=e19]: history
+            - generic [ref=e20]: Every clinical action is written to an append-only audit trail
+      - paragraph [ref=e21]: All data in this system is synthetic. No real patient data appears anywhere.
+    - generic [ref=e23]:
+      - heading "Sign in" [level=2] [ref=e24]
+      - paragraph [ref=e25]: Choose a role to fill its email, then enter the password.
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - paragraph [ref=e28]: Role accounts
+          - generic [ref=e29]:
+            - button "Doctor" [ref=e30] [cursor=pointer]:
+              - generic [ref=e31]: stethoscope
+            - button "Nurse" [ref=e33] [cursor=pointer]:
+              - generic [ref=e34]: vaccines
+            - button "Receptionist" [ref=e36] [cursor=pointer]:
+              - generic [ref=e37]: support_agent
+            - button "Laboratory" [ref=e39] [cursor=pointer]:
+              - generic [ref=e40]: science
+            - button "Radiology" [ref=e42] [cursor=pointer]:
+              - generic [ref=e43]: radiology
+            - button "Pharmacist" [ref=e45] [cursor=pointer]:
+              - generic [ref=e46]: pill
+            - button "Cashier" [ref=e48] [cursor=pointer]:
+              - generic [ref=e49]: payments
+            - button "Administrator" [ref=e51] [cursor=pointer]:
+              - generic [ref=e52]: admin_panel_settings
+            - button "Patient" [ref=e54] [cursor=pointer]:
+              - generic [ref=e55]: person
+        - generic [ref=e57]:
+          - generic [ref=e58]: Email
+          - textbox "Email" [ref=e59]:
+            - /placeholder: you@medicare.com
+        - generic [ref=e60]:
+          - generic [ref=e61]: Password
+          - textbox "Password" [ref=e62]:
+            - /placeholder: ••••••••••••
+        - button "Sign in" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]: login
+          - text: Sign in
+        - paragraph [ref=e65]: All data is synthetic. No real patient data appears anywhere.
+  - alert [ref=e66]
