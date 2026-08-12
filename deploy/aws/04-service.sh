@@ -41,6 +41,15 @@ SERVICE_ARN=$(aws apprunner list-services \
 # only called server-to-server, which CORS does not govern anyway.
 CORS="${VERCEL_URL:-http://localhost:3000}"
 
+# Secrets Manager appends a six-character suffix to every secret ARN, and
+# App Runner wants the full one. A constructed ARN without the suffix is
+# accepted by the create call and then fails at start-up with an
+# AccessDenied naming an ARN that does not exist, so ask for the real one.
+DB_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id "$SECRET_DB" \
+  --query ARN --output text)
+JWT_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id "$SECRET_JWT" \
+  --query ARN --output text)
+
 SOURCE=$(cat <<JSON
 {
   "ImageRepository": {
@@ -56,8 +65,8 @@ SOURCE=$(cat <<JSON
         "ENVIRONMENT": "production"
       },
       "RuntimeEnvironmentSecrets": {
-        "DATABASE_URL": "arn:aws:secretsmanager:$AWS_REGION:$ACCOUNT:secret:$SECRET_DB",
-        "JWT_SECRET": "arn:aws:secretsmanager:$AWS_REGION:$ACCOUNT:secret:$SECRET_JWT"
+        "DATABASE_URL": "$DB_SECRET_ARN",
+        "JWT_SECRET": "$JWT_SECRET_ARN"
       }
     }
   },

@@ -7,11 +7,12 @@
 # page, which is easy to miss by clicking around — one screen out of thirty
 # can be broken for a week. This is the cheap check that none is.
 #
-#   API_PORT=8010 WEB_PORT=3010 ./scripts/verify-screens.sh
+#   API_PORT=8010 WEB_PORT=3010 ./scripts/verify-screens.sh      # local stack
+#   WEB_URL=https://... ./scripts/verify-screens.sh              # deployed
 #
 set -uo pipefail
 
-WEB="http://localhost:${WEB_PORT:-3000}"
+WEB="${WEB_URL:-http://localhost:${WEB_PORT:-3000}}"
 PASSWORD="${DEMO_PASSWORD:-MediCare2026!Demo}"
 JAR="$(mktemp -d)"
 trap 'rm -rf "$JAR"' EXIT

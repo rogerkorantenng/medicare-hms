@@ -11,7 +11,11 @@ dependencies = [
     "pydantic-settings>=2.6",
     "pyjwt>=2.9",
     "argon2-cffi>=23.1",
-    "anthropic>=0.39",
+    # The [bedrock] extra pulls in boto3/botocore. Without it the Bedrock
+    # client raises ModuleNotFoundError at call time, which ai.py catches and
+    # turns into a fallback message, so the API stays up and the failure is
+    # visible only in the log.
+    "anthropic[bedrock]>=0.39",
     "python-multipart>=0.0.12",
 ]
 

@@ -6,7 +6,7 @@
 
 Group Number/Name : [TO BE COMPLETED]
 Project Title     : MediCare+ Hospital Management System
-Version           : 1.0 final
+Version           : 2.0 final
 Submission Date   : August 2026
 
 ----------------------------------------------------------------
@@ -23,7 +23,7 @@ Submission Date   : August 2026
  ACCESS URLS
 ----------------------------------------------------------------
 
-Live Application  : [TO BE COMPLETED - e.g. https://medicare-plus-hms.vercel.app]
+Live Application  : https://medicare-hms-cyan.vercel.app
 
 Admin URL         : Same address as above.
                     The administrator workspace is reached by signing
@@ -32,7 +32,17 @@ Admin URL         : Same address as above.
 Patient Mobile    : Same address. Open on a phone, or narrow the
                     browser window to about 400 pixels wide.
 
-Source Code Repo  : [TO BE COMPLETED - e.g. https://github.com/<org>/medicare-plus-hms]
+Source Code Repo  : https://github.com/rogerkorantenng/medicare-hms
+                    Branch: feat/supabase-migration
+
+API                : https://qvfrhkd9yw.eu-west-1.awsapprunner.com
+                    /health   answers without signing in
+                    /docs     lists all 52 operations, with schemas
+
+                    The API is the enforcement point for every access
+                    rule, so it is listed here for inspection. Calling
+                    it directly without a token returns 401 on every
+                    clinical route.
 
 ----------------------------------------------------------------
  TEST USER CREDENTIALS
@@ -52,8 +62,6 @@ Laboratory Technician    lab@medicare.com              [PASSWORD]
 Radiologist              radiology@medicare.com        [PASSWORD]
 Pharmacist               pharmacy@medicare.com         [PASSWORD]
 Cashier                  cashier@medicare.com          [PASSWORD]
-
-Patient Mobile App       sarah.johnson@gmail.com       [PASSWORD]
 
 ----------------------------------------------------------------
  ADMINISTRATOR CREDENTIALS
@@ -81,8 +89,14 @@ the append-only audit log.
 3. To change role, sign out at the bottom of the sidebar and
    sign in as another role.
 
-4. To restore the original seeded data at any point, select
-   "Reset demo data" on the login screen.
+4. There is no reset button in v2.0. Every role now reads and
+   writes one shared database, so a reset would clear another
+   examiner's work mid-session. The seeded data can be restored
+   from the server by the group on request.
+
+5. A session lasts twelve hours. If you are signed out, sign in
+   again; nothing is lost, because every action was saved on the
+   server when you took it.
 
 ----------------------------------------------------------------
  NOTES
@@ -94,7 +108,12 @@ the append-only audit log.
 
 - No real patient data is used anywhere in the system.
 
-- The six AI features call a live service and require an internet
+- The system runs on three tiers: the interface on Vercel, the
+  API on AWS App Runner, and PostgreSQL on Amazon RDS. The
+  database accepts no connection from the internet; only the API
+  can reach it.
+
+- The six AI features call Amazon Bedrock and require an internet
   connection. If one reports itself unavailable, the connection is
   down; every other function continues to work. This fallback is
   the designed behaviour and is covered by test case TC-70.
@@ -110,6 +129,10 @@ the append-only audit log.
 
 - Known limitations are stated in full in README.pdf section 8 and
   Project_Documentation.pdf section 20.
+
+- The first request after a period of inactivity may take a few
+  seconds while the API instance wakes. Subsequent requests are
+  immediate.
 
 ----------------------------------------------------------------
  SECURITY NOTICE
@@ -127,7 +150,7 @@ not redistribute this file.
 Project_Documentation.pdf      25 sections, the master document
 SRS.pdf                        67 functional, 20 non-functional reqs
 Design_Documentation.pdf       architecture, UML, ERD, wireframes
-Testing_Report.pdf             110 test cases, 14-entry defect log
+Testing_Report.pdf             114 test cases, 20-entry defect log
 User_Manual.pdf                all nine roles plus mobile
 Maintenance_and_Evolution.pdf  maintenance, migration plan, roadmap
 README.pdf                     examiner quick start

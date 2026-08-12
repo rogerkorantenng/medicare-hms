@@ -7,12 +7,13 @@
 # cookies, exactly as an examiner clicking around would experience it. It
 # is the check that the two halves are actually wired to each other.
 #
-#   API_PORT=8010 WEB_PORT=3010 ./scripts/verify-e2e.sh
+#   API_PORT=8010 WEB_PORT=3010 ./scripts/verify-e2e.sh          # local stack
+#   WEB_URL=https://... API_BASE=https://... ./scripts/verify-e2e.sh   # deployed
 #
 set -uo pipefail
 
-WEB="http://localhost:${WEB_PORT:-3000}"
-API="http://localhost:${API_PORT:-8000}"
+WEB="${WEB_URL:-http://localhost:${WEB_PORT:-3000}}"
+API="${API_BASE:-http://localhost:${API_PORT:-8000}}"
 PASSWORD="${DEMO_PASSWORD:-MediCare2026!Demo}"
 JAR_DIR="$(mktemp -d)"
 trap 'rm -rf "$JAR_DIR"' EXIT
