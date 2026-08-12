@@ -747,6 +747,17 @@
     </table>
     <p style="margin:0 0 8px">Correcting a patient record is not a screen but a pair of controls on the chart, because that is where somebody is standing when they notice the error. The split follows the API: reception owns the demographics it captured, clinical staff own the clinical facts. The allergy editor states its own consequence on screen, since the prescribing guard reads that list and an unrecorded allergy blocks nothing.</p>
 
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.3b Reference data, and states nothing could reach</h3>
+    <p style="margin:0 0 10px">Two patterns account for most of what the system was missing when it was first assessed as complete, and both are worth naming because neither looks like a missing feature from inside the code.</p>
+    <table>
+      <thead><tr><th style="width:34%">Pattern</th><th>What it cost</th></tr></thead>
+      <tbody>
+        <tr><td>Reference data held in source</td><td>Laboratory tests, imaging studies, the consultation tariff, departments, wards and beds were arrays in a TypeScript file or rows in a seed script. Repricing a test meant a code change, a review and a deployment, performed by somebody with no business setting prices. Six of the forty gaps were the same defect wearing six hats; they are tables now, with one administrative screen between them.</td></tr>
+        <tr><td>States the schema allowed and no code could reach</td><td>An appointment could be cancelled according to the enumeration and by nothing in the system. A study had four stages and the code moved from the first to the last, so scan tracking appeared in this document and not in the software. These read as complete from the database and as missing from a desk.</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:0 0 10px">The lesson is about how completeness was judged rather than about either pattern. A screen that renders and a table that holds the right columns will both pass inspection while the thing they exist for cannot be done. What found them was asking, for each entity in turn, which of its verbs a user could actually reach.</p>
+
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.4 Where authorisation lives, and why it moved</h3>
     <p style="margin:0 0 8px">The previous revision planned to enforce authorisation with PostgreSQL row-level security. That plan was implemented, tested against a real database, and then deliberately replaced. Both approaches were built, so the comparison below is between two things that worked rather than between one that worked and one that was imagined.</p>
     

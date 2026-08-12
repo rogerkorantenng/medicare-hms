@@ -63,19 +63,21 @@ cd frontend && cp .env.local.example .env.local && npm install && npm run dev
 
 ## Verifying it
 
-Four suites. All four pass; run them in this order.
+Five suites, 194 checks. All pass; run them in this order.
 
 ```bash
 cd backend && uv run pytest                 # 74 tests, about two seconds
-./scripts/verify-screens.sh                 # 30 screens load as their owning role
+./scripts/verify-screens.sh                 # 33 screens load as their owning role
 ./scripts/verify-e2e.sh                     # 39 checks through the browser surface
+./scripts/verify-operations.sh              # 25 checks: stock, catalogues, rosters
+./scripts/verify-records.sh                 # 23 checks: appointments, clinical, money
 ```
 
 `backend/tests/test_authorisation.py` is the one to read first. Moving
 authorisation out of the database into the API was a deliberate decision, and
 its cost is that the database will now hand any row to whatever asks. These
 tests are what stands in for the guarantee row-level security used to give —
-they exercise the cases the Testing Report lists as TC-95 to TC-114. The file
+they exercise the cases the Testing Report lists as TC-95 to TC-130. The file
 says so in its opening lines: **if one of these fails, it is a data leak, not a
 failing test.**
 
@@ -101,7 +103,7 @@ Documentation §9.4.
 backend/
   app/
     security/       THE authorisation boundary — roles, guards, tokens, deps
-    routers/        63 operations, each carrying a role guard
+    routers/        102 operations, each carrying a role guard
     queries/        chart.py holds the three views: clinical, own, billing
     safety.py       deterministic prescribing rules — never AI
     prompts.py      the six system prompts, verbatim, in one file

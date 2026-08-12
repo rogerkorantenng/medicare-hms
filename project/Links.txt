@@ -37,7 +37,7 @@ Source Code Repo  : https://github.com/rogerkorantenng/medicare-hms
 
 API                : https://qvfrhkd9yw.eu-west-1.awsapprunner.com
                     /health   answers without signing in
-                    /docs     lists all 63 operations, with schemas
+                    /docs     lists all 102 operations, with schemas
 
                     The API is the enforcement point for every access
                     rule, so it is listed here for inspection. Calling
@@ -124,6 +124,17 @@ the append-only audit log.
   class in a consultation. The prescription is refused and cannot
   be forced through from any screen.
 
+- Also worth ten minutes, as the administrator: open Clinics and
+  remove a doctor's Monday clinic, then try to book them on a
+  Monday from the front desk. There are no slots, because slots
+  exist only where somebody is rostered to work. Put it back and
+  they return. Nothing else in the system produces a bookable time.
+
+- And as the pharmacist: Inventory now belongs to the pharmacy.
+  Add a medicine, receive a delivery against a note number, write
+  off breakage. Every movement asks who and why, and the count
+  cannot be driven below zero.
+
 - The system runs on three tiers: the interface on Vercel, the
   API on AWS App Runner, and PostgreSQL on Amazon RDS. The
   database accepts no connection from the internet; only the API
@@ -164,9 +175,9 @@ not redistribute this file.
 ----------------------------------------------------------------
 
 Project_Documentation.pdf      25 sections, the master document
-SRS.pdf                        74 functional, 20 non-functional reqs
+SRS.pdf                        115 functional, 20 non-functional reqs
 Design_Documentation.pdf       architecture, UML, ERD, wireframes
-Testing_Report.pdf             124 test cases, 23-entry defect log
+Testing_Report.pdf             146 test cases, 26-entry defect log
 User_Manual.pdf                all nine roles plus mobile
 Maintenance_and_Evolution.pdf  maintenance, migration plan, roadmap
 README.pdf                     examiner quick start

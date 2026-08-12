@@ -113,7 +113,7 @@
     <table>
       <thead><tr><th style="width:7%">No.</th><th style="width:40%">Objective</th><th>How it was met, and where the evidence is</th></tr></thead>
       <tbody>
-        <tr><td>O1</td><td>Elicit and specify requirements from real stakeholders</td><td>Four gathering methods; 74 functional and 20 non-functional requirements. SRS §4 to §6.</td></tr>
+        <tr><td>O1</td><td>Elicit and specify requirements from real stakeholders</td><td>Four gathering methods; 115 functional and 20 non-functional requirements. SRS §4 to §6.</td></tr>
         <tr><td>O2</td><td>Design a system that serves every department without duplicating data</td><td>Layered architecture, 16-entity model, ten design figures. Design Documentation.</td></tr>
         <tr><td>O3</td><td>Implement the complete patient journey across all roles</td><td>Nine role workspaces, registration through discharge and settlement. §13.</td></tr>
         <tr><td>O4</td><td>Prevent the specific harms in §3 by design</td><td>Allergy and interaction blocking, verification-gated release, critical escalation, automatic charge capture. §13.3.</td></tr>
@@ -243,9 +243,9 @@
         <tr><td>Doctor</td><td>Dashboard with queue and critical alerts, consultation with staged order panel, my orders, patient list, patient chart with six tabs</td></tr>
         <tr><td>Laboratory technician</td><td>Sample worklist with STAT priority, four-stage pipeline, result entry against reference ranges, verification and release</td></tr>
         <tr><td>Radiologist</td><td>Imaging worklist by modality, scan tracking, report entry attaching to the chart</td></tr>
-        <tr><td>Pharmacist</td><td>Prescription queue, dispensing with automatic stock decrement, inventory with low-stock and expiry warnings, printable slips</td></tr>
+        <tr><td>Pharmacist</td><td>Prescription queue, dispensing with automatic stock decrement and partial dispensing, inventory the pharmacy maintains itself: adding a medicine, receiving a delivery, adjusting a count for breakage or expiry, each movement recording who and why. Low-stock and expiry warnings, printable slips</td></tr>
         <tr><td>Cashier</td><td>Invoice list with automatic charge capture, cash and Mobile Money payment, printable receipts, insurance claim lifecycle</td></tr>
-        <tr><td>Administrator</td><td>Hospital KPIs, live activity feed, operations assistant, append-only audit log, and staff administration: creating accounts, changing roles and departments, marking duty, resetting a forgotten password, and deactivating somebody who has left</td></tr>
+        <tr><td>Administrator</td><td>Hospital KPIs, live activity feed, operations assistant, append-only audit log with filtering and export. Staff administration: creating accounts, changing roles and departments, marking duty, resetting a forgotten password, deactivating somebody who has left. The catalogue of tests, studies and fees, which no longer requires a developer to change. Each doctor&apos;s clinics and leave, from which every bookable slot is generated. Attendance, non-attendance and revenue reporting</td></tr>
         <tr><td>Patient</td><td>Portal and mobile application: onboarding, login, dashboard, booking, records, bills, alerts, profile, symptom checker, MoMo payment</td></tr>
       </tbody>
     </table>
@@ -330,7 +330,7 @@
         <tr><td>Transport</td><td>HTTPS only, certificates managed by the platforms. No mixed content.</td></tr>
         <tr><td>Configuration</td><td>Environment variables. The two secret values, the database URL and the token signing key, are held in AWS Secrets Manager and read by App Runner at start-up, so neither appears in the service configuration, in the console, or in this repository. There is no third secret.</td></tr>
         <tr><td>Live application URL</td><td>See Links.txt</td></tr>
-        <tr><td>API URL</td><td>See Links.txt. <code>/health</code> answers without authentication; <code>/docs</code> lists all sixty-three operations.</td></tr>
+        <tr><td>API URL</td><td>See Links.txt. <code>/health</code> answers without authentication; <code>/docs</code> lists all one hundred and two operations.</td></tr>
         <tr><td>Administrator URL</td><td>Same address as the application; the administrator workspace is reached by signing in with the administrator role. See Links.txt.</td></tr>
         <tr><td>Test-user credentials</td><td>See Links.txt. One account per role is provided so the examiner can inspect every workspace.</td></tr>
         <tr><td>Source-code repository</td><td>See Links.txt</td></tr>
@@ -463,7 +463,7 @@
     <table>
       <thead><tr><th style="width:12%">Appendix</th><th style="width:32%">Contents</th><th>Location</th></tr></thead>
       <tbody>
-        <tr><td>A</td><td>Full Software Requirements Specification, 74 functional and 20 non-functional requirements with traceability matrix</td><td>SRS.pdf</td></tr>
+        <tr><td>A</td><td>Full Software Requirements Specification, 115 functional and 20 non-functional requirements with traceability matrix</td><td>SRS.pdf</td></tr>
         <tr><td>B</td><td>Design documentation with all ten figures and the use case specification template</td><td>Design_Documentation.pdf</td></tr>
         <tr><td>C</td><td>All 110 test cases with expected and actual results, and the 14-entry defect log</td><td>Testing_Report.pdf</td></tr>
         <tr><td>D</td><td>User manual for all nine roles</td><td>User_Manual.pdf</td></tr>

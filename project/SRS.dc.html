@@ -311,6 +311,47 @@
         <tr><td><code>FR-72</code></td><td>A receptionist shall correct a patient&apos;s name, age, phone number, blood group and insurer. The medical record number shall not be editable.</td><td>Must</td></tr>
         <tr><td><code>FR-73</code></td><td>A doctor, nurse or receptionist shall record and amend a patient&apos;s allergies and chronic conditions, and the prescribing safety check shall act on the amended list.</td><td>Must</td></tr>
         <tr><td><code>FR-74</code></td><td>A user who has forgotten their password shall be able to raise a reset request, and the response shall not disclose whether the address is registered.</td><td>Should</td></tr>
+        <tr><td><code>FR-75</code></td><td>A pharmacist shall add a medicine to the inventory, with an opening quantity recorded as a stock movement.</td><td>Must</td></tr>
+        <tr><td><code>FR-76</code></td><td>A pharmacist shall record a delivery, increasing the quantity held.</td><td>Must</td></tr>
+        <tr><td><code>FR-77</code></td><td>A pharmacist shall adjust a quantity for breakage, expiry or a recount, stating a reason. Every movement shall record who made it and why.</td><td>Must</td></tr>
+        <tr><td><code>FR-78</code></td><td>A pharmacist shall amend the reorder level, unit price and expiry date of a stock item.</td><td>Should</td></tr>
+        <tr><td><code>FR-79</code></td><td>A pharmacist shall dispense part of a prescription, leaving the remainder outstanding.</td><td>Should</td></tr>
+        <tr><td><code>FR-80</code></td><td>A doctor shall discontinue a prescription, stating a reason. The prescription shall be retained.</td><td>Must</td></tr>
+        <tr><td><code>FR-81</code></td><td>An administrator shall maintain the laboratory test catalogue and its prices without a code change.</td><td>Must</td></tr>
+        <tr><td><code>FR-82</code></td><td>An administrator shall maintain the imaging catalogue and its prices.</td><td>Must</td></tr>
+        <tr><td><code>FR-83</code></td><td>An administrator shall maintain the tariff of consultation and other fees.</td><td>Must</td></tr>
+        <tr><td><code>FR-84</code></td><td>An administrator shall retire a catalogue entry. Retiring shall hide it from new orders and shall not alter existing invoice lines.</td><td>Must</td></tr>
+        <tr><td><code>FR-85</code></td><td>An administrator shall maintain the list of departments.</td><td>Should</td></tr>
+        <tr><td><code>FR-86</code></td><td>A nurse or administrator shall open a ward and add beds to it.</td><td>Must</td></tr>
+        <tr><td><code>FR-87</code></td><td>A nurse shall take a bed out of service with a reason, and return it. An occupied bed shall not be withdrawn.</td><td>Must</td></tr>
+        <tr><td><code>FR-88</code></td><td>A nurse shall transfer an admitted patient between beds in one action.</td><td>Must</td></tr>
+        <tr><td><code>FR-89</code></td><td>An administrator shall define each doctor's weekly clinics, as a day, a start and end time, and an appointment length. Bookable slots shall be generated from these and from nothing else.</td><td>Must</td></tr>
+        <tr><td><code>FR-90</code></td><td>An administrator shall record a doctor's leave. No slot shall be offered on a day covered by leave.</td><td>Must</td></tr>
+        <tr><td><code>FR-91</code></td><td>A receptionist, doctor or the patient shall cancel an appointment with a reason, releasing the slot.</td><td>Must</td></tr>
+        <tr><td><code>FR-92</code></td><td>A receptionist shall move an appointment to another slot the same doctor is working.</td><td>Must</td></tr>
+        <tr><td><code>FR-93</code></td><td>A receptionist shall record that a patient did not attend. This shall be distinguishable from a cancellation.</td><td>Must</td></tr>
+        <tr><td><code>FR-94</code></td><td>A clinician shall file a document against a patient record: a referral letter, a consent form, a report or a letter.</td><td>Must</td></tr>
+        <tr><td><code>FR-95</code></td><td>A doctor shall add a dated, attributed addendum to a signed consultation. The consultation itself shall not be editable.</td><td>Must</td></tr>
+        <tr><td><code>FR-96</code></td><td>A clinician shall correct a recorded set of vitals. The original shall be retained and marked superseded.</td><td>Must</td></tr>
+        <tr><td><code>FR-97</code></td><td>A clinician shall cancel a laboratory or imaging order with a reason.</td><td>Should</td></tr>
+        <tr><td><code>FR-98</code></td><td>A laboratory technician shall reject a sample with a reason, returning the order for a fresh sample to be taken.</td><td>Must</td></tr>
+        <tr><td><code>FR-99</code></td><td>A radiologist shall record a study as scheduled and then scanned, before reporting it.</td><td>Must</td></tr>
+        <tr><td><code>FR-100</code></td><td>A nurse shall change a waiting patient's triage acuity with a reason, altering their position in the queue.</td><td>Must</td></tr>
+        <tr><td><code>FR-101</code></td><td>A cashier shall raise an insurance claim against an invoice. The claim number shall be allocated by the system.</td><td>Must</td></tr>
+        <tr><td><code>FR-102</code></td><td>A cashier shall record that an insurer has rejected a claim, with the reason given.</td><td>Must</td></tr>
+        <tr><td><code>FR-103</code></td><td>A cashier shall add a charge to an invoice that arises from no clinical event, such as a consumable or a bed-day.</td><td>Must</td></tr>
+        <tr><td><code>FR-104</code></td><td>A cashier shall refund all or part of a payment, stating a reason. The refund shall not exceed what has been paid.</td><td>Must</td></tr>
+        <tr><td><code>FR-105</code></td><td>A cashier shall write off an outstanding balance with a reason. A write-off shall never be counted as revenue.</td><td>Must</td></tr>
+        <tr><td><code>FR-106</code></td><td>The system shall retain a payment history for each invoice, including refunds and write-offs.</td><td>Should</td></tr>
+        <tr><td><code>FR-107</code></td><td>A receptionist shall create a patient application account for a registered patient and link it to their record.</td><td>Must</td></tr>
+        <tr><td><code>FR-108</code></td><td>A user issued a password by an administrator shall be required to replace it, and shall be told so on every screen until they do.</td><td>Must</td></tr>
+        <tr><td><code>FR-109</code></td><td>The patient list shall be searchable and paged, and shall report the number of matching records.</td><td>Must</td></tr>
+        <tr><td><code>FR-110</code></td><td>The audit log shall be filterable by actor and by date, and paged.</td><td>Must</td></tr>
+        <tr><td><code>FR-111</code></td><td>The appointment list shall be filterable by status and by doctor.</td><td>Should</td></tr>
+        <tr><td><code>FR-112</code></td><td>The invoice list shall be filterable by status and by patient.</td><td>Should</td></tr>
+        <tr><td><code>FR-113</code></td><td>A member of staff shall send a notification to a named colleague.</td><td>Should</td></tr>
+        <tr><td><code>FR-114</code></td><td>An administrator shall view attendance, non-attendance, consultation and revenue figures for a chosen period.</td><td>Must</td></tr>
+        <tr><td><code>FR-115</code></td><td>An administrator shall export the audit trail as a file.</td><td>Should</td></tr>
       </tbody>
     </table>
 

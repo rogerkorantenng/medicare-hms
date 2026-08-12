@@ -120,6 +120,11 @@
     </ol>
     <div class="note">You can see billing information but not clinical records. This is deliberate. If you open a patient chart, the clinical tabs show a restriction notice instead of the data.</div>
 
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">2.5 Changing or cancelling a booking</h3>
+    <p style="margin:0 0 10px">Each row on the Appointments screen carries three controls.</p>
+    <ul style="margin:0 0 12px 18px"><li><b>Move</b> offers only times that doctor is actually working. If nothing is free, they have no clinic that day or they are on leave.</li><li><b>Cancel</b> asks why and releases the slot for somebody else.</li><li><b>No show</b> is for a patient who simply did not arrive. Keep it separate from a cancellation: a cancellation frees the slot in time to reuse it and a no-show wastes it, and the difference is what the clinic is measured on.</li></ul>
+    <p style="margin:0 0 10px">If a patient has no way into the application, open their chart and select <b>App access</b>. You give them the password on the screen, and they are asked to replace it the first time they sign in.</p>
+
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">3. Nurse</h2>
     <div class="role"><b>Your screens:</b> Triage Queue, Wards and Beds, Medication Record.<br /><b>Your job in the system:</b> record accurate vitals, set urgency, manage beds and drug rounds.</div>
 
@@ -238,6 +243,11 @@
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">7.2 Watch your inventory</h3>
     <p style="margin:0 0 10px">Open Inventory. Items below reorder level are flagged low stock, and items approaching expiry are flagged too. Check this daily and raise your order before an item runs out, not after.</p>
 
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">7.4 Keeping the stock figures true</h3>
+    <p style="margin:0 0 10px">The quantity on the Inventory screen is only worth reading if it matches the shelf, so every change asks what happened.</p>
+    <ul style="margin:0 0 12px 18px"><li><b>Add medicine</b> creates a new line. The opening quantity you type is recorded as a delivery, so the figures reconcile from the first day.</li><li><b>Receive</b> is for a delivery. Put the delivery note number in the reason box.</li><li><b>Adjust</b> is for anything that reduces stock without a prescription: breakage, expiry, or a recount that disagrees with the system.</li></ul>
+    <p style="margin:0 0 10px">You cannot take a count below zero, and the message tells you what is actually there. If a prescription needs thirty and you have twenty, dispense the twenty: the rest stays outstanding on the prescription rather than the whole thing being refused.</p>
+
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">8. Cashier</h2>
     <div class="role"><b>Your screens:</b> Invoices, Insurance Claims.<br /><b>Your job in the system:</b> collect what is owed and get claims paid.</div>
 
@@ -280,6 +290,10 @@
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.4 Audit log</h3>
     <p style="margin:0 0 10px">Every action by every user, with actor, action, target and time. The log cannot be edited or deleted from anywhere in the system, including your own account. That is what makes it worth having.</p>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.5 Prices, clinics and reports</h3>
+    <p style="margin:0 0 10px">Three screens that decide what the rest of the hospital can do.</p>
+    <ul style="margin:0 0 12px 18px"><li><b>Catalogue</b> holds the laboratory tests, imaging studies and fees that doctors order from. Change a price here and the consultation screen offers the new one straight away. Retiring an entry hides it from new orders and leaves old invoices exactly as they were.</li><li><b>Clinics</b> is where a doctor&apos;s working week is set. This is the only thing that creates bookable slots: a doctor with no clinic on a Wednesday cannot be booked on a Wednesday. Leave removes days outright.</li><li><b>Reports</b> shows attendance, non-attendance, consultations and money for a period you choose, and will hand you the audit trail as a file.</li></ul>
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">10. Patients using the mobile application</h2>
     <div class="role"><b>Patients use the mobile application only.</b> A desktop patient portal exists in the system for use at a hospital kiosk or reception terminal, and it mirrors the mobile screens exactly: dashboard, booking, records, bills and profile. Everything in this section applies to both. The instructions are written for the phone because that is where patients will use it.</div>
