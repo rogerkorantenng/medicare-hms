@@ -4,7 +4,7 @@
  Department of Computer Science, University of Ghana
 ================================================================
 
-Group Number/Name : [TO BE COMPLETED]
+Group Number/Name : [Group number] MediCare+, twelve members
 Project Title     : MediCare+ Hospital Management System
 Version           : 2.0 final
 Submission Date   : August 2026
@@ -13,11 +13,18 @@ Submission Date   : August 2026
  GROUP MEMBERS
 ----------------------------------------------------------------
 
-1. [Full Name]                    [Student ID]
-2. [Full Name]                    [Student ID]
-3. [Full Name]                    [Student ID]
-4. [Full Name]                    [Student ID]
-5. [Full Name]                    [Student ID]
+ 1. Roger Koranteng Obeng          22424140   (group lead)
+ 2. Sarfo Tawiah                   22424538
+ 3. Brown Solomon                  22424671
+ 4. Richard Tsaatey Ahuakli        22425045
+ 5. Issahaku Mutaka                22427516
+ 6. Ishmael Essilfie               22424719
+ 7. Bright Akpo                    22424176
+ 8. Iddrisu Basiru                 22425666
+ 9. Edem Komla Agbetor             22428630
+10. John Twasam                    22425093
+11. Etornam Kudolo                 22424573
+12. Stephen Datsomor               22424328
 
 ----------------------------------------------------------------
  ACCESS URLS
@@ -177,7 +184,7 @@ not redistribute this file.
 Project_Documentation.pdf      25 sections, the master document
 SRS.pdf                        115 functional, 20 non-functional reqs
 Design_Documentation.pdf       architecture, UML, ERD, wireframes
-Testing_Report.pdf             146 test cases, 26-entry defect log
+Testing_Report.pdf             146 test cases, 27-entry defect log
 User_Manual.pdf                all nine roles plus mobile
 Maintenance_and_Evolution.pdf  maintenance, migration plan, roadmap
 README.pdf                     examiner quick start
@@ -187,9 +194,10 @@ Links.txt                      this file
  CONTACT
 ----------------------------------------------------------------
 
-Group Lead        : [Name, email]
-Technical Queries : [Name, email]
-Supervisor        : [Name]
+Group Lead        : Roger Koranteng Obeng (22424140),
+
+Technical Queries : Roger Koranteng Obeng, as above
+
 
 Any member of the group can demonstrate or explain any part of the
 system. Individual contributions are listed in section 1 of

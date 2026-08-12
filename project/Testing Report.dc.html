@@ -40,7 +40,7 @@
 
 <doc-page margin="0.8in">
   <div slot="footer" style="display:flex;justify-content:space-between;align-items:center;font-family:'Inter',sans-serif;font-size:8.5pt;color:#94A3B8;border-top:1px solid #DBE4F3;padding-top:6px">
-    <span>Testing Report, MediCare+ HMS v1.0</span>
+    <span>Testing Report, MediCare+ HMS v2.0</span>
     <span>CSCD602 Capstone Project</span>
   </div>
 
@@ -52,11 +52,11 @@
       <p style="margin:0;font-family:'Inter',sans-serif;font-size:10.5pt;color:#64748B">Test strategy, 110 executed test cases, a defect log with resolutions, and results for usability, performance, security and user acceptance testing.</p>
       <table style="margin-top:16px;width:auto">
         <tbody>
-          <tr><th style="background:#F6F9FE;width:145px">Version</th><td>1.0 final</td></tr>
+          <tr><th style="background:#F6F9FE;width:145px">Document version</th><td>1.0 final, describing software v2.0</td></tr>
           <tr><th style="background:#F6F9FE">Course</th><td>CSCD602 Capstone Project, University of Ghana</td></tr>
-          <tr><th style="background:#F6F9FE">Group</th><td>[Group number and name]</td></tr>
+          <tr><th style="background:#F6F9FE">Group</th><td>[Group number] MediCare+. Twelve members, led by Roger Koranteng Obeng (22424140)</td></tr>
           <tr><th style="background:#F6F9FE">Test period</th><td>July to August 2026</td></tr>
-          <tr><th style="background:#F6F9FE">Build under test</th><td>v1.0, staff workspace and patient mobile application</td></tr>
+          <tr><th style="background:#F6F9FE">Build under test</th><td>v2.0, staff workspace and patient mobile application</td></tr>
         </tbody>
       </table>
     </div>
@@ -73,10 +73,10 @@
         <tr><td>Performance</td><td>6</td><td>6</td><td>0</td><td>Render and search timing against the NFR targets.</td></tr>
         <tr><td>Security</td><td>42</td><td>42</td><td>0</td><td>Access control, session handling and network exposure. Automated in v2.0.</td></tr>
         <tr><td>User acceptance</td><td>10</td><td>10</td><td>0</td><td>Signed off by role representatives.</td></tr>
-        <tr><th>Total</th><th>146</th><th>146</th><th>0</th><th>All passing. 26 defects found across all versions, all closed.</th></tr>
+        <tr><th>Total</th><th>146</th><th>146</th><th>0</th><th>All passing. 27 defects found across all versions, all closed.</th></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px">Twenty-six defects were found and all twenty-six are closed. Fourteen came from testing v1.0: six functional, four interface, three platform or asset-loading, and one data defect. Six more came from the v2.0 migration, four of them found by running the new database code against a real PostgreSQL instance before any of it was deployed. Details and resolutions are in §9.</p>
+    <p style="margin:0 0 10px">Twenty-seven defects were found and all twenty-seven are closed. Fourteen came from testing v1.0: six functional, four interface, three platform or asset-loading, and one data defect. Six more came from the v2.0 migration, four of them found by running the new database code against a real PostgreSQL instance before any of it was deployed. The last one was in the test suites themselves, which is worth recording because a suite that only passes the first time will read as green to whoever runs it once. Details and resolutions are in section 9.</p>
 
     <figure>
       <svg class="dgm" viewBox="0 0 720 210" xmlns="http://www.w3.org/2000/svg">
@@ -328,10 +328,10 @@
       <tbody>
         <tr><td><code>tests/test_authorisation.py</code></td><td>19</td><td>The API refuses what it should, called directly with each role's token. This is the suite that replaced row-level security, and its header states the standard: if one of these fails, it is a data leak, not a failing test.</td></tr>
         <tr><td><code>tests/test_staff_admin.py</code>, <code>test_corrections.py</code>, <code>test_account_prefs.py</code></td><td>36</td><td>Account creation and deactivation, self-service passwords, record correction, and the reset request. Added in the final revision alongside the features themselves.</td></tr>
-        <tr><td><code>tests/test_journey.py</code> and the rest</td><td>19</td><td>The clinical workflow end to end, plus the deterministic safety rules and the state machines. 74 backend tests in total, running in about two seconds. With the two operational suites and the screen sweep, 194 checks run against a deployment.</td></tr>
+        <tr><td><code>tests/test_journey.py</code> and the rest</td><td>19</td><td>The clinical workflow end to end, plus the deterministic safety rules and the state machines. 74 backend tests in total, running in about two seconds. With the two operational suites and the screen sweep, 196 checks run against a deployment.</td></tr>
         <tr><td><code>scripts/verify-e2e.sh</code></td><td>39</td><td>The same guarantees through the browser-facing surface: cookies, redirects, sign-in for all nine roles, and TC-96 and TC-99 asserted against rendered HTML, not against JSON.</td></tr>
         <tr><td><code>scripts/verify-operations.sh</code></td><td>25</td><td>Stock, catalogues, wards, rosters, reports and messages, each exercised against a running API with the role that owns it and at least one role that does not.</td></tr>
-        <tr><td><code>scripts/verify-records.sh</code></td><td>23</td><td>Appointments, clinical corrections, billing and portal access, end to end and in order, because several of them consume state.</td></tr>
+        <tr><td><code>scripts/verify-records.sh</code></td><td>25</td><td>Appointments, clinical corrections, billing and portal access. Anything that can only happen once to a record is done to a record the run creates, so the suite can be run again without a reseed.</td></tr>
         <tr><td><code>scripts/verify-screens.sh</code></td><td>33</td><td>Every screen loads as the role that owns it. A server component that throws renders as a generic error page, which is easy to miss by clicking around; this is the check that none is broken.</td></tr>
       </tbody>
     </table>
@@ -369,6 +369,7 @@
         <tr><td><code>D-24</code></td><td>Major</td><td>Every attempt to dispense returned a server error</td><td>The rebuilt function took a third argument with a default. In PostgreSQL that creates an overload rather than replacing the original, so a two-argument call matched both signatures and was refused as ambiguous</td><td>The old signature is dropped before the new one is created. Found by the clinical journey test within a minute of the change</td><td>Closed</td></tr>
         <tr><td><code>D-25</code></td><td>Major</td><td>A rejected sample could not be recorded</td><td>The forward-only stage trigger refused the move back to ordered. It was right about ordinary progress and wrong about this one case: a haemolysed sample genuinely returns for recollection, and without it the technician either verifies a result they do not trust or leaves the order against a sample that has been discarded</td><td>A narrow exception, permitted only when a rejection reason is written in the same statement. Pinned by TC-122</td><td>Closed</td></tr>
         <tr><td><code>D-26</code></td><td>Minor</td><td>The reports screen failed to render at all</td><td>The endpoint returned raw database records, so did_not_attend and written_off reached the page under their database names and arrived as undefined</td><td>The serialiser that enforces the camelCase contract is applied, as it is on every other route. Found by the screen sweep on first load</td><td>Closed</td></tr>
+      <tr><td><code>D-27</code></td><td>Minor</td><td>The two operational suites passed once and then reported nine and five failures on the same database</td><td>Both created records under fixed names and acted on whichever seeded order happened to be waiting, so a second run collided with the first</td><td>Unique names per run, and the suites now order the laboratory and imaging work they are about to test rather than borrowing it from the seed. Verified by running each twice in succession</td><td>Closed</td></tr>
       </tbody>
     </table>
 
@@ -412,7 +413,7 @@
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">11. Conclusion</h2>
     <p style="margin:0 0 10px">All 110 test cases pass and all 14 defects are closed. Every functional and non-functional requirement in the SRS has at least one executed case behind it.</p>
     <p style="margin:0 0 10px">Two things we would do differently. First, we tested persistence late, and D-14 was the result. Had we written the reload case at the start we would have built the persistence layer before the screens depended on it. Second, D-01 and D-09 both came from assuming external resources would be reachable in the deployed environment. Testing the deployed build early, not just the development build, would have caught both in an afternoon.</p>
-    <p style="margin:0 0 10px">The security limitation in §8 is the honest weak point of version 1.0 and we have not dressed it up. Authorisation works, but it lives in the application. Moving it into the database is the first item of post-submission work.</p>
+    <p style="margin:0 0 10px">The security limitation in section 8 is the honest weak point of version 1.0 and we have not dressed it up. Authorisation works, but it lives in the application. Moving it into the database is the first item of post-submission work.</p>
 
     <div style="margin-top:24px;padding-top:12px;border-top:1px solid #DBE4F3;font-family:'Inter',sans-serif;font-size:9.5pt;color:#64748B">
       <p style="margin:0">End of Testing Report. 110 cases executed, 110 passed, 14 defects closed. Test lead: ____________________ Approved by supervisor: ____________________ Date: ____________</p>

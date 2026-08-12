@@ -39,7 +39,7 @@
 
 <doc-page margin="0.85in">
   <div slot="footer" style="display:flex;justify-content:space-between;align-items:center;font-family:'Inter',sans-serif;font-size:8.5pt;color:#94A3B8;border-top:1px solid #DBE4F3;padding-top:6px">
-    <span>Software Requirements Specification, MediCare+ HMS v1.0</span>
+    <span>Software Requirements Specification, MediCare+ HMS v2.0</span>
     <span>CSCD602 Capstone Project</span>
   </div>
 
@@ -51,10 +51,10 @@
       <p style="margin:0;font-family:'Inter',sans-serif;font-size:10.5pt;color:#64748B">A hospital-wide clinical, operational and billing system with an AI-assisted clinical layer and a patient mobile application.</p>
       <table style="margin-top:16px;width:auto">
         <tbody>
-          <tr><th style="background:#F6F9FE;width:145px">Version</th><td>1.0 final</td></tr>
+          <tr><th style="background:#F6F9FE;width:145px">Document version</th><td>1.0 final, describing software v2.0</td></tr>
           <tr><th style="background:#F6F9FE">Course</th><td>CSCD602 Capstone Project, Department of Computer Science, University of Ghana</td></tr>
-          <tr><th style="background:#F6F9FE">Group</th><td>[Group number and name]</td></tr>
-          <tr><th style="background:#F6F9FE">Members</th><td>[Full name and student ID for each member]</td></tr>
+          <tr><th style="background:#F6F9FE">Group</th><td>[Group number] MediCare+. Twelve members, led by Roger Koranteng Obeng (22424140)</td></tr>
+          <tr><th style="background:#F6F9FE">Members</th><td>Roger Koranteng Obeng (22424140); Sarfo Tawiah (22424538); Brown Solomon (22424671); Richard Tsaatey Ahuakli (22425045); Issahaku Mutaka (22427516); Ishmael Essilfie (22424719); Bright Akpo (22424176); Iddrisu Basiru (22425666); Edem Komla Agbetor (22428630); John Twasam (22425093); Etornam Kudolo (22424573); Stephen Datsomor (22424328)</td></tr>
           <tr><th style="background:#F6F9FE">Date</th><td>August 2026</td></tr>
           <tr><th style="background:#F6F9FE">Basis</th><td>IEEE 830-1998, adapted</td></tr>
         </tbody>
@@ -67,7 +67,7 @@
     <p style="margin:0 0 10px">This document states what the MediCare+ Hospital Management System must do and the qualities it must have. It is written for the project supervisor and examiner, and for whoever maintains the system after us.</p>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">1.2 Scope</h3>
-    <p style="margin:0 0 8px">The reference facility is the University of Ghana Medical Centre: a teaching hospital with outpatient clinics, a laboratory, imaging, a pharmacy, inpatient wards and an accounts office. Requirements were drawn from interviews and observation as described in §4, and the Centre is the case the system was designed against rather than a client that commissioned it. The system covers one such facility and follows the patient from the front desk to discharge: registration, appointments, nurse triage, consultation, laboratory and imaging orders, pharmacy, ward and bed management, billing, insurance claims, and administration. It has two applications on one shared record:</p>
+    <p style="margin:0 0 8px">The reference facility is the University of Ghana Medical Centre: a teaching hospital with outpatient clinics, a laboratory, imaging, a pharmacy, inpatient wards and an accounts office. Requirements were drawn from interviews and observation as described in section 4, and the Centre is the case the system was designed against rather than a client that commissioned it. The system covers one such facility and follows the patient from the front desk to discharge: registration, appointments, nurse triage, consultation, laboratory and imaging orders, pharmacy, ward and bed management, billing, insurance claims, and administration. It has two applications on one shared record:</p>
     <ul>
       <li>A staff web application for nine roles: patient portal, doctor, nurse, receptionist, laboratory technician, radiologist, pharmacist, cashier and administrator.</li>
       <li>A patient mobile application for booking, records, notifications, Mobile Money payment and an AI symptom checker.</li>
@@ -143,7 +143,7 @@
         <tr><td>Cashiers and accounts</td><td>Primary user</td><td>Medium</td><td>No missed charges. Answered with automatic charge capture and a claim lifecycle.</td></tr>
         <tr><td>Hospital administrator</td><td>Sponsor</td><td>High</td><td>Oversight and accountability. Answered with KPIs, audit log and the operations assistant.</td></tr>
         <tr><td>NHIS and private insurers</td><td>External</td><td>Medium</td><td>Complete, timely claims. Answered with a claim record per invoice and drafted justifications.</td></tr>
-        <tr><td>Data Protection Commission</td><td>Regulator</td><td>High</td><td>Lawful handling of health data. Answered with role-based access, audit trail and the security measures in §6.</td></tr>
+        <tr><td>Data Protection Commission</td><td>Regulator</td><td>High</td><td>Lawful handling of health data. Answered with role-based access, audit trail and the security measures in section 6.</td></tr>
         <tr><td>IT support</td><td>Maintainer</td><td>Low</td><td>Something they can keep running. Answered with a documented architecture and maintenance guide.</td></tr>
       </tbody>
     </table>
@@ -159,7 +159,7 @@
         <tr><td>System study</td><td>Existing hospital software and published literature</td><td>Standard module boundaries and what such systems usually get wrong.</td></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px">We then wrote user stories per role, grouped them into the ten functional areas in §2.2, removed anything that could not be justified by one of the four sources, and prioritised the rest with MoSCoW.</p>
+    <p style="margin:0 0 10px">We then wrote user stories per role, grouped them into the ten functional areas in section 2.2, removed anything that could not be justified by one of the four sources, and prioritised the rest with MoSCoW.</p>
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">5. Functional requirements</h2>
 
@@ -422,7 +422,7 @@
     <table>
       <thead><tr><th style="width:11%">ID</th><th>Constraint</th></tr></thead>
       <tbody>
-        <tr><td><code>CON-01</code></td><td>The project must be delivered within one academic semester by a student group, which caps the scope at the modules listed in §2.2.</td></tr>
+        <tr><td><code>CON-01</code></td><td>The project must be delivered within one academic semester by a student group, which caps the scope at the modules listed in section 2.2.</td></tr>
         <tr><td><code>CON-02</code></td><td>No budget for licensed software or commercial API contracts. v2.0 uses the smallest managed database instance and the smallest compute size available, which is enough for the scale in NFR-02 and is a deliberate limit rather than a sizing recommendation.</td></tr>
         <tr><td><code>CON-03</code></td><td>Live Mobile Money collection requires a merchant agreement the project cannot obtain, so that step is modelled.</td></tr>
         <tr><td><code>CON-04</code></td><td>Real patient data cannot be used. Test data is synthetic but clinically plausible.</td></tr>

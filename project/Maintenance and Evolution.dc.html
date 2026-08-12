@@ -40,7 +40,7 @@
 
 <doc-page margin="0.85in">
   <div slot="footer" style="display:flex;justify-content:space-between;align-items:center;font-family:'Inter',sans-serif;font-size:8.5pt;color:#94A3B8;border-top:1px solid #DBE4F3;padding-top:6px">
-    <span>Maintenance and Future Evolution Plan, MediCare+ HMS v1.0</span>
+    <span>Maintenance and Future Evolution Plan, MediCare+ HMS v2.0</span>
     <span>CSCD602 Capstone Project</span>
   </div>
 
@@ -52,9 +52,9 @@
       <p style="margin:0;font-family:'Inter',sans-serif;font-size:10.5pt;color:#64748B">How the system is kept running after deployment, and how it grows beyond version 1.0.</p>
       <table style="margin-top:16px;width:auto">
         <tbody>
-          <tr><th style="background:#F6F9FE;width:145px">Version</th><td>1.0 final</td></tr>
+          <tr><th style="background:#F6F9FE;width:145px">Document version</th><td>1.0 final, describing software v2.0</td></tr>
           <tr><th style="background:#F6F9FE">Course</th><td>CSCD602 Capstone Project, University of Ghana</td></tr>
-          <tr><th style="background:#F6F9FE">Group</th><td>[Group number and name]</td></tr>
+          <tr><th style="background:#F6F9FE">Group</th><td>[Group number] MediCare+. Twelve members, led by Roger Koranteng Obeng (22424140)</td></tr>
           <tr><th style="background:#F6F9FE">Audience</th><td>Whoever maintains the system after handover, and the hospital's IT office.</td></tr>
         </tbody>
       </table>
@@ -131,13 +131,13 @@
     <ol>
       <li><b>Report.</b> Anybody can raise a fault. The report needs the role, the screen, what was expected, what happened, and the MRN if a patient record is involved.</li>
       <li><b>Reproduce.</b> A fault that cannot be reproduced is not fixed, only guessed at. Reproduce it on test data first.</li>
-      <li><b>Grade.</b> Assign P1 to P4 by clinical consequence using §2.1.</li>
+      <li><b>Grade.</b> Assign P1 to P4 by clinical consequence using section 2.1.</li>
       <li><b>Find the cause.</b> Fix the cause, not the symptom. D-05 looked like a display problem and was actually a stale copy of the inventory list.</li>
       <li><b>Write the test first.</b> A case that fails before the fix and passes after it.</li>
       <li><b>Fix on a branch.</b> One branch per fault, named for the fault number.</li>
       <li><b>Review.</b> Another group member reads the change. No self-merging.</li>
       <li><b>Retest and regress.</b> Run the new case plus every case touching the same module.</li>
-      <li><b>Release and record.</b> Merge, deploy, and close the entry with the resolution written down as in §9 of the testing report.</li>
+      <li><b>Release and record.</b> Merge, deploy, and close the entry with the resolution written down as in section 9 of the testing report.</li>
     </ol>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">3.2 Version control</h3>
@@ -172,9 +172,9 @@
     <table>
       <thead><tr><th style="width:26%">Area</th><th>Ongoing obligation</th></tr></thead>
       <tbody>
-        <tr><td>Authorisation</td><td>The v1.0 weak point, stated plainly in the testing report: authorisation is enforced in the application, not the database. §4 step 2 closes it. Until then, treat the deployment as a demonstration, not a live clinical system.</td></tr>
+        <tr><td>Authorisation</td><td>The v1.0 weak point, stated plainly in the testing report: authorisation is enforced in the application, not the database. Section 4 step 2 closes it. Until then, treat the deployment as a demonstration, not a live clinical system.</td></tr>
         <tr><td>Credentials</td><td>Rotate staff passwords each semester or on any suspicion. Remove accounts the day somebody leaves, not at the end of the month.</td></tr>
-        <tr><td>Secrets</td><td>Rotate API keys quarterly. Move the AI key server-side as part of §4 step 5 so it never reaches a browser.</td></tr>
+        <tr><td>Secrets</td><td>Rotate API keys quarterly. Move the AI key server-side as part of section 4 step 5 so it never reaches a browser.</td></tr>
         <tr><td>Transport</td><td>HTTPS only. No mixed content.</td></tr>
         <tr><td>Audit</td><td>Review the log monthly for shared logins and out-of-hours access.</td></tr>
         <tr><td>Disclosure</td><td>A named contact for reporting a vulnerability, and a commitment to acknowledge within two working days.</td></tr>
@@ -216,53 +216,56 @@
       <svg class="dgm" viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg">
         <g stroke="#DBE4F3" stroke-width="1"><path d="M150 40 V400" /><path d="M290 40 V400" /><path d="M430 40 V400" /><path d="M570 40 V400" /></g>
         <g font-size="8.5" font-weight="700" fill="#7C3AED" text-anchor="middle">
-          <text x="85" y="32">v1.0 NOW</text><text x="220" y="32">v1.1 to v1.3</text><text x="360" y="32">v2.0</text><text x="500" y="32">v2.5</text><text x="645" y="32">v3.0</text>
+          <text x="85" y="32">v1.0</text><text x="220" y="32">v1.1 to v1.3</text><text x="360" y="32">v2.0 NOW</text><text x="500" y="32">v2.5</text><text x="645" y="32">v3.0</text>
         </g>
         <g font-size="7.5" fill="#94A3B8" text-anchor="middle">
-          <text x="85" y="44">delivered</text><text x="220" y="44">0 to 3 months</text><text x="360" y="44">3 to 6 months</text><text x="500" y="44">6 to 12 months</text><text x="645" y="44">12 months on</text>
+          <text x="85" y="44">delivered</text><text x="220" y="44">partly taken</text><text x="360" y="44">delivered</text><text x="500" y="44">next 6 months</text><text x="645" y="44">12 months on</text>
         </g>
         <g fill="#F5F3FF" stroke="#7C3AED" stroke-width="1">
           <rect x="14" y="58" width="128" height="26" rx="5" /><rect x="14" y="90" width="128" height="26" rx="5" />
           <rect x="14" y="122" width="128" height="26" rx="5" /><rect x="14" y="154" width="128" height="26" rx="5" />
           <rect x="14" y="186" width="128" height="26" rx="5" />
-          <rect x="156" y="58" width="128" height="26" rx="5" /><rect x="156" y="90" width="128" height="26" rx="5" />
-          <rect x="156" y="122" width="128" height="26" rx="5" /><rect x="156" y="154" width="128" height="26" rx="5" />
-          <rect x="296" y="58" width="128" height="26" rx="5" /><rect x="296" y="90" width="128" height="26" rx="5" />
-          <rect x="296" y="122" width="128" height="26" rx="5" /><rect x="296" y="154" width="128" height="26" rx="5" />
+          <rect x="156" y="58" width="128" height="26" rx="5" />
+          <rect x="296" y="58" width="128" height="26" rx="5" /><rect x="296" y="154" width="128" height="26" rx="5" />
           <rect x="436" y="58" width="128" height="26" rx="5" /><rect x="436" y="90" width="128" height="26" rx="5" />
           <rect x="436" y="122" width="128" height="26" rx="5" /><rect x="436" y="154" width="128" height="26" rx="5" />
           <rect x="576" y="58" width="130" height="26" rx="5" /><rect x="576" y="90" width="130" height="26" rx="5" />
           <rect x="576" y="122" width="130" height="26" rx="5" /><rect x="576" y="154" width="130" height="26" rx="5" />
         </g>
+        <g fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4 3">
+          <rect x="156" y="90" width="128" height="26" rx="5" /><rect x="156" y="122" width="128" height="26" rx="5" /><rect x="156" y="154" width="128" height="26" rx="5" />
+          <rect x="296" y="90" width="128" height="26" rx="5" /><rect x="296" y="122" width="128" height="26" rx="5" />
+        </g>
         <g font-size="7.2" fill="#0D1B3E">
           <text x="22" y="75">Nine roles end to end</text><text x="22" y="107">AI clinical assistance</text>
           <text x="22" y="139">MoMo payment flow</text><text x="22" y="171">Patient mobile app</text><text x="22" y="203">Browser persistence</text>
-          <text x="164" y="75">Automated test suite</text><text x="164" y="107">Consultation drafts</text>
-          <text x="164" y="139">Bulk lab verification</text><text x="164" y="171">Ward round printout</text>
-          <text x="304" y="75">PostgreSQL database</text><text x="304" y="107">Row-level security</text>
-          <text x="304" y="139">Live MoMo API</text><text x="304" y="171">Server-side AI keys</text>
+          <text x="164" y="75">Automated test suite</text><text x="164" y="107" fill="#94A3B8">Consultation drafts</text>
+          <text x="164" y="139" fill="#94A3B8">Bulk lab verification</text><text x="164" y="171" fill="#94A3B8">Ward round printout</text>
+          <text x="304" y="75">PostgreSQL database</text><text x="304" y="107" fill="#94A3B8">Row-level security</text>
+          <text x="304" y="139" fill="#94A3B8">Live MoMo API</text><text x="304" y="171">Server-side AI keys</text>
           <text x="444" y="75">SMS reminders</text><text x="444" y="107">Offline-capable mobile</text>
           <text x="444" y="139">Twi and Ga interface</text><text x="444" y="171">NHIS claim submission</text>
           <text x="584" y="75">Multi-facility support</text><text x="584" y="107">HL7 device feeds</text>
           <text x="584" y="139">DICOM image viewer</text><text x="584" y="171">Predictive analytics</text>
         </g>
         <g font-size="7.5" fill="#64748B">
-          <text x="20" y="232">Delivered and tested.</text>
-          <text x="162" y="232">Hardening. No new</text><text x="162" y="244">data model changes.</text>
-          <text x="302" y="232">The real backend.</text><text x="302" y="244">Closes the v1.0</text><text x="302" y="256">security limitation.</text>
+          <text x="20" y="232">Delivered, on browser</text><text x="20" y="244">storage.</text>
+          <text x="162" y="232">Only the test suite was</text><text x="162" y="244">taken. The rest was</text><text x="162" y="256">passed over for the</text><text x="162" y="268">backend.</text>
+          <text x="302" y="232">Delivered, and what is</text><text x="302" y="244">submitted. Row-level</text><text x="302" y="256">security and the live</text><text x="302" y="268">MoMo API are not in it.</text>
           <text x="442" y="232">Reach and inclusion.</text><text x="442" y="244">Works where the</text><text x="442" y="256">network does not.</text>
           <text x="582" y="232">Hospital group scale</text><text x="582" y="244">and clinical device</text><text x="582" y="256">integration.</text>
         </g>
         <path d="M14 290 H706" stroke="#7C3AED" stroke-width="2" />
         <g fill="#7C3AED"><circle cx="85" cy="290" r="5" /><circle cx="220" cy="290" r="5" /><circle cx="360" cy="290" r="5" /><circle cx="500" cy="290" r="5" /><circle cx="645" cy="290" r="5" /></g>
         <g font-size="7.5" fill="#334155" text-anchor="middle">
-          <text x="85" y="310">submission</text><text x="220" y="310">pilot ready</text><text x="360" y="310">clinically usable</text>
+          <text x="85" y="310">prototype</text><text x="220" y="310">pilot ready</text><text x="360" y="310">submitted</text>
           <text x="500" y="310">district ready</text><text x="645" y="310">regional ready</text>
         </g>
-        <text x="14" y="348" font-size="8" font-weight="700" fill="#0D1B3E">Sequencing rule</text>
-        <text x="14" y="366" font-size="7.8" fill="#334155">Nothing in v2.5 or v3.0 begins before v2.0 is complete. A system holding real patient records must enforce</text>
-        <text x="14" y="380" font-size="7.8" fill="#334155">authorisation in the database first. Adding reach to a system with an application-only permission model</text>
-        <text x="14" y="394" font-size="7.8" fill="#334155">would multiply the exposure without multiplying the benefit.</text>
+        <text x="14" y="336" font-size="7.5" fill="#94A3B8">Dashed and grey: planned for that band and not in the submitted build.</text>
+        <text x="14" y="360" font-size="8" font-weight="700" fill="#0D1B3E">Sequencing rule</text>
+        <text x="14" y="378" font-size="7.8" fill="#334155">Nothing in v2.5 or v3.0 begins before v2.0 is complete. A system holding real patient records must enforce</text>
+        <text x="14" y="392" font-size="7.8" fill="#334155">authorisation in the database first. Adding reach to a system with an application-only permission model</text>
+        <text x="14" y="406" font-size="7.8" fill="#334155">would multiply the exposure without multiplying the benefit.</text>
       </svg>
       <figcaption>Figure 1. Evolution roadmap. Each column is a release band with its own theme, and the milestone line below states what the system is fit for at each point.</figcaption>
     </figure>
@@ -321,7 +324,7 @@
         <tr><td>No-show prediction</td><td>High</td><td>Predict which appointments will be missed from history, and overbook those slots deliberately. Low clinical risk, direct effect on clinic throughput. The obvious first addition.</td></tr>
         <tr><td>Stock demand forecasting</td><td>High</td><td>Forecast drug demand from dispensing history and season. Prevents both stockouts and expiry write-offs. No patient-facing risk.</td></tr>
         <tr><td>Coding assistance for claims</td><td>Medium</td><td>Suggest diagnosis and procedure codes from the encounter note. Reduces rejected claims. Needs a human to confirm every code.</td></tr>
-        <tr><td>Deterioration early warning</td><td>Medium</td><td>Flag inpatients whose vitals trend towards deterioration before it is obvious. Clinically valuable and clinically risky. Requires validation against real outcomes and a clinician's sign-off, not a student project's judgement.</td></tr>
+        <tr><td>Deterioration early warning</td><td>Medium</td><td>Flag inpatients whose vitals trend towards deterioration before it is obvious. Clinically useful and clinically risky. Requires validation against real outcomes and a clinician's sign-off, not a student project's judgement.</td></tr>
         <tr><td>Voice dictation for notes</td><td>Medium</td><td>Faster documentation, but accuracy on Ghanaian English and local drug names would need testing before anybody relied on it.</td></tr>
         <tr><td>Image pre-reading</td><td>Low</td><td>Draw a radiologist's attention to regions of interest. Regulated territory. Not appropriate without formal clinical validation and approval.</td></tr>
         <tr><td>Autonomous clinical decisions</td><td>Excluded</td><td>Not on the roadmap at any release. Every AI feature in this system requires a human to accept it, and that constraint is deliberate and permanent.</td></tr>
@@ -336,7 +339,7 @@
       <li>This document, the design document and the user manual held by the IT office in their current versions.</li>
       <li>The defect log carried forward, not archived. It is the fastest orientation a new maintainer can get.</li>
       <li>A named owner inside the hospital for each of: user accounts, backups, and the pharmacist review of safety rules.</li>
-      <li>A walkthrough session with the IT office covering deployment, restore, and the migration plan in §4.</li>
+      <li>A walkthrough session with the IT office covering deployment, restore, and the migration plan in section 4.</li>
     </ol>
     <p style="margin:0 0 10px">The most likely way this system fails is not a technical fault. It is nobody owning it after the semester ends. The list above exists to make that outcome harder.</p>
 

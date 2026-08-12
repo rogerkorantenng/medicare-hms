@@ -11,7 +11,7 @@ export default async function Records({ searchParams }: { searchParams: { tab?: 
 
   return (
     <>
-      <header className="pt-[62px] px-5 pb-4 bg-white border-b border-hairline">
+      <header className="pt-[62px] px-5 pb-4 bg-white border-b border-hairline md:pt-8 md:px-8">
         <h1 className="text-title">Your records</h1>
         <p className="text-m-support text-ink-soft mt-0.5">
           Results appear here once the laboratory has verified them.

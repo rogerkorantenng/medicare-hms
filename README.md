@@ -63,14 +63,16 @@ cd frontend && cp .env.local.example .env.local && npm install && npm run dev
 
 ## Verifying it
 
-Five suites, 194 checks. All pass; run them in this order.
+Five suites, 196 checks. All pass. The order below is habit rather than a
+requirement: each suite provisions what it needs, so any of them can be run
+on its own and run again without reseeding.
 
 ```bash
 cd backend && uv run pytest                 # 74 tests, about two seconds
 ./scripts/verify-screens.sh                 # 33 screens load as their owning role
 ./scripts/verify-e2e.sh                     # 39 checks through the browser surface
 ./scripts/verify-operations.sh              # 25 checks: stock, catalogues, rosters
-./scripts/verify-records.sh                 # 23 checks: appointments, clinical, money
+./scripts/verify-records.sh                 # 25 checks: appointments, clinical, money
 ```
 
 `backend/tests/test_authorisation.py` is the one to read first. Moving
@@ -93,7 +95,7 @@ knowing about are recorded as D-15 and D-16 in the Testing Report: policy
 helper functions that recursed during query *planning*, not execution,
 and a trigger that could never fire because it inserted into a table whose
 policies forbade it. The reasoning for the replacement is in Design
-Documentation §9.4.
+Documentation section 9.4.
 
 ---
 

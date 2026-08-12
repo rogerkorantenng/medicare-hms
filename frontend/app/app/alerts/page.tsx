@@ -8,7 +8,7 @@ export default async function Alerts() {
 
   return (
     <>
-      <header className="pt-[62px] px-5 pb-4 bg-white border-b border-hairline">
+      <header className="pt-[62px] px-5 pb-4 bg-white border-b border-hairline md:pt-8 md:px-8">
         <h1 className="text-title">Alerts</h1>
       </header>
       <AlertsList initial={notifications} />

@@ -41,7 +41,7 @@
 
 <doc-page margin="0.8in">
   <div slot="footer" style="display:flex;justify-content:space-between;align-items:center;font-family:'Inter',sans-serif;font-size:8.5pt;color:#94A3B8;border-top:1px solid #DBE4F3;padding-top:6px">
-    <span>Design Documentation, MediCare+ HMS v1.0</span>
+    <span>Design Documentation, MediCare+ HMS v2.0</span>
     <span>CSCD602 Capstone Project</span>
   </div>
 
@@ -53,10 +53,10 @@
       <p style="margin:0;font-family:'Inter',sans-serif;font-size:10.5pt;color:#64748B">Architecture, use cases, class model, sequence and activity flows, data model, components, interface design and technology stack.</p>
       <table style="margin-top:16px;width:auto">
         <tbody>
-          <tr><th style="background:#F6F9FE;width:145px">Version</th><td>1.0 final</td></tr>
+          <tr><th style="background:#F6F9FE;width:145px">Document version</th><td>1.0 final, describing software v2.0</td></tr>
           <tr><th style="background:#F6F9FE">Course</th><td>CSCD602 Capstone Project, University of Ghana</td></tr>
-          <tr><th style="background:#F6F9FE">Group</th><td>[Group number and name]</td></tr>
-          <tr><th style="background:#F6F9FE">Members</th><td>[Full name and student ID for each member]</td></tr>
+          <tr><th style="background:#F6F9FE">Group</th><td>[Group number] MediCare+. Twelve members, led by Roger Koranteng Obeng (22424140)</td></tr>
+          <tr><th style="background:#F6F9FE">Members</th><td>Roger Koranteng Obeng (22424140); Sarfo Tawiah (22424538); Brown Solomon (22424671); Richard Tsaatey Ahuakli (22425045); Issahaku Mutaka (22427516); Ishmael Essilfie (22424719); Bright Akpo (22424176); Iddrisu Basiru (22425666); Edem Komla Agbetor (22428630); John Twasam (22425093); Etornam Kudolo (22424573); Stephen Datsomor (22424328)</td></tr>
           <tr><th style="background:#F6F9FE">Companions</th><td>SRS v1.0, Testing Report v1.0, User Manual v1.0, Maintenance and Evolution Plan v1.0</td></tr>
         </tbody>
       </table>
@@ -64,12 +64,12 @@
 
     <h2 style="margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">1. Design approach</h2>
     <p style="margin:0 0 10px">We designed the system around one rule: the patient record is the single source of truth, and every role writes to it rather than keeping a private copy. That decision drove the rest. Because every department reads the same record, an order placed by a doctor appears in the laboratory worklist without anybody re-keying it, and a verified result appears in the chart, the doctor's alert list and the patient's phone at the same moment.</p>
-    <p style="margin:0 0 10px">The second decision was to separate what the system knows from how it looks. Domain state and the rules that change it sit in a logic layer. Screens read from that layer and call its methods. No screen keeps its own copy of clinical data. That separation is what makes the storage replacement in §9.3 possible without rewriting the interface.</p>
+    <p style="margin:0 0 10px">The second decision was to separate what the system knows from how it looks. Domain state and the rules that change it sit in a logic layer. Screens read from that layer and call its methods. No screen keeps its own copy of clinical data. That separation is what makes the storage replacement in section 9.3 possible without rewriting the interface.</p>
     <p style="margin:0 0 10px">Notation follows UML 2.5, simplified where full notation would add nothing for a reader.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">2. System architecture</h2>
     <p style="margin:0 0 12px">Four layers. Dependencies point downward only: presentation depends on application logic, logic depends on the domain model, and the domain reaches storage through an interface it defines itself. Nothing lower depends on anything higher, so any layer can be replaced from below.</p>
-    <p style="margin:0 0 12px">In v2.0 the lower three layers moved out of the browser and into a FastAPI service, and the persistence layer became PostgreSQL. The diagram below is unchanged in shape because the change did not alter it: the same four layers, with a process boundary now drawn between presentation and application logic. §9.2 shows where each layer runs.</p>
+    <p style="margin:0 0 12px">In v2.0 the lower three layers moved out of the browser and into a FastAPI service, and the persistence layer became PostgreSQL. The diagram below is unchanged in shape because the change did not alter it: the same four layers, with a process boundary now drawn between presentation and application logic. Section 9.2 shows where each layer runs.</p>
 
     <figure>
       <svg class="dgm" viewBox="0 0 720 480" xmlns="http://www.w3.org/2000/svg">
@@ -136,7 +136,7 @@
     </figure>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">2.1 Why layered and not microservices</h3>
-    <p style="margin:0 0 10px">A hospital of this size runs one shared record with tight coupling between departments. Splitting it into services would mean distributed transactions for something as ordinary as signing a consultation, which stages a laboratory order, a prescription and an invoice line in one action. A layered design keeps that atomic and keeps the deployment simple enough for hospital IT to run. The module boundaries in §7 are drawn so a service split stays possible later if patient volume demands it.</p>
+    <p style="margin:0 0 10px">A hospital of this size runs one shared record with tight coupling between departments. Splitting it into services would mean distributed transactions for something as ordinary as signing a consultation, which stages a laboratory order, a prescription and an invoice line in one action. A layered design keeps that atomic and keeps the deployment simple enough for hospital IT to run. The module boundaries in section 7 are drawn so a service split stays possible later if patient volume demands it.</p>
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">3. Use case model</h2>
     <p style="margin:0 0 12px">Twenty-two use cases across nine actors. The patient is the only actor outside the hospital.</p>
@@ -614,7 +614,13 @@
         </g>
         <text x="20" y="548" font-size="7.5" fill="#64748B">Also: AUDIT_ENTRY (PK audit_id, FK staff_id, action, target, ts) and NOTIFICATION (PK notif_id, FK mrn, type, title, body, read, ts).</text>
       </svg>
-      <figcaption>Figure 9. Entity relationship diagram. Fourteen entity tables drawn, plus the two log tables noted beneath, giving sixteen in all. Patient is the hub of the clinical record; Invoice is the hub of the financial record.</figcaption>
+      <figcaption>Figure 9. Entity relationship diagram, clinical and financial core. Fourteen entity tables drawn, plus the two log tables noted beneath. Patient is the hub of the clinical record; Invoice is the hub of the financial one. Sign-in credentials sit in a seventeenth table, USERS, which STAFF and PATIENT both extend; it is left out here because it holds no clinical or financial data. Nine further tables were added when the system was completed for operational use, giving twenty-six in all. Those nine are drawn separately in figure 10, because adding them here would make neither diagram readable.</figcaption>
+    </figure>
+
+    
+    <figure>
+      <svg class="dgm" viewBox="0 0 720 456" xmlns="http://www.w3.org/2000/svg"><defs><marker id="o1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#94A3B8" /></marker></defs><rect x="14" y="7" width="11" height="11" rx="2" fill="#F1F5F9" stroke="#CBD5E1" /><text x="31" y="16" font-size="8" fill="#64748B">table that already existed</text><rect x="176" y="7" width="11" height="11" rx="2" fill="#EEF3FB" stroke="#1D4ED8" /><text x="193" y="16" font-size="8" fill="#64748B">table added for operations</text><text x="14" y="42" font-size="8.5" font-weight="700" fill="#64748B">ONE TO MANY, DECLARED FOREIGN KEY</text><rect x="14" y="50" width="170" height="68" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" /><text x="99.0" y="87.4" font-size="9" text-anchor="middle" font-weight="700" fill="#475569">staff</text><rect x="310" y="50" width="200" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="410.0" y="68.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">doctor_schedules</text><rect x="310" y="88" width="200" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="410.0" y="106.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">doctor_leave</text><path d="M184 84 H276 V65 H310" fill="none" stroke="#94A3B8" stroke-width="1.2" marker-end="url(#o1)" /><path d="M184 84 H276 V103 H310" fill="none" stroke="#94A3B8" stroke-width="1.2" marker-end="url(#o1)" /><text x="228" y="80" font-size="7.5" text-anchor="middle" fill="#94A3B8">doctor_id</text><rect x="14" y="126" width="170" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" /><text x="99.0" y="144.4" font-size="9" text-anchor="middle" font-weight="700" fill="#475569">inventory_items</text><rect x="310" y="126" width="200" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="410.0" y="144.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">stock_movements</text><path d="M184 141 H310" stroke="#94A3B8" stroke-width="1.2" marker-end="url(#o1)" /><text x="247" y="137" font-size="7.5" text-anchor="middle" fill="#94A3B8">item_id</text><rect x="14" y="164" width="170" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" /><text x="99.0" y="182.4" font-size="9" text-anchor="middle" font-weight="700" fill="#475569">invoices</text><rect x="310" y="164" width="200" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="410.0" y="182.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">payments</text><path d="M184 179 H310" stroke="#94A3B8" stroke-width="1.2" marker-end="url(#o1)" /><text x="247" y="175" font-size="7.5" text-anchor="middle" fill="#94A3B8">invoice_id</text><rect x="14" y="202" width="170" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" /><text x="99.0" y="220.4" font-size="9" text-anchor="middle" font-weight="700" fill="#475569">encounters</text><rect x="310" y="202" width="200" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="410.0" y="220.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">encounter_addenda</text><path d="M184 217 H310" stroke="#94A3B8" stroke-width="1.2" marker-end="url(#o1)" /><text x="247" y="213" font-size="7.5" text-anchor="middle" fill="#94A3B8">encounter_id</text><rect x="14" y="240" width="170" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" /><text x="99.0" y="258.4" font-size="9" text-anchor="middle" font-weight="700" fill="#475569">users</text><rect x="310" y="240" width="200" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="410.0" y="258.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">password_reset_requests</text><path d="M184 255 H310" stroke="#94A3B8" stroke-width="1.2" marker-end="url(#o1)" /><text x="247" y="251" font-size="7.5" text-anchor="middle" fill="#94A3B8">user_id</text><text x="14" y="296" font-size="8.5" font-weight="700" fill="#64748B">MATCHED BY NAME, NO FOREIGN KEY</text><rect x="14" y="304" width="170" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="99.0" y="322.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">departments</text><rect x="310" y="304" width="396" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" /><text x="508.0" y="322.4" font-size="8" text-anchor="middle" font-weight="700" fill="#475569">staff.department</text><path d="M184 319 H310" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#o1)" /><rect x="14" y="342" width="170" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="99.0" y="360.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">wards</text><rect x="310" y="342" width="396" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" /><text x="508.0" y="360.4" font-size="8" text-anchor="middle" font-weight="700" fill="#475569">ward_beds.ward</text><path d="M184 357 H310" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#o1)" /><rect x="14" y="380" width="170" height="30" rx="6" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.3" /><text x="99.0" y="398.4" font-size="9" text-anchor="middle" font-weight="700" fill="#1D4ED8">catalogue_items</text><rect x="310" y="380" width="396" height="30" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" /><text x="508.0" y="398.4" font-size="8" text-anchor="middle" font-weight="700" fill="#475569">lab_orders.test_name, imaging_orders.study, invoice_lines.description</text><path d="M184 395 H310" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#o1)" /><text x="14" y="432" font-size="7.5" fill="#94A3B8">Not drawn: the columns added to tables that already existed. Appointments gained a cancellation reason and a non-attendance flag; lab orders gained a</text><text x="14" y="444" font-size="7.5" fill="#94A3B8">rejection reason; prescriptions gained a dispensed quantity; invoices gained a write-off; users gained a change-password-on-first-sign-in flag.</text></svg>
+      <figcaption>Figure 10. The nine tables added when the system was completed for operational use, taking the schema to twenty-six. Six carry a foreign key into a table that already existed. The other three are lookups matched on name, which is deliberate: retiring a test or closing a ward has to leave last year&apos;s orders and invoices readable exactly as they were written.</figcaption>
     </figure>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">8.1 Database design decisions</h3>
@@ -640,9 +646,9 @@
       <tbody>
         <tr><td>Interface</td><td>Next.js 14 (App Router), TypeScript, Tailwind CSS</td><td>Server components render clinical screens on the server, so a chart is assembled where the authorisation is, not in the browser. Runs on any hospital machine with no installation.</td></tr>
         <tr><td>Application logic</td><td>FastAPI on Python 3.12, Pydantic v2</td><td>Every rule that matters (role guards, the prescribing safety checks, charge capture) lives in one process the hospital can audit, restart and version independently of the interface.</td></tr>
-        <tr><td>Persistence</td><td>PostgreSQL 16 with asyncpg</td><td>Constraints, generated columns and triggers hold the invariants in §8.1 whatever calls the database. A record now follows the patient, not the device.</td></tr>
+        <tr><td>Persistence</td><td>PostgreSQL 16 with asyncpg</td><td>Constraints, generated columns and triggers hold the invariants in section 8.1 whatever calls the database. A record now follows the patient, not the device.</td></tr>
         <tr><td>Session</td><td>JSON Web Token issued by the API; argon2id password hashing</td><td>The token is signed by the one process that also decides what it permits. argon2id is the current password-hashing recommendation.</td></tr>
-        <tr><td>AI services</td><td>Amazon Bedrock, Claude Opus 4.6 through an EU inference profile</td><td>Reached through the compute role, so there is no API key, so there is no long-lived AI credential to store or rotate. See §9.5.</td></tr>
+        <tr><td>AI services</td><td>Amazon Bedrock, Claude Opus 4.6 through an EU inference profile</td><td>Reached through the compute role, so there is no API key, so there is no long-lived AI credential to store or rotate. See section 9.5.</td></tr>
         <tr><td>Printing</td><td>Browser print pipeline with print stylesheets</td><td>Works with any printer already on the hospital network.</td></tr>
         <tr><td>Typography</td><td>Plus Jakarta Sans, Inter, JetBrains Mono, self-hosted</td><td>Screen legibility at small sizes, and a monospaced face for clinical values so digits align. Self-hosted, so no screen depends on a third party being reachable.</td></tr>
       </tbody>
@@ -701,7 +707,7 @@
         <path d="M296 254 H300" stroke="#94A3B8" stroke-width="1.2" />
         <path d="M241 226 V196 H300" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#d1)" />
       </svg>
-      <figcaption>Figure 12. Deployment topology. Arrows are the only paths that exist:
+      <figcaption>Figure 11. Deployment topology. Arrows are the only paths that exist:
       the browser reaches the web tier and nothing else, the web tier reaches the API and
       nothing else, and the database accepts connections from the VPC connector and nothing
       else.</figcaption>
@@ -726,8 +732,8 @@
     <table>
       <thead><tr><th style="width:7%">Step</th><th style="width:41%">Planned</th><th>Delivered</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td>Create the schema in figure 9 as PostgreSQL tables with the constraints listed in §8.1.</td><td>As specified. Sixteen tables, with the double-booking index, the one-patient-per-bed index, the forward-only order triggers and the generated invoice status.</td></tr>
-        <tr><td>2</td><td>Move staff accounts to a managed authentication service; map <code>RoleEnum</code> onto row-level security policies so authorisation is enforced by the database rather than only the interface.</td><td><strong>Changed.</strong> Accounts are rows in a <code>users</code> table with argon2id hashes, and authorisation is enforced by guards on API routes rather than by database policies. §9.4 gives the reasoning, and says what carries the guarantee instead.</td></tr>
+        <tr><td>1</td><td>Create the schema in figure 9 as PostgreSQL tables with the constraints listed in section 8.1.</td><td>As specified. Sixteen tables, with the double-booking index, the one-patient-per-bed index, the forward-only order triggers and the generated invoice status.</td></tr>
+        <tr><td>2</td><td>Move staff accounts to a managed authentication service; map <code>RoleEnum</code> onto row-level security policies so authorisation is enforced by the database rather than only the interface.</td><td><strong>Changed.</strong> Accounts are rows in a <code>users</code> table with argon2id hashes, and authorisation is enforced by guards on API routes rather than by database policies. Section 9.4 gives the reasoning, and says what carries the guarantee instead.</td></tr>
         <tr><td>3</td><td>Write a second adapter satisfying the same repository interface, calling REST endpoints instead of browser storage.</td><td>As specified. <code>HttpRepository</code> satisfies the same interface over HTTP.</td></tr>
         <tr><td>4</td><td>Switch the adapter at the single point where it is constructed.</td><td>As specified, and the claim held: one line changed, and no screen, domain class or application component changed with it.</td></tr>
         <tr><td>5</td><td>Move the AI calls behind a server route so the API key is never exposed to the client.</td><td>Done, and then taken further: there is no API key at all. The six prompts and the model call live in the application tier, which reaches Bedrock through its instance role.</td></tr>
@@ -833,7 +839,7 @@
         <circle cx="514" cy="291" r="5" fill="#2563EB" />
         <text x="565" y="326" font-size="7.5" text-anchor="middle" fill="#64748B">Patient mobile, 5 tabs</text>
       </svg>
-      <figcaption>Figure 10. Wireframe of the two shells. Staff: collapsible sidebar, top bar with search and notifications, KPI row, then the work list. Patient: hero card for the next appointment, quick action grid, AI entry point, bottom tab bar.</figcaption>
+      <figcaption>Figure 12. Wireframe of the two shells. Staff: collapsible sidebar, top bar with search and notifications, KPI row, then the work list. Patient: hero card for the next appointment, quick action grid, AI entry point, bottom tab bar.</figcaption>
     </figure>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">10.3 Design system</h3>
@@ -876,21 +882,26 @@
         <tr><td>FR-07 to FR-12</td><td>Figure 3, figure 9</td><td>Registration, patient repository</td></tr>
         <tr><td>FR-13 to FR-19</td><td>Figure 2 UC-02, figure 7</td><td>Scheduling, queue manager</td></tr>
         <tr><td>FR-20 to FR-23</td><td>Figure 7, figure 3 Vitals</td><td>Triage</td></tr>
-        <tr><td>FR-24 to FR-30</td><td>Figure 4, §3.1</td><td>Consultation, order dispatcher, safety rules</td></tr>
-        <tr><td>FR-31 to FR-37</td><td>Figure 5, §4.1</td><td>Order repository, lab and imaging worklists</td></tr>
+        <tr><td>FR-24 to FR-30</td><td>Figure 4, section 3.1</td><td>Consultation, order dispatcher, safety rules</td></tr>
+        <tr><td>FR-31 to FR-37</td><td>Figure 5, section 4.1</td><td>Order repository, lab and imaging worklists</td></tr>
         <tr><td>FR-38 to FR-43</td><td>Figure 4, figure 8</td><td>Safety rules, pharmacy, inventory</td></tr>
         <tr><td>FR-44 to FR-47</td><td>Figure 9 WARD_BED</td><td>Ward board, discharge</td></tr>
         <tr><td>FR-48 to FR-56</td><td>Figure 6, figure 9</td><td>Charge capture, billing repository</td></tr>
         <tr><td>FR-57 to FR-61</td><td>Figure 8</td><td>Audit repository, AI adapter</td></tr>
-        <tr><td>FR-62 to FR-67</td><td>Figure 10</td><td>Patient mobile</td></tr>
-        <tr><td>NFR-06 to NFR-10</td><td>Figure 1, §9.3 step 2</td><td>Role router, audit logger, planned row-level security</td></tr>
-        <tr><td>NFR-11, NFR-15</td><td>Figure 1, §9.3</td><td>Repository interface and adapters</td></tr>
+        <tr><td>FR-62 to FR-67</td><td>Figure 12</td><td>Patient mobile</td></tr>
+        <tr><td>FR-68 to FR-74</td><td>Figure 10 doctor_schedules, doctor_leave</td><td>Clinics and leave, from which every bookable slot is generated</td></tr>
+        <tr><td>FR-75 to FR-80</td><td>Figure 10 stock_movements</td><td>Pharmacy stock kept by the pharmacy: receipts, adjustments, part-dispensing</td></tr>
+        <tr><td>FR-81 to FR-90</td><td>Figure 10 wards, catalogue_items</td><td>Wards and beds, and the catalogue of tests, studies and fees</td></tr>
+        <tr><td>FR-91 to FR-102</td><td>Figure 10 encounter_addenda, payments</td><td>Amendments to a signed note, and money in and out against an invoice</td></tr>
+        <tr><td>FR-103 to FR-115</td><td>Figure 10 password_reset_requests, section 9.3b</td><td>Portal access, reporting and export</td></tr>
+        <tr><td>NFR-06 to NFR-10</td><td>Figure 1, section 9.3 step 2</td><td>Role router, audit logger, planned row-level security</td></tr>
+        <tr><td>NFR-11, NFR-15</td><td>Figure 1, section 9.3</td><td>Repository interface and adapters</td></tr>
         <tr><td>NFR-12, NFR-19</td><td>Figure 4 alternate C</td><td>AI adapter with fallback</td></tr>
       </tbody>
     </table>
 
     <div style="margin-top:24px;padding-top:12px;border-top:1px solid #DBE4F3;font-family:'Inter',sans-serif;font-size:9.5pt;color:#64748B">
-      <p style="margin:0">End of Design Documentation. Ten figures. Approved by: ____________________ (Group lead) ____________________ (Supervisor). Date: ____________</p>
+      <p style="margin:0">End of Design Documentation. Twelve figures. Approved by: ____________________ (Group lead) ____________________ (Supervisor). Date: ____________</p>
     </div>
   </div>
 </doc-page>

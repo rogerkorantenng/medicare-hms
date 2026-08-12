@@ -63,7 +63,7 @@ export function SymptomChat() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="pt-[62px] px-5 pb-3 bg-white border-b border-hairline sticky top-0 z-20">
+      <header className="pt-[62px] px-5 pb-3 bg-white border-b border-hairline sticky top-0 z-20 md:pt-6 md:px-8">
         <div className="flex items-center gap-2.5">
           <Link href="/app" className="grid place-items-center w-11 h-11 -ml-2 rounded-full" aria-label="Back">
             <Icon name="chevron_left" size={24} />

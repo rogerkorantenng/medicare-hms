@@ -11,7 +11,7 @@ export default async function Book({ searchParams }: { searchParams: { specialty
 
   return (
     <>
-      <header className="pt-[62px] px-5 pb-4 bg-white border-b border-hairline">
+      <header className="pt-[62px] px-5 pb-4 bg-white border-b border-hairline md:pt-8 md:px-8">
         <h1 className="text-title">Book an appointment</h1>
         <p className="text-m-support text-ink-soft mt-0.5">
           Slots already taken are struck through and cannot be chosen.

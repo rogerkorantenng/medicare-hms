@@ -4,14 +4,18 @@
 #
 # Everything here exercises a capability the system did not have: an
 # inventory that could only ever empty, a roster that was ten fixed times
-# in SQL, an appointment that could never be cancelled. Run against a
-# seeded database.
+# in SQL, an appointment that could never be cancelled.
+#
+# Safe to run repeatedly. Names that have to be unique carry a per-run
+# tag, because the first version of this suite passed once and then
+# returned nine 409s on the same database.
 #
 #   API=http://localhost:8000 ./scripts/verify-operations.sh
 #
 set -uo pipefail
 A=${API:-http://localhost:8000}
 P='MediCare2026!Demo'
+TAG=$$$(date +%S)
 pass=0; fail=0
 tok() { curl -s -H 'content-type: application/json' \
   -d "{\"email\":\"$1\",\"password\":\"$P\"}" "$A/api/auth/login" \
@@ -37,12 +41,12 @@ check() { # name expected method token path [body]
 echo "--- catalogues (items 6-11) ---"
 check "list lab catalogue"    200 GET   "$DR" "/api/catalogue?kind=lab"
 check "list departments"      200 GET   "$RC" "/api/catalogue/departments"
-check "admin adds a test"     201 POST  "$AD" "/api/catalogue" '{"kind":"lab","name":"Smoke Test Panel","price":42}'
+check "admin adds a test"     201 POST  "$AD" "/api/catalogue" '{"kind":"lab","name":"Smoke Test Panel '"$TAG"'","price":42}'
 check "doctor cannot add"     403 POST  "$DR" "/api/catalogue" '{"kind":"lab","name":"Nope","price":1}'
-check "admin adds department" 201 POST  "$AD" "/api/catalogue/departments?name=Smoke%20Ward"
+check "admin adds department" 201 POST  "$AD" "/api/catalogue/departments?name=Smoke%20Dept%20$TAG"
 
 echo "--- inventory and stock (items 1-4) ---"
-check "create item"           201 POST  "$PH" "/api/pharmacy/inventory" '{"name":"Smoke Syrup 5ml","category":"Test","quantity":50,"reorderLevel":10,"unitPrice":3.5}'
+check "create item"           201 POST  "$PH" "/api/pharmacy/inventory" '{"name":"Smoke Syrup '"$TAG"'","category":"Test","quantity":50,"reorderLevel":10,"unitPrice":3.5}'
 ITEM=$(python3 -c "import json;print(json.load(open('/tmp/sm.json'))['id'])")
 check "receive stock"         200 POST  "$PH" "/api/pharmacy/inventory/$ITEM/movement" '{"quantity":25,"reason":"Delivery GRN-1"}'
 check "write off breakage"    200 POST  "$PH" "/api/pharmacy/inventory/$ITEM/movement" '{"quantity":-5,"reason":"Broken"}'
@@ -52,10 +56,11 @@ check "movement ledger"       200 GET   "$PH" "/api/pharmacy/inventory/$ITEM/mov
 check "cashier cannot stock"  403 POST  "$CA" "/api/pharmacy/inventory/$ITEM/movement" '{"quantity":5,"reason":"no"}'
 
 echo "--- wards and beds (item 9) ---"
-check "open a ward"           201 POST  "$NU" "/api/wards/wards" '{"name":"Smoke Ward"}'
-check "add a bed"             201 POST  "$NU" "/api/wards/beds" '{"ward":"Smoke Ward","bedNo":"SW1"}'
-check "duplicate bed refused" 409 POST  "$NU" "/api/wards/beds" '{"ward":"Smoke Ward","bedNo":"SW1"}'
-check "take bed offline"      200 PATCH "$NU" "/api/wards/beds/Smoke%20Ward/SW1" '{"isAvailable":false,"reason":"Deep clean"}'
+WARD="Smoke Ward $TAG"
+check "open a ward"           201 POST  "$NU" "/api/wards/wards" "{\"name\":\"$WARD\"}"
+check "add a bed"             201 POST  "$NU" "/api/wards/beds" "{\"ward\":\"$WARD\",\"bedNo\":\"SW1\"}"
+check "duplicate bed refused" 409 POST  "$NU" "/api/wards/beds" "{\"ward\":\"$WARD\",\"bedNo\":\"SW1\"}"
+check "take bed offline"      200 PATCH "$NU" "/api/wards/beds/Smoke%20Ward%20$TAG/SW1" '{"isAvailable":false,"reason":"Deep clean"}'
 
 echo "--- rosters (item 12) ---"
 DOC=$(curl -s -H "authorization: Bearer $AD" "$A/api/staff" | python3 -c "

@@ -3,22 +3,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from '@/components/ui';
+import { TABS } from './tabs';
 
-/** Five tabs. The filled icon variant marks the active one. */
-const TABS = [
-  { href: '/app', label: 'Home', icon: 'home' },
-  { href: '/app/book', label: 'Book', icon: 'event' },
-  { href: '/app/records', label: 'Records', icon: 'folder' },
-  { href: '/app/alerts', label: 'Alerts', icon: 'notifications' },
-  { href: '/app/profile', label: 'Profile', icon: 'person' },
-];
-
+/**
+ * The bottom bar, on phones only. A wide screen gets the sidebar in
+ * side-nav.tsx instead, which is the same five destinations in a shape
+ * that suits a mouse.
+ */
 export function TabBar() {
   const pathname = usePathname();
 
   return (
     <nav
-      className="fixed bottom-0 w-full max-w-[430px] bg-white border-t border-hairline flex no-print z-30"
+      className="md:hidden fixed bottom-0 inset-x-0 mx-auto w-full max-w-[430px] bg-white border-t border-hairline flex no-print z-30"
       aria-label="Main"
     >
       {TABS.map((t) => {

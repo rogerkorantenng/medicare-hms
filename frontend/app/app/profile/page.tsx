@@ -15,13 +15,13 @@ export default async function Profile() {
 
   return (
     <>
-      <header className="pt-[62px] px-5 pb-6 bg-gradient-to-br from-primary-bright to-primary-deep text-white rounded-b-sheet text-center">
+      <header className="pt-[62px] px-5 pb-6 bg-gradient-to-br from-primary-bright to-primary-deep text-white rounded-b-sheet text-center md:pt-8 md:mx-8 md:mt-8 md:rounded-card">
         <Avatar name={me!.fullName} size={72} />
         <h1 className="font-display font-extrabold text-xl mt-3">{me!.fullName}</h1>
         <p className="val text-m-support text-white/75 mt-0.5">{patient?.mrn}</p>
       </header>
 
-      <div className="px-5 py-5 flex flex-col gap-5">
+      <div className="px-5 md:px-8 py-5 flex flex-col gap-5">
         <section className="rounded-card bg-white border border-hairline p-4">
           <h2 className="text-m-section mb-3">Your details</h2>
           <dl className="flex flex-col gap-3">

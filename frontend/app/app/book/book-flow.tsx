@@ -82,7 +82,7 @@ export function BookFlow({
   }
 
   return (
-    <div className="px-5 py-5 flex flex-col gap-5">
+    <div className="px-5 md:px-8 py-5 flex flex-col gap-5">
       {/* Doctors */}
       <section>
         <h2 className="text-m-section mb-2.5">Choose a doctor</h2>

@@ -23,7 +23,7 @@ export default async function PatientHome() {
   return (
     <>
       {/* 62px top inset for the status bar. */}
-      <header className="pt-[62px] px-5 pb-5 bg-gradient-to-br from-primary-bright to-primary-deep text-white rounded-b-sheet">
+      <header className="pt-[62px] px-5 pb-5 bg-gradient-to-br from-primary-bright to-primary-deep text-white rounded-b-sheet md:pt-8 md:mx-8 md:mt-8 md:rounded-card">
         <div className="flex items-center gap-3">
           <Avatar name={me!.fullName} size={44} />
           <div className="min-w-0">
@@ -69,7 +69,7 @@ export default async function PatientHome() {
         </div>
       </header>
 
-      <div className="px-5 mt-5 flex flex-col gap-5">
+      <div className="px-5 md:px-8 mt-5 flex flex-col gap-5">
         {/* Quick actions — 44px minimum targets */}
         <div className="grid grid-cols-4 gap-2.5">
           {[

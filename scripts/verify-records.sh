@@ -2,14 +2,16 @@
 #
 # Appointments, clinical corrections, billing and portal access.
 #
-# Run against a freshly seeded database: several of these consume state,
-# in the same way the clinical journey test does.
+# Safe to run repeatedly against the same database. Anything that can only
+# happen once to a given record is done to a record this run creates, so
+# the suite does not quietly depend on being the first to touch the seed.
 #
 #   API=http://localhost:8000 ./scripts/verify-records.sh
 #
 set -uo pipefail
 A=${API:-http://localhost:8000}
 P='MediCare2026!Demo'
+TAG=$$$(date +%S)
 pass=0; fail=0
 tok() { curl -s -H 'content-type: application/json' \
   -d "{\"email\":\"$1\",\"password\":\"$P\"}" "$A/api/auth/login" \
@@ -61,11 +63,24 @@ check "correct a vital"       201 POST "$NU" "/api/vitals/$VIT/correct" \
   '{"note":"Transposed digits","systolic":148,"diastolic":92}'
 check "re-triage in the queue" 204 POST "$NU" "/api/queue/PT-20536/acuity" \
   '{"acuity":"urgent","reason":"Deteriorated while waiting"}'
-LAB=$(curl -s -H "authorization: Bearer $LB" "$A/api/lab/worklist" \
-      | python3 -c "import sys,json;d=[o for o in json.load(sys.stdin) if o['status']=='collected'];print(d[0]['id'] if d else '')")
+# The next two blocks used to grab whichever seeded order happened to be
+# waiting, which meant the suite passed once and then failed on a database
+# it had already run against. It orders its own work now.
+curl -s -o /dev/null -H "authorization: Bearer $DR" -H 'content-type: application/json' \
+  -d '{"mrn":"PT-20481","diagnosis":"For the verification suite",
+       "labs":[{"testName":"Full Blood Count","price":40}],
+       "imaging":[{"modality":"X-Ray","bodyRegion":"Chest","price":90}]}' \
+  "$A/api/encounters"
+newest() { # worklist-path status token
+  curl -s -H "authorization: Bearer $3" "$A$1" | python3 -c "
+import sys, json
+d = [o for o in json.load(sys.stdin) if o['status'] == '$2']
+print(max((o['id'] for o in d), default=''))"; }
+
+LAB=$(newest /api/lab/worklist ordered "$LB")
+check "collect the sample"    204 POST "$LB" "/api/lab/$LAB/advance" '{"next":"collected"}'
 check "reject a sample"       204 POST "$LB" "/api/lab/$LAB/reject" '{"reason":"Haemolysed"}'
-IMG=$(curl -s -H "authorization: Bearer $RA" "$A/api/imaging/worklist" \
-      | python3 -c "import sys,json;d=[o for o in json.load(sys.stdin) if o['status']=='ordered'];print(d[0]['id'] if d else '')")
+IMG=$(newest /api/imaging/worklist ordered "$RA")
 check "schedule a scan"       204 POST "$RA" "/api/imaging/$IMG/advance?next=scheduled"
 check "mark it scanned"       204 POST "$RA" "/api/imaging/$IMG/advance?next=scanned"
 check "cannot skip a step"    409 POST "$RA" "/api/imaging/$IMG/advance?next=scheduled"
@@ -84,12 +99,18 @@ CLM=$(jq_ "['id']")
 check "insurer rejects it"    204 POST "$CA" "/api/claims/$CLM/reject" '{"reason":"Missing referral"}'
 
 echo "--- portal access (item 35) ---"
-check "grant patient a login" 201 POST "$RC" "/api/patients/PT-20492/portal-access" \
-  '{"email":"kwame.mensah@example.com","password":"TemporaryPass99!"}'
+# A fresh registration, for the same reason: granting a login twice is one
+# of the things under test, so the suite cannot reuse a patient it granted
+# on the last run.
+check "register a patient"    201 POST "$RC" "/api/patients" \
+  "{\"fullName\":\"Verification Patient $TAG\",\"age\":31,\"sex\":\"F\",\"phone\":\"0244000$TAG\"}"
+MRN=$(jq_ "['mrn']")
+check "grant patient a login" 201 POST "$RC" "/api/patients/$MRN/portal-access" \
+  "{\"email\":\"verify.$TAG@example.com\",\"password\":\"TemporaryPass99!\"}"
 check "the patient signs in"  200 POST "$RC" "/api/auth/login" \
-  '{"email":"kwame.mensah@example.com","password":"TemporaryPass99!"}'
-check "cannot grant twice"    409 POST "$RC" "/api/patients/PT-20492/portal-access" \
-  '{"email":"other@example.com","password":"TemporaryPass99!"}'
+  "{\"email\":\"verify.$TAG@example.com\",\"password\":\"TemporaryPass99!\"}"
+check "cannot grant twice"    409 POST "$RC" "/api/patients/$MRN/portal-access" \
+  "{\"email\":\"other.$TAG@example.com\",\"password\":\"TemporaryPass99!\"}"
 
 printf '\n\033[1m%d passed, %d failed\033[0m\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
