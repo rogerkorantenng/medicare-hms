@@ -24,3 +24,7 @@ __pycache__/
 
 # deployment state — holds the database password
 deploy/aws/.state
+
+# browser-automation artefacts
+.playwright-mcp/
+*.png
