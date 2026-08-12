@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Icons are Material Symbols Rounded, as the handoff specifies — not an SVG
+ * icon library. Served from this origin, subsetted to the icons in use.
+ * Nothing is requested from Google at run time.
+ */
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: block;   /* block, not swap: an unstyled ligature name is worse than a brief blank */
+  src: url('/fonts/material-symbols-rounded.woff2') format('woff2');
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    @apply bg-surface-page text-ink font-body;
+    font-size: 13.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, th, button, label { @apply font-display; }
+
+  /* Clinical values, MRNs, amounts, times and references are monospaced so
+     digits align in a column, which makes a misreading less likely. */
+  .val { @apply font-mono tabular-nums; }
+
+  ::selection { background: #E0EAFF; }
+
+  input, select, textarea {
+    @apply bg-surface-wash border border-hairline rounded-input px-3 py-2 text-body outline-none;
+    @apply focus:border-primary focus:ring-2 focus:ring-primary/15;
+  }
+  input[type='checkbox'], input[type='radio'] { @apply p-0 w-4 h-4 accent-primary; }
+
+  :focus-visible { @apply outline-2 outline-offset-2 outline-primary; }
+}
+
+@layer components {
+  .icon {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+
+  .card { @apply bg-white rounded-card border border-hairline shadow-card; }
+  .panel { @apply bg-white rounded-panel border border-hairline shadow-card; }
+
+  .label { @apply text-label uppercase text-ink-soft; }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-control px-3.5 py-2;
+    @apply text-body font-display font-bold transition active:scale-[.97] disabled:opacity-50;
+    @apply disabled:pointer-events-none;
+  }
+  .btn-primary { @apply btn bg-primary text-white hover:bg-primary-hover; }
+  .btn-secondary { @apply btn bg-primary-tint text-primary hover:bg-primary-tint/70; }
+  .btn-ghost { @apply btn border border-hairline bg-white text-ink hover:bg-surface-row; }
+  .btn-danger { @apply btn bg-danger-fg text-white hover:opacity-90; }
+
+  /* Every status chip carries both a colour and a word, so it survives
+     printing and colour blindness. */
+  .chip { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-chip border; }
+  .chip-success { @apply chip bg-success-bg text-success-fg border-success-br; }
+  .chip-warning { @apply chip bg-warning-bg text-warning-fg border-warning-br; }
+  .chip-danger  { @apply chip bg-danger-bg  text-danger-fg  border-danger-br; }
+  .chip-info    { @apply chip bg-info-bg    text-info-fg    border-info-br; }
+  .chip-neutral { @apply chip bg-surface-wash text-ink-soft border-hairline; }
+
+  /* Purple is reserved for AI. It is how a user tells a suggestion from a
+     recorded fact — never use it for anything else. */
+  .chip-ai { @apply chip bg-ai-bg text-ai-fg border-ai-br; }
+  .ai-panel { @apply bg-ai-bg border border-ai-br text-ai-fg rounded-card p-4 animate-fadeUp; }
+
+  .th { @apply bg-primary-wash text-label uppercase text-ink-soft px-3 py-2 text-left; }
+  .td { @apply px-3 py-2.5 border-t border-hairline align-middle; }
+  .row-hover { @apply hover:bg-surface-row transition-colors; }
+
+  .field { @apply flex flex-col gap-1.5; }
+  .field > label { @apply text-label uppercase text-ink-soft; }
+}
+
+/* Print: the prescription slip, receipt and discharge summary are printed. */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  .print-sheet { box-shadow: none !important; border: none !important; }
+}
