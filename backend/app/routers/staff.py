@@ -14,9 +14,18 @@ AnyUser = Annotated[CurrentUser, Depends(require())]
 
 @router.get("/staff")
 async def staff_directory(user: AnyStaff):
-    """The full directory, including every nurse, cashier and staff number."""
+    """
+    The full directory, including every nurse, cashier and staff number.
+
+    Deactivated people are included rather than hidden. They still appear
+    as the author of past clinical actions, so an administrator needs to
+    see them; `isActive` is what the interface greys out.
+    """
     async with connection() as conn:
-        return rows(await conn.fetch("select * from staff order by staff_no"))
+        return rows(await conn.fetch(
+            """select s.*, u.email, u.is_active from staff s
+                 join users u on u.id = s.id
+                order by u.is_active desc, s.staff_no"""))
 
 
 @router.get("/staff/bookable")

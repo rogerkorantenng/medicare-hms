@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { repo } from '@/lib/repository';
 import type {
   NewPatient, NewAppointment, NewVitals, SignEncounterInput, LabStatus,
-  ResultInput, MomoProvider,
+  ResultInput, MomoProvider, NewStaff, StaffPatch,
 } from '@/lib/repository/types';
 
 /**
@@ -106,3 +106,21 @@ export const recordPaymentAction = (
 
 export const advanceClaimAction = (claimId: string) =>
   run(() => repo.advanceClaim(claimId), 'Claim advanced.', ['/workspace/cashier/claims']);
+
+// ---- staff administration ----
+// Creating an account is the one action that hands somebody clinical
+// access, so the API guards it to an administrator and re-checks the role
+// from the database rather than the token. Nothing is re-checked here: a
+// second copy of the rule in TypeScript would only be a place for the two
+// to drift apart.
+
+export const createStaffAction = (input: NewStaff) =>
+  run(() => repo.createStaff(input), 'Staff account created.', ['/workspace/admin/staff']);
+
+export const updateStaffAction = (id: string, patch: StaffPatch) =>
+  run(() => repo.updateStaff(id, patch), 'Staff record updated.',
+      ['/workspace/admin/staff', '/workspace/admin']);
+
+export const resetStaffPasswordAction = (id: string, password: string) =>
+  run(() => repo.resetStaffPassword(id, password), 'Password reset. Hand it over in person.',
+      ['/workspace/admin/staff']);

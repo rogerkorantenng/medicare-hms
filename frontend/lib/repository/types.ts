@@ -27,6 +27,28 @@ export interface Staff {
   role: Role;
   department: string | null;
   onDuty: boolean;
+  /** Present for an administrator; the directory omits nothing. */
+  email?: string;
+  /** A deactivated person keeps their record, because past clinical
+   *  actions reference them. They simply cannot sign in. */
+  isActive?: boolean;
+}
+
+export interface NewStaff {
+  email: string;
+  fullName: string;
+  role: Role;
+  department?: string | null;
+  password: string;
+}
+
+/** Every field optional: the screen sends only what it changed. */
+export interface StaffPatch {
+  fullName?: string;
+  role?: Role;
+  department?: string | null;
+  onDuty?: boolean;
+  isActive?: boolean;
 }
 
 export interface Patient {
@@ -463,6 +485,9 @@ export interface Repository {
   dashboardKpis(): Promise<Kpis>;
   liveActivity(limit: number): Promise<AuditEntry[]>;
   staffDirectory(): Promise<Staff[]>;
+  createStaff(input: NewStaff): Promise<Staff>;
+  updateStaff(id: string, patch: StaffPatch): Promise<void>;
+  resetStaffPassword(id: string, password: string): Promise<void>;
   /** Doctors on duty, for the booking screens. Readable by a patient. */
   bookableDoctors(): Promise<Staff[]>;
   hospitalSnapshot(): Promise<OpsSnapshot>;

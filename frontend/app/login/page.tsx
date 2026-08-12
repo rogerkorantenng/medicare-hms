@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { LoginForm } from './login-form';
 import { Icon } from '@/components/ui';
 
@@ -22,7 +21,17 @@ const ROLES = [
   { email: 'patient@medicare.com',   label: 'Patient',      icon: 'person',           dept: 'Patient app' },
 ];
 
-export default function LoginPage() {
+export const dynamic = 'force-dynamic';
+
+/**
+ * The query is read here rather than in the form. useSearchParams would
+ * push the whole form behind a Suspense boundary and leave the server
+ * HTML showing a skeleton, so "your session ended" would never appear
+ * without JavaScript, and could not be asserted from outside a browser.
+ */
+export default function LoginPage(
+  { searchParams }: { searchParams: { next?: string; expired?: string } },
+) {
   return (
     <main className="min-h-screen grid lg:grid-cols-2">
       {/* Left: identity. Gradient runs primary-bright to primary-deep. */}
@@ -76,11 +85,11 @@ export default function LoginPage() {
             Choose a role to fill its email, then enter the password.
           </p>
 
-          {/* The form reads ?next= to return you where you were headed,
-              which means it needs a Suspense boundary to prerender. */}
-          <Suspense fallback={<div className="mt-7 h-96 rounded-card bg-white/50 animate-pulse" />}>
-            <LoginForm roles={ROLES} />
-          </Suspense>
+          <LoginForm
+            roles={ROLES}
+            next={searchParams.next ?? null}
+            expired={Boolean(searchParams.expired)}
+          />
         </div>
       </section>
     </main>

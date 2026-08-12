@@ -63,3 +63,15 @@ def auth(tokens):
     def _headers(role: str) -> dict[str, str]:
         return {"Authorization": f"Bearer {tokens[role]}"}
     return _headers
+
+
+@pytest_asyncio.fixture(scope="session", loop_scope="session")
+async def admin_id(api, tokens) -> str:
+    """
+    The signed-in administrator's own id, for the tests that check an
+    administrator cannot lock themselves out.
+    """
+    response = await api.get(
+        "/api/auth/me", headers={"Authorization": f"Bearer {tokens['admin']}"}
+    )
+    return response.json()["id"]

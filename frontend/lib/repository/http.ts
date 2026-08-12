@@ -5,6 +5,7 @@ import type {
   LabStatus, ResultInput, ImagingOrder, Prescription, InventoryItem, Ward,
   MarEntry, Invoice, Claim, Kpis, AuditEntry, Staff, OpsSnapshot, AppNotification,
   MomoProvider, AppointmentFilter, PrescriptionSlip, ReceiptDocument, DischargeSummary,
+  NewStaff, StaffPatch,
 } from './types';
 
 /**
@@ -102,6 +103,15 @@ export class HttpRepository implements Repository {
   dashboardKpis = () => call<Kpis>('/dashboard');
   liveActivity = (limit: number) => call<AuditEntry[]>('/audit', { query: { limit } });
   staffDirectory = () => call<Staff[]>('/staff');
+
+  createStaff = (input: NewStaff) =>
+    call<Staff>('/staff', { method: 'POST', body: input });
+
+  updateStaff = (id: string, patch: StaffPatch) =>
+    call<void>(`/staff/${id}`, { method: 'PATCH', body: patch });
+
+  resetStaffPassword = (id: string, password: string) =>
+    call<void>(`/staff/${id}/password`, { method: 'POST', body: { password } });
   bookableDoctors = () => call<Staff[]>('/staff/bookable');
   hospitalSnapshot = () => call<OpsSnapshot>('/snapshot');
 

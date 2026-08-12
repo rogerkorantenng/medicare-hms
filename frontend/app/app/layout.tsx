@@ -11,7 +11,10 @@ import { TabBar } from './tab-bar';
  */
 export default async function PatientLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser();
-  if (!user) redirect('/login');
+  // Not merely signed out: the cookie may be present but rejected by the
+  // API, in which case it has to be cleared or the middleware sends the
+  // visitor straight back here. See app/api/session/end.
+  if (!user) redirect(`/api/session/end?next=/app`);
   if (user.role !== 'patient') redirect(`/workspace/${user.role}`);
 
   return (

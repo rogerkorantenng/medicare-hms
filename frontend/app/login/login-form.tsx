@@ -1,18 +1,20 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui';
 
 type RoleOption = { email: string; label: string; icon: string; dept: string };
 
-export function LoginForm({ roles }: { roles: RoleOption[] }) {
+export function LoginForm(
+  { roles, next, expired }:
+  { roles: RoleOption[]; next: string | null; expired: boolean },
+) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const router = useRouter();
-  const params = useSearchParams();
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
@@ -32,7 +34,6 @@ export function LoginForm({ roles }: { roles: RoleOption[] }) {
       return;
     }
 
-    const next = params.get('next');
     start(() => {
       router.replace(next && next !== '/' ? next : json.home);
       router.refresh();
@@ -41,6 +42,12 @@ export function LoginForm({ roles }: { roles: RoleOption[] }) {
 
   return (
     <form onSubmit={signIn} className="mt-7 flex flex-col gap-5">
+      {expired && !error && (
+        <p className="flex items-start gap-2 rounded-control border border-info-br bg-info-bg px-3 py-2 text-support text-info-fg">
+          <Icon name="schedule" size={16} className="mt-px" />
+          Your session ended. Sign in again to carry on.
+        </p>
+      )}
       <div>
         <p className="label mb-2">Role accounts</p>
         <div className="grid grid-cols-3 gap-2">

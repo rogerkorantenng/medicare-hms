@@ -150,6 +150,25 @@ check "the patient symptom checker refuses a doctor" "403" \
       -d '{"history":[{"role":"user","content":"hello"}]}' \
       "$WEB/api/ai/symptom-check")"
 
+step "A token the API no longer recognises does not trap the browser"
+# Deactivating an account, or reseeding, leaves people holding a token that
+# looks valid to the middleware and is refused by the API. That combination
+# used to bounce between the sign-in page and the workspace until the
+# browser gave up with ERR_TOO_MANY_REDIRECTS.
+STALE="$JAR_DIR/stale"
+python3 "$(dirname "$0")/stale-token.py" "$STALE" "$(echo "$WEB" | sed -E 's#https?://##; s#:.*##')"
+read -r hops final <<<"$(curl -s -L --max-redirs 10 -b "$STALE" -c "$STALE" \
+  -o "$JAR_DIR/stale.html" -w '%{num_redirects} %{url_effective}' "$WEB/workspace/doctor")"
+case "$final" in
+  */login*) ok "a stale token lands on sign-in, after $hops redirects" ;;
+  *)        bad "a stale token ended at '$final' after $hops redirects" ;;
+esac
+if grep -q 'session ended' "$JAR_DIR/stale.html"; then
+  ok "the sign-in page explains why"
+else
+  bad "the sign-in page did not explain that the session had ended"
+fi
+
 step "Signing out clears the session"
 curl -s -X DELETE -b "$JAR_DIR/doctor" -c "$JAR_DIR/doctor" -o /dev/null "$WEB/api/session"
 read -r code redirect <<<"$(as doctor /workspace/doctor)"
