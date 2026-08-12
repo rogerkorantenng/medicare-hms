@@ -735,6 +735,18 @@
     </table>
 
     <p style="margin:0 0 8px">The reason step 4 was a swap and not a rewrite is the dependency direction in figure 1. The repository interface belongs to the domain, so the domain neither knows nor cares which adapter satisfies it. That interface has now been satisfied three different ways without a screen changing.</p>
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.3a Screens added after the migration</h3>
+    <p style="margin:0 0 8px">Three screens exist that the original inventory did not describe, each closing a gap that only became visible once the system was being used rather than demonstrated.</p>
+    <table>
+      <thead><tr><th style="width:22%">Screen</th><th>Why it had to exist</th></tr></thead>
+      <tbody>
+        <tr><td>Staff administration</td><td>The administrator could read a directory and change nothing. Creating an account, moving somebody between departments, resetting a forgotten password and withdrawing access all required a developer with database access, which is not an administrator in any useful sense.</td></tr>
+        <tr><td>Your account</td><td>Nobody could change their own password. Anyone issued a temporary one was stuck with it, and a person who suspected theirs was known had to ask somebody else to act. The current password is required, because a session left open on a ward computer is the realistic threat.</td></tr>
+        <tr><td>Patient onboarding, and forgotten password</td><td>The patient application began at a sign-in form with no explanation and no way past a forgotten password. The reset raises a request for the front desk rather than promising an email this system cannot send.</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:0 0 8px">Correcting a patient record is not a screen but a pair of controls on the chart, because that is where somebody is standing when they notice the error. The split follows the API: reception owns the demographics it captured, clinical staff own the clinical facts. The allergy editor states its own consequence on screen, since the prescribing guard reads that list and an unrecorded allergy blocks nothing.</p>
+
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.4 Where authorisation lives, and why it moved</h3>
     <p style="margin:0 0 8px">The previous revision planned to enforce authorisation with PostgreSQL row-level security. That plan was implemented, tested against a real database, and then deliberately replaced. Both approaches were built, so the comparison below is between two things that worked rather than between one that worked and one that was imagined.</p>
     

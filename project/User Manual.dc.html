@@ -263,7 +263,7 @@
     <div class="note">You can see billing and claims but not clinical records. If a claim needs clinical detail you do not have, ask the treating clinician rather than looking for a way around the restriction.</div>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">9. Administrator</h2>
-    <div class="role"><b>Your screens:</b> Dashboard, Staff, Audit Log.<br /><b>Your job in the system:</b> oversight, accountability and answering questions about the hospital.</div>
+    <div class="role"><b>Your screens:</b> Dashboard, Staff, Audit Log, Patients.<br /><b>Your job in the system:</b> oversight, accountability and answering questions about the hospital.</div>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.1 Dashboard</h3>
     <p style="margin:0 0 10px">Patient count, appointments today, revenue, bed occupancy and department load. Below them, Live Activity streams actions from every role as they happen.</p>
@@ -271,7 +271,14 @@
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.2 Ask the operations assistant</h3>
     <p style="margin:0 0 10px">Type a question in plain words, for example "how many beds are free in the general ward" or "what revenue is outstanding", and select Ask. The assistant answers from current system data only. If it cannot reach the service, it says so rather than guessing.</p>
 
-    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.3 Audit log</h3>
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.3 Adding and managing staff</h3>
+    <p style="margin:0 0 10px">The Staff screen is where somebody gets access to this system, and where it is taken away. Nothing else in the hospital can do either.</p>
+    <ol style="margin:0 0 10px 18px"><li>Select <b>Add staff</b>. Enter their full name, work email, role and department.</li><li>A temporary password is generated for you. <b>Write it down, or hand them the screen.</b> It is shown once and never again, because the system keeps only a scrambled copy and cannot look it up later.</li><li>Tell them to change it themselves from <b>Your account</b>, reached by selecting their name in the top bar.</li></ol>
+    <p style="margin:0 0 10px">Each row also carries three controls. <b>Off duty</b> and <b>On duty</b> mark who is working, which is what the booking roster reads. <b>Reset</b> issues a new password for somebody who has lost theirs, shown once in the same way. <b>Deactivate</b> stops them signing in.</p>
+    <p style="margin:0 0 10px"><b>Nobody is ever deleted.</b> Orders, prescriptions and audit entries all name the person who performed them, so removing a record would tear holes in the trail. A deactivated person keeps their history and simply cannot sign in. Select <b>Reactivate</b> if they return.</p>
+    <p style="margin:0 0 10px">You cannot deactivate or change the role of your own account. The system refuses it, so that a hospital cannot end up with no administrator at all.</p>
+
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.4 Audit log</h3>
     <p style="margin:0 0 10px">Every action by every user, with actor, action, target and time. The log cannot be edited or deleted from anywhere in the system, including your own account. That is what makes it worth having.</p>
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">10. Patients using the mobile application</h2>
@@ -309,7 +316,12 @@
     <p style="margin:0 0 10px">Tap Symptom checker on the home screen. Describe how you feel in your own words. It will suggest which kind of doctor to see and how soon, and offer to open booking.</p>
     <div class="warn">This is not a diagnosis and it cannot examine you. If you are seriously unwell, in severe pain, bleeding heavily, struggling to breathe or losing consciousness, do not use the application. Call the emergency line or go to the hospital now.</div>
 
-    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">11. Common problems</h2>
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">11. Your account, whoever you are</h2>
+    <p style="margin:0 0 10px">Select your name in the top right to reach <b>Your account</b>. It shows who you are signed in as, your role and your staff number, and lets you change your password.</p>
+    <p style="margin:0 0 10px">Changing it asks for your current password first. That is deliberate: if you leave a session open on a ward computer, it stops somebody walking past and locking you out of your own account.</p>
+    <p style="margin:0 0 10px">If you have forgotten your password entirely, select <b>Forgotten your password?</b> on the sign-in screen. Staff should ask their administrator; patients should bring photo identification to reception.</p>
+
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">12. Common problems</h2>
     <table>
       <thead><tr><th style="width:32%">What you see</th><th>What to do</th></tr></thead>
       <tbody>
@@ -321,12 +333,16 @@
         <tr><td>I saved something but a colleague cannot see it</td><td>Ask them to refresh. Everyone reads the same record now, so if it still does not appear, it did not save. Look for the confirmation bar.</td></tr>
         <tr><td>A result I expect is not in the chart</td><td>The laboratory has not verified it yet. Results release on verification, not on entry.</td></tr>
         <tr><td>A clinical tab shows a lock notice</td><td>Your role does not have clinical access. This is correct, not a fault. Ask a clinician.</td></tr>
+        <tr><td>A patient&apos;s details are wrong</td><td>Open their chart and select <b>Correct details</b> if you are on reception, for a name, age, phone number, blood group or insurer. The medical record number never changes, because every other record points at it. Allergies and conditions sit behind <b>Allergies and conditions</b>, which doctors and nurses can also reach.</td></tr>
+        <tr><td>A patient tells me about an allergy</td><td>Record it straight away, on their chart under <b>Allergies and conditions</b>. Until it is on the record the prescribing check does not know about it, and will not block the drug.</td></tr>
         <tr><td>I cannot find a patient by name</td><td>Check the spelling, or search by MRN instead. If they are genuinely absent, they were never registered.</td></tr>
+        <tr><td>I am new to the app</td><td>The first four screens explain booking, results, the symptom checker and paying by Mobile Money. Select <b>Skip</b> if you would rather get straight on.</td></tr>
+        <tr><td>I do not want every notification</td><td>Open <b>Profile</b> and turn off the ones you do not want. Results, appointment reminders and billing can each be set separately, and the change saves as you make it.</td></tr>
         <tr><td>I want to start the demonstration data over</td><td>There is no longer a reset button, and that is deliberate: everyone now shares one database, so a reset would clear a colleague's work mid-shift. Ask IT, who can reload the demonstration set from the server.</td></tr>
       </tbody>
     </table>
 
-    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">12. Rules for everybody</h2>
+    <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #B45309;padding-bottom:5px">13. Rules for everybody</h2>
     <ol>
       <li>One login per person. Never work under someone else's account.</li>
       <li>Sign out when you leave a shared machine.</li>

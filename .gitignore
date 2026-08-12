@@ -28,3 +28,8 @@ deploy/aws/.state
 # browser-automation artefacts
 .playwright-mcp/
 *.png
+
+HANDOFF-BUNDLE.md
+/chats
+/deploy
+/project

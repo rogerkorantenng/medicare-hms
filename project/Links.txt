@@ -37,7 +37,7 @@ Source Code Repo  : https://github.com/rogerkorantenng/medicare-hms
 
 API                : https://qvfrhkd9yw.eu-west-1.awsapprunner.com
                     /health   answers without signing in
-                    /docs     lists all 52 operations, with schemas
+                    /docs     lists all 63 operations, with schemas
 
                     The API is the enforcement point for every access
                     rule, so it is listed here for inspection. Calling
@@ -98,6 +98,11 @@ the append-only audit log.
    again; nothing is lost, because every action was saved on the
    server when you took it.
 
+6. Every user can change their own password from "Your account",
+   reached by selecting their name in the top right. The
+   administrator account can create, suspend and reset staff
+   accounts from the Staff screen.
+
 ----------------------------------------------------------------
  NOTES
 ----------------------------------------------------------------
@@ -107,6 +112,17 @@ the append-only audit log.
   claims, so every screen has content on first visit.
 
 - No real patient data is used anywhere in the system.
+
+- The administrator account is the one to start with if you have
+  time for only one: the dashboard, the live activity feed, the
+  operations assistant, the staff administration screen and the
+  append-only audit log are all reachable from it.
+
+- Worth trying, because it is the point of the system: open any
+  patient chart as a doctor or nurse, add an allergy under
+  "Allergies and conditions", then try to prescribe a drug of that
+  class in a consultation. The prescription is refused and cannot
+  be forced through from any screen.
 
 - The system runs on three tiers: the interface on Vercel, the
   API on AWS App Runner, and PostgreSQL on Amazon RDS. The
@@ -148,9 +164,9 @@ not redistribute this file.
 ----------------------------------------------------------------
 
 Project_Documentation.pdf      25 sections, the master document
-SRS.pdf                        67 functional, 20 non-functional reqs
+SRS.pdf                        74 functional, 20 non-functional reqs
 Design_Documentation.pdf       architecture, UML, ERD, wireframes
-Testing_Report.pdf             114 test cases, 20-entry defect log
+Testing_Report.pdf             124 test cases, 23-entry defect log
 User_Manual.pdf                all nine roles plus mobile
 Maintenance_and_Evolution.pdf  maintenance, migration plan, roadmap
 README.pdf                     examiner quick start
