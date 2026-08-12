@@ -24,8 +24,8 @@ export class HttpRepository implements Repository {
   registerPatient = (input: NewPatient) =>
     call<Patient>('/patients', { method: 'POST', body: input });
 
-  searchPatients = (query: string) =>
-    call<Patient[]>('/patients', { query: { q: query } });
+  searchPatients = (query: string, limit = 50, offset = 0) =>
+    call<Patient[]>('/patients', { query: { q: query, limit, offset } });
 
   getPatient = (mrn: string) =>
     call<Patient | null>(`/patients/${mrn}`).catch(() => null);
@@ -105,6 +105,10 @@ export class HttpRepository implements Repository {
   // ---- admin ----
   dashboardKpis = () => call<Kpis>('/dashboard');
   liveActivity = (limit: number) => call<AuditEntry[]>('/audit', { query: { limit } });
+
+  auditTrail = (filter: {
+    actor?: string; action?: string; since?: string; limit?: number; offset?: number;
+  }) => call<AuditEntry[]>('/audit', { query: { ...filter } });
   staffDirectory = () => call<Staff[]>('/staff');
 
   createStaff = (input: NewStaff) =>

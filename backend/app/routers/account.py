@@ -54,8 +54,10 @@ async def change_own_password(body: PasswordChange, user: AnyUser):
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="That is not your current password.",
             )
-        await conn.execute("update users set password_hash = $2 where id = $1",
-                           user.id, hash_password(body.newPassword))
+        await conn.execute(
+            """update users set password_hash = $2, must_change_password = false
+                where id = $1""",
+            user.id, hash_password(body.newPassword))
         # The target is the actor: an administrator reading the trail can
         # tell a self-service change from one they performed for somebody.
         await conn.execute(

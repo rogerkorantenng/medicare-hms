@@ -1,23 +1,28 @@
 import Link from 'next/link';
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, Avatar, Chip, EmptyState, onlyDate } from '@/components/ui';
+import { ListFilter } from '@/components/list-filter';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Patients({
   searchParams,
-}: { searchParams: { q?: string } }) {
+}: { searchParams: { q?: string; offset?: string; limit?: string } }) {
   const q = searchParams.q ?? '';
-  const patients = await repo.searchPatients(q);
+  const offset = Number(searchParams.offset ?? 0);
+  const limit = Number(searchParams.limit ?? 50);
+  const patients = await repo.searchPatients(q, limit, offset);
+  // The count comes back on every row, so paging needs no second query.
+  const total = patients[0]?.totalMatching ?? patients.length;
 
   return (
     <>
-      <PageHeader title="Patients" subtitle={`${patients.length} record${patients.length === 1 ? '' : 's'}`} />
+      <PageHeader
+        title="Patients"
+        subtitle={`${total} record${total === 1 ? '' : 's'}${q ? ` matching "${q}"` : ''}`}
+      />
 
-      <form className="mb-5 flex gap-2 max-w-lg" action="/workspace/patients">
-        <input name="q" defaultValue={q} placeholder="Search by name, MRN or phone" className="flex-1" />
-        <button className="btn-primary">Search</button>
-      </form>
+      <ListFilter placeholder="Name, MRN or phone number" total={total} />
 
       {patients.length === 0 ? (
         <Card><EmptyState icon="search_off" title="No patient matches that" /></Card>

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { currentUser } from '@/lib/session';
 import { Shell } from '@/components/shell/shell';
+import { MustChangePassword } from '@/components/must-change-password';
 
 export default async function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser();
@@ -13,6 +14,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
 
   return (
     <Shell role={user.role} fullName={user.fullName} department={user.department}>
+      {user.mustChangePassword && <MustChangePassword href="/workspace/account" />}
       {children}
     </Shell>
   );

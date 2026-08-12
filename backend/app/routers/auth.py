@@ -41,6 +41,7 @@ async def login(body: LoginRequest) -> LoginResponse:
         row = await conn.fetchrow(
             """
             select u.id, u.email, u.password_hash, u.role::text as role, u.is_active,
+                   u.must_change_password,
                    s.full_name as staff_name, s.staff_no, s.department,
                    p.mrn, p.full_name as patient_name
               from users u
@@ -82,6 +83,7 @@ async def login(body: LoginRequest) -> LoginResponse:
             staff_no=row["staff_no"],
             department=row["department"],
             mrn=row["mrn"],
+        must_change_password=row["must_change_password"],
         ),
     )
 

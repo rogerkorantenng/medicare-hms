@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card, Chip, StatusChip, EmptyState, Icon, money, when, onlyDate } from '@/components/ui';
 import { ExplainResult } from '@/components/explain-result';
 import type { PatientChart } from '@/lib/repository/types';
+import { Addendum } from './addendum';
 
 const TABS = [
   { id: 'timeline', label: 'Timeline', icon: 'timeline' },
@@ -83,6 +84,11 @@ export function ChartTabs({ chart, clinical }: { chart: PatientChart; clinical: 
                   <p className="val text-chip text-ink-faint mt-1.5">
                     {when(e.createdAt)} · {e.doctorName ?? ''}
                   </p>
+                  {clinical && (
+                    <div className="mt-1 -ml-2">
+                      <Addendum encounterId={e.id} mrn={e.mrn} />
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>

@@ -36,7 +36,7 @@ from .tokens import read_subject, unauthorised
 _bearer = HTTPBearer(auto_error=False)
 
 _LOOKUP = """
-    select u.id, u.email, u.role::text as role, u.is_active,
+    select u.id, u.email, u.role::text as role, u.is_active, u.must_change_password,
            s.full_name as staff_name, s.staff_no, s.department,
            p.mrn, p.full_name as patient_name
       from users u
@@ -54,6 +54,10 @@ class CurrentUser(BaseModel):
     staff_no: str | None = None
     department: str | None = None
     mrn: str | None = None
+    # True while somebody is still using a password an administrator
+    # typed for them. The interface steers them to change it; the flag
+    # clears itself when they do.
+    must_change_password: bool = False
 
     @property
     def is_staff(self) -> bool:
@@ -89,6 +93,7 @@ async def get_current_user(
         staff_no=row["staff_no"],
         department=row["department"],
         mrn=row["mrn"],
+        must_change_password=row["must_change_password"],
     )
 
 

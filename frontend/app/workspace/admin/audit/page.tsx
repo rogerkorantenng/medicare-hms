@@ -1,5 +1,6 @@
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, Icon, when } from '@/components/ui';
+import { ListFilter } from '@/components/list-filter';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,12 +12,28 @@ export const dynamic = 'force-dynamic';
  * policy exists on audit_entries for any role, and the grants are revoked. An
  * audit trail that can be edited is not an audit trail.
  */
-export default async function AuditLog() {
-  const entries = await repo.liveActivity(300);
+export default async function AuditLog({
+  searchParams,
+}: { searchParams: { q?: string; since?: string; offset?: string } }) {
+  const offset = Number(searchParams.offset ?? 0);
+  const entries = await repo.auditTrail({
+    actor: searchParams.q, since: searchParams.since, limit: 100, offset,
+  });
 
   return (
     <>
       <PageHeader title="Audit log" subtitle={`${entries.length} most recent entries, newest first.`} />
+
+      <ListFilter
+        placeholder="Who performed it"
+        choices={[{
+          param: 'since', label: 'Since', options: [
+            [new Date(Date.now() - 864e5).toISOString().slice(0, 10), 'Yesterday'],
+            [new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10), 'Last week'],
+            [new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), 'Last month'],
+          ],
+        }]}
+      />
 
       <div className="mb-5 rounded-card border border-info-br bg-info-bg px-4 py-3 flex items-start gap-2.5">
         <Icon name="lock" size={19} className="text-info-fg mt-0.5" />

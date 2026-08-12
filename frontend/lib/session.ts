@@ -25,6 +25,8 @@ export interface SessionUser {
   staffNo: string | null;
   department: string | null;
   mrn: string | null;
+  /** True while they are still using a password somebody else typed. */
+  mustChangePassword: boolean;
 }
 
 type ApiUser = {
@@ -35,6 +37,7 @@ type ApiUser = {
   staff_no: string | null;
   department: string | null;
   mrn: string | null;
+  must_change_password: boolean;
 };
 
 export const currentUser = cache(async (): Promise<SessionUser | null> => {
@@ -49,6 +52,7 @@ export const currentUser = cache(async (): Promise<SessionUser | null> => {
       staffNo: u.staff_no,
       department: u.department,
       mrn: u.mrn,
+      mustChangePassword: Boolean(u.must_change_password),
     };
   } catch {
     // An expired or tampered token reads as signed out. The middleware

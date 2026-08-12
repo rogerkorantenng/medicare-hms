@@ -80,6 +80,8 @@ export interface StaffPatch {
 }
 
 export interface Patient {
+  /** Present on search results, so paging needs no second query. */
+  totalMatching?: number;
   mrn: string;
   authUserId: string | null;
   fullName: string;
@@ -464,7 +466,7 @@ export interface DischargeSummary {
 export interface Repository {
   // ---- patients ----
   registerPatient(input: NewPatient): Promise<Patient>;
-  searchPatients(query: string): Promise<Patient[]>;
+  searchPatients(query: string, limit?: number, offset?: number): Promise<Patient[]>;
   getPatient(mrn: string): Promise<Patient | null>;
   getPatientChart(mrn: string): Promise<PatientChart>;
 
@@ -512,6 +514,9 @@ export interface Repository {
   // ---- admin ----
   dashboardKpis(): Promise<Kpis>;
   liveActivity(limit: number): Promise<AuditEntry[]>;
+  auditTrail(filter: {
+    actor?: string; action?: string; since?: string; limit?: number; offset?: number;
+  }): Promise<AuditEntry[]>;
   staffDirectory(): Promise<Staff[]>;
   createStaff(input: NewStaff): Promise<Staff>;
   updateStaff(id: string, patch: StaffPatch): Promise<void>;
