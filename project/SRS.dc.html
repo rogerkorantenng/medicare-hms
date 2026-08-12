@@ -339,10 +339,10 @@
       <thead><tr><th style="width:22%">Interface</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td>User interface</td><td>Two front ends. The staff workspace uses a collapsible sidebar, a top bar with search and notifications, and content panels per role. The patient application uses a five-tab bottom navigation. Both use one type scale and one colour palette, documented in the design document.</td></tr>
-        <tr><td>AI service</td><td>The clinical and operations assistants call a large language model over HTTPS. Requests carry only the clinical context needed for the task. Failure is handled by NFR-12.</td></tr>
+        <tr><td>AI service</td><td>The clinical and operations assistants call a large language model. In v2.0 the call is made by the application tier over the cloud provider network, authorised by its compute role, so no key is held by the system and none reaches a browser. Requests carry only the clinical context needed for the task. Failure is handled by NFR-12.</td></tr>
         <tr><td>Mobile Money</td><td>Version 1.0 models the MTN MoMo, Telecel Cash and AT Money request-and-approve flow. A production deployment would replace the modelled step with the provider's collections API.</td></tr>
         <tr><td>Printing</td><td>Prescriptions, receipts and discharge summaries print through the browser print pipeline on A4 or Letter.</td></tr>
-        <tr><td>Storage</td><td>Version 1.0 persists state in browser storage behind a single persistence layer, so it can be replaced by a server API without touching screen logic. See the migration path in the maintenance plan.</td></tr>
+        <tr><td>Storage</td><td>Behind a single persistence layer, which is the point: v1.0 satisfied it with browser storage and v2.0 satisfies it with an HTTP client against a PostgreSQL-backed API, without touching screen logic. The maintenance plan records the migration as carried out.</td></tr>
       </tbody>
     </table>
 
@@ -375,12 +375,12 @@
       <thead><tr><th style="width:11%">ID</th><th>Constraint</th></tr></thead>
       <tbody>
         <tr><td><code>CON-01</code></td><td>The project must be delivered within one academic semester by a student group, which caps the scope at the modules listed in §2.2.</td></tr>
-        <tr><td><code>CON-02</code></td><td>No budget for licensed software, paid hosting tiers or commercial API contracts.</td></tr>
+        <tr><td><code>CON-02</code></td><td>No budget for licensed software or commercial API contracts. v2.0 uses the smallest managed database instance and the smallest compute size available, which is enough for the scale in NFR-02 and is a deliberate limit rather than a sizing recommendation.</td></tr>
         <tr><td><code>CON-03</code></td><td>Live Mobile Money collection requires a merchant agreement the project cannot obtain, so that step is modelled.</td></tr>
         <tr><td><code>CON-04</code></td><td>Real patient data cannot be used. Test data is synthetic but clinically plausible.</td></tr>
-        <tr><td><code>CON-05</code></td><td>Version 1.0 stores data in browser storage, so records do not currently move between devices.</td></tr>
+        <tr><td><code>CON-05</code></td><td><s>Version 1.0 stores data in browser storage, so records do not currently move between devices.</s> Lifted in v2.0. Records are held in a shared PostgreSQL database, so they follow the patient rather than the device.</td></tr>
         <tr><td><code>CON-06</code></td><td>The system must run on existing hospital hardware and bandwidth, so no heavy client-side processing.</td></tr>
-        <tr><td><code>CON-07</code></td><td>AI features depend on an external service and an internet connection.</td></tr>
+        <tr><td><code>CON-07</code></td><td>AI features depend on an external service and an internet connection. Still true, and still handled by NFR-12: every feature degrades to a documented fallback message and no clinical action is ever blocked on a model response.</td></tr>
       </tbody>
     </table>
     <table>

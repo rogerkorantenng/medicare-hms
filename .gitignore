@@ -21,3 +21,6 @@ __pycache__/
 # editors
 .idea/
 .vscode/
+
+# deployment state — holds the database password
+deploy/aws/.state

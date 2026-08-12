@@ -4,9 +4,9 @@ A hospital management system for MediCare+ General Hospital: a staff workspace
 covering eight roles and a patient application, sharing one patient record
 rather than nine copies of it.
 
-Built with Next.js 14 and Supabase. This is version 2.0 — the migration of a
-working browser-storage prototype onto a real database, which is what makes it
-a system rather than a demonstration.
+Next.js on the front, FastAPI over PostgreSQL behind it. This is version 2.0 —
+the migration of a working browser-storage prototype onto a real database and a
+real API, which is what makes it a system rather than a demonstration.
 
 > All data in this system is synthetic. No real patient data appears anywhere.
 
@@ -20,126 +20,143 @@ as the system's honest weakness. This version closes both.
 
 | Concern | v1.0 | v2.0 |
 |---|---|---|
-| Storage | Browser, per device | PostgreSQL on Supabase |
-| Authorisation | Enforced in the interface | Enforced by row-level security in the database |
-| AI calls | From the browser, key exposed | Server-side route handlers, key never sent |
+| Storage | Browser, per device | PostgreSQL on Amazon RDS |
+| Authorisation | Enforced in the interface | Enforced by guards in the API, on every route |
+| Sessions | In memory | JWT issued by the API, in an httpOnly cookie |
+| Passwords | A hardcoded list | argon2id hashes in a `users` table |
+| AI calls | From the browser, key exposed | From the API, through an IAM role — no key exists |
 | Result release | Application convention | Database trigger on the verify transition |
-| Audit trail | Editable rows | Append-only, no update or delete policy for anyone |
+| Audit trail | Editable rows | Append-only: the API exposes no write route, and a test asserts it |
+| Security tests | 6, run by hand | 10, automated, run against the API and again through the browser surface |
 
-The test that matters: sign in as a cashier and query the consultations table
-directly. You get zero rows. Not a hidden tab — zero rows.
+The test that matters: sign in as a cashier and open a patient chart. You get
+demographics and invoices. Not a hidden tab — the clinical arrays come back
+empty, because a different query ran.
 
 ---
 
-## Running it
+## Running the whole thing locally
 
 ```bash
-npm install
-cp .env.local.example .env.local     # fill in your Supabase and Anthropic keys
-npm run dev
+docker compose up --build          # database, API and frontend
+docker compose run --rm seed       # schema, functions, accounts, seed data
 ```
 
-### Setting up the database
-
-Run these in order. Steps 1 and 2 come from the design handoff; 4 adds the
-operations the repository contract requires to be atomic.
+Then <http://localhost:3000>, and sign in with any of the nine role accounts.
+If those ports are taken:
 
 ```bash
-# 1. In the Supabase SQL editor, in this order:
-supabase/migrations/0001_schema.sql          # 16 tables, constraints, triggers
-supabase/migrations/0002_rls_policies.sql    # row-level security — the important one
-
-# 2. Create the auth accounts (needs SUPABASE_SERVICE_ROLE_KEY and DEMO_PASSWORD)
-node --env-file=.env.local scripts/create-users.mjs
-
-# 3. Back in the SQL editor:
-supabase/migrations/0003_seed.sql            # 28 patients, wards, inventory, open work
-supabase/migrations/0004_functions.sql       # sign_encounter, free_slots, discharge, payments
+API_PORT=8010 WEB_PORT=3010 docker compose up
 ```
 
-### Verifying the database before you trust it
+The database image matches the RDS engine version and the API image is the one
+App Runner runs, so nothing behaves differently between a laptop and AWS.
+
+### Or each part on its own
 
 ```bash
-./supabase/verify/run.sh
+cd backend  && cp .env.example .env       && uv run uvicorn app.main:app --reload
+cd frontend && cp .env.local.example .env.local && npm install && npm run dev
 ```
 
-This rebuilds a throwaway PostgreSQL database from the migration files and runs
-every acceptance block the handoff specifies:
+---
 
-- **Step 1** — all nine schema constraints must *reject*. Empty diagnosis,
-  double booking, one patient in two beds, skipping a laboratory stage,
-  verifying with no value, over-dispensing, a claim moving backwards,
-  implausible vitals, writing the generated invoice status.
-- **Step 2** — 20 row-level security checks across six roles.
-- **Step 3** — seed counts, and invoice totals actually synced by the trigger.
-- **Step 4** — `sign_encounter` is atomic, `free_slots` excludes bookings,
-  discharge writes its summary, payment names the MoMo provider in the audit.
+## Verifying it
 
-The checks run as the `authenticated` database role, never as the table owner
-or a superuser — either of those bypasses row-level security and would give a
-false pass.
+Four suites. All four pass; run them in this order.
 
-**This does not replace the real step 2 acceptance test.** That has to be run
-against Supabase signed in as each role through the client, because only
-Supabase Auth issues a real JWT. Do not use the service-role key for it.
+```bash
+cd backend && uv run pytest                 # 33 tests, under a second
+./scripts/verify-screens.sh                 # 29 screens load as their owning role
+./scripts/verify-e2e.sh                     # 37 checks through the browser surface
+```
 
-Four defects in the handoff SQL were found by running these checks. They are
-documented in [`supabase/DEVIATIONS.md`](supabase/DEVIATIONS.md) rather than
-changed quietly — three of them stopped the SQL executing at all.
+`backend/tests/test_authorisation.py` is the one to read first. Moving
+authorisation out of the database into the API was a deliberate decision, and
+its cost is that the database will now hand any row to whatever asks. These
+tests are what stands in for the guarantee row-level security used to give —
+they exercise the cases the Testing Report lists as TC-95 to TC-104. The file
+says so in its opening lines: **if one of these fails, it is a data leak, not a
+failing test.**
+
+`verify-screens.sh` exists because a server component that throws renders as a
+generic error page, which is easy to miss by clicking around. It found a real
+one: the patient booking screen asked for the staff directory, which is
+staff-only.
+
+Row-level security *was* built first, tested against a real PostgreSQL
+instance, and then replaced. Four defects in the original handoff SQL were
+found by that work and are documented in
+[`supabase/DEVIATIONS.md`](supabase/DEVIATIONS.md) rather than changed quietly.
+Three of them stopped the SQL executing at all.
 
 ---
 
 ## How it is put together
 
 ```
-app/
-  workspace/        staff, one directory per role
-  app/              the patient application
-  print/            prescription slip, receipt, discharge summary
-  api/ai/           six route handlers, each role-gated
-  actions.ts        server actions — every write goes through here
-lib/
-  repository/       the single boundary between UI and database
-    types.ts        the Repository interface
-    supabase.ts     the implementation
-    safety.ts       deterministic rules — never AI
-    index.ts        the construction point
-  supabase/         clients: server (session cookie), browser (anon key only)
-supabase/
-  migrations/       the SQL, in run order
-  verify/           the local acceptance harness
-  DEVIATIONS.md     what was wrong in the handoff, and why it changed
+backend/
+  app/
+    security/       THE authorisation boundary — roles, guards, tokens, deps
+    routers/        49 endpoints, each carrying a role guard
+    queries/        chart.py holds the three views: clinical, own, billing
+    safety.py       deterministic prescribing rules — never AI
+    prompts.py      the six system prompts, verbatim, in one file
+    ai.py           Bedrock and Anthropic behind one function that never raises
+  sql/              schema, functions, seed — plain PostgreSQL
+  scripts/seed.py   builds a database from nothing
+  tests/            33 tests
+frontend/
+  app/
+    workspace/      staff, one directory per role
+    app/            the patient application
+    print/          prescription slip, receipt, discharge summary
+    api/session/    sign-in and sign-out; puts the token in an httpOnly cookie
+    api/ai/[route]/ one proxy for all six AI features
+    actions.ts      server actions — every write goes through here
+  lib/
+    repository/     the single boundary between UI and API
+      types.ts      the Repository interface
+      http.ts       the implementation
+      index.ts      the construction point
+    api/client.ts   attaches the bearer token, server-side only
+    session.ts      who is asking
+deploy/aws/         five idempotent scripts that build the whole deployment
+scripts/            the two end-to-end verification suites
 ```
 
-### The repository is the only boundary
+### The repository is still the only boundary
 
-No screen imports Supabase. Screens import `repo` and nothing else, so
-swapping storage is one line in `lib/repository/index.ts` — which is exactly
-how the browser-storage version was replaced.
+No screen imports an HTTP client. Screens import `repo` and nothing else, so
+swapping storage is one line in `frontend/lib/repository/index.ts`. That same
+interface has now been satisfied three ways — browser storage, Supabase, and
+HTTP against FastAPI — and no screen changed for any of them.
 
-Every query runs through a server client built from the caller's session
-cookie, so every query carries that user's JWT and row-level security applies.
-The service-role key appears in exactly one file, `scripts/create-users.mjs`,
-which runs from a terminal and never on a request.
+### The authorisation boundary is one directory
+
+`backend/app/security/` decides everything. A route without a guard is a data
+leak rather than a bug, which is why `deps.py` says so in a comment and why the
+tests above exist. The role is re-read from the database on each request rather
+than trusted from the token.
 
 ### Some rules are deliberately not AI
 
 The prescription safety check and the triage acuity suggestion are ordinary
-code in `lib/repository/safety.ts`. A safety block has to be reproducible and
+code in `backend/app/safety.py`. A safety block has to be reproducible and
 explainable — the acuity panel lists the readings that drove its answer, not
 just the answer.
 
 A blocked prescription **cannot be forced through from the screen**. There is
-no override button, by design: a clinician who judges the drug necessary
-despite the conflict arranges it with the pharmacist directly.
+no override path, by design: a clinician who judges the drug necessary despite
+the conflict arranges it with the pharmacist directly.
 
 ### Where AI is used
 
-Six features, all server-side, all role-gated, all landing in an editable
-field that a human accepts or discards. Output renders in purple with a
-sparkle so a suggestion is never confusable with a recorded fact. If a call
-fails, the feature shows a plain message and the workflow continues manually —
-a clinical action is never blocked on an AI response.
+Six features, all in the API, all role-gated, all landing in an editable field
+that a human accepts or discards. Output renders in purple with a sparkle so a
+suggestion is never confusable with a recorded fact. If a call fails, the
+feature shows a plain message and the workflow continues manually — a clinical
+action is never blocked on an AI response.
 
 Autonomous clinical decision-making is excluded permanently, not pending.
 
@@ -147,20 +164,35 @@ Autonomous clinical decision-making is excluded permanently, not pending.
 
 ## Assets
 
-Fonts and icons are committed to `public/fonts` and served from this origin.
-Nothing is fetched from Google at build time or at run time. Two v1.0 defects
-were caused by unreachable external assets in the deployed build, which is why
-the design uses an icon font and initials tiles rather than photographs in the
-first place. Material Symbols is subsetted to the 70 icons actually used —
-60 KB rather than the full 3 MB.
+Fonts and icons are committed to `frontend/public/fonts` and served from this
+origin. Nothing is fetched from Google at build time or at run time. Two v1.0
+defects were caused by unreachable external assets in the deployed build, which
+is why the design uses an icon font and initials tiles rather than photographs
+in the first place. Material Symbols is subsetted to the 70 icons actually
+used — 60 KB rather than the full 3 MB.
+
+---
 
 ## Deploying
 
-See [`project/design_handoff_medicare_backend/deployment.md`](project/design_handoff_medicare_backend/deployment.md)
-for the full sequence, including the post-deployment checks to run against the
-deployed build rather than the development one.
+```bash
+./deploy/aws/01-database.sh   # network, security groups, RDS, secrets
+./deploy/aws/02-roles.sh      # the two App Runner roles
+./deploy/aws/02-image.sh      # build for linux/amd64, push to ECR
+./deploy/aws/03-seed.sh       # load the schema, then revoke its own access
+./deploy/aws/04-service.sh    # VPC connector, App Runner service, health check
+```
 
-Only the two `NEXT_PUBLIC_` values may reach the browser. The service-role key
-and the Anthropic key are server-side only, and the acceptance criterion for
-that step is that neither appears in any client request. Check the network tab
-before calling it done.
+Each is idempotent: re-running finds what exists rather than failing. The
+frontend deploys to Vercel from the repository with one environment variable,
+`API_URL`.
+
+Note what is *not* in that list: no key to paste anywhere. The database URL and
+the token signing key live in Secrets Manager and are read by App Runner at
+start-up; Bedrock is reached through the instance role. `API_URL` has no
+`NEXT_PUBLIC_` prefix because every call the browser makes is relative to the
+frontend, so the API's address never reaches the bundle.
+
+`03-seed.sh` opens the database to the machine running it, loads the schema,
+and then revokes that access and fails loudly if any address range remains.
+After it runs, nothing on the internet can reach port 5432.

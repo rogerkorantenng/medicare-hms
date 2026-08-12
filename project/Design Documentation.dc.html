@@ -69,6 +69,7 @@
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">2. System architecture</h2>
     <p style="margin:0 0 12px">Four layers. Dependencies point downward only: presentation depends on application logic, logic depends on the domain model, and the domain reaches storage through an interface it defines itself. Nothing lower depends on anything higher, so any layer can be replaced from below.</p>
+    <p style="margin:0 0 12px">In v2.0 the lower three layers moved out of the browser and into a FastAPI service, and the persistence layer became PostgreSQL. The diagram below is unchanged in shape because the change did not alter it: the same four layers, with a process boundary now drawn between presentation and application logic. §9.2 shows where each layer runs.</p>
 
     <figure>
       <svg class="dgm" viewBox="0 0 720 480" xmlns="http://www.w3.org/2000/svg">
@@ -122,16 +123,16 @@
         <text x="130" y="416" font-size="9.5" text-anchor="middle" font-weight="600" fill="#0D1B3E">Repository interface</text>
         <text x="130" y="431" font-size="8.5" text-anchor="middle" fill="#64748B">load, save, reset</text>
         <text x="130" y="445" font-size="8.5" text-anchor="middle" fill="#64748B">defined by the domain</text>
-        <rect x="246" y="396" width="200" height="56" rx="6" fill="#fff" stroke="#FDE68A" />
-        <text x="346" y="416" font-size="9.5" text-anchor="middle" font-weight="600" fill="#0D1B3E">Browser store adapter</text>
-        <text x="346" y="431" font-size="8.5" text-anchor="middle" fill="#64748B">v1.0 implementation</text>
-        <text x="346" y="445" font-size="8.5" text-anchor="middle" fill="#64748B">debounced write</text>
-        <rect x="462" y="396" width="228" height="56" rx="6" fill="#FFFDF5" stroke="#FDE68A" stroke-dasharray="4 3" />
-        <text x="576" y="416" font-size="9.5" text-anchor="middle" font-weight="600" fill="#92700A">Server API adapter</text>
-        <text x="576" y="431" font-size="8.5" text-anchor="middle" fill="#A98A2C">planned, v2.0</text>
-        <text x="576" y="445" font-size="8.5" text-anchor="middle" fill="#A98A2C">PostgreSQL behind REST</text>
+        <rect x="246" y="396" width="200" height="56" rx="6" fill="#FAFAFA" stroke="#E2E8F0" stroke-dasharray="4 3" />
+        <text x="346" y="416" font-size="9.5" text-anchor="middle" font-weight="600" fill="#94A3B8">Browser store adapter</text>
+        <text x="346" y="431" font-size="8.5" text-anchor="middle" fill="#A9B4C4">v1.0, retired</text>
+        <text x="346" y="445" font-size="8.5" text-anchor="middle" fill="#A9B4C4">debounced write</text>
+        <rect x="462" y="396" width="228" height="56" rx="6" fill="#fff" stroke="#B45309" stroke-width="1.4" />
+        <text x="576" y="416" font-size="9.5" text-anchor="middle" font-weight="600" fill="#0D1B3E">HTTP repository</text>
+        <text x="576" y="431" font-size="8.5" text-anchor="middle" fill="#64748B">v2.0, delivered</text>
+        <text x="576" y="445" font-size="8.5" text-anchor="middle" fill="#64748B">FastAPI over PostgreSQL</text>
       </svg>
-      <figcaption>Figure 1. Layered architecture. The dashed block is the planned server adapter. It satisfies the same repository interface, so no layer above it changes.</figcaption>
+      <figcaption>Figure 1. Layered architecture. The greyed block is the retired v1.0 adapter. Its replacement satisfies the same repository interface, which is why no layer above it changed when the storage did.</figcaption>
     </figure>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">2.1 Why layered and not microservices</h3>
@@ -632,44 +633,127 @@
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">9. Technology architecture</h2>
 
-    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.1 Stack as delivered in v1.0</h3>
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.1 Stack as delivered in v2.0</h3>
+    
     <table>
-      <thead><tr><th style="width:22%">Layer</th><th style="width:26%">Technology</th><th>Why</th></tr></thead>
+      <thead><tr><th style="width:20%">Layer</th><th style="width:28%">Technology</th><th>Why</th></tr></thead>
       <tbody>
-        <tr><td>Interface</td><td>HTML5, CSS3, component-based JavaScript</td><td>Runs on any hospital machine with no installation and no plugin.</td></tr>
-        <tr><td>Application logic</td><td>JavaScript classes with explicit state and lifecycle</td><td>Keeps rules in one place, testable independently of the screens.</td></tr>
-        <tr><td>Persistence</td><td>Browser storage behind a repository interface</td><td>Delivers working persistence within the project constraints and leaves a clean seam for a server.</td></tr>
-        <tr><td>AI services</td><td>Large language model over HTTPS</td><td>No model training or hosting needed; the hospital pays per use.</td></tr>
+        <tr><td>Interface</td><td>Next.js 14 (App Router), TypeScript, Tailwind CSS</td><td>Server components render clinical screens on the server, so a chart is assembled where the authorisation is rather than in the browser. Runs on any hospital machine with no installation.</td></tr>
+        <tr><td>Application logic</td><td>FastAPI on Python 3.12, Pydantic v2</td><td>Every rule that matters (role guards, the prescribing safety checks, charge capture) lives in one process the hospital can audit, restart and version independently of the interface.</td></tr>
+        <tr><td>Persistence</td><td>PostgreSQL 16 with asyncpg</td><td>Constraints, generated columns and triggers hold the invariants in §8.1 whatever calls the database. A record now follows the patient rather than the device.</td></tr>
+        <tr><td>Session</td><td>JSON Web Token issued by the API; argon2id password hashing</td><td>The token is signed by the one process that also decides what it permits. argon2id is the current password-hashing recommendation.</td></tr>
+        <tr><td>AI services</td><td>Amazon Bedrock, Claude Opus 4.6 through an EU inference profile</td><td>Reached through the compute role rather than an API key, so there is no long-lived AI credential to store or rotate. See §9.5.</td></tr>
         <tr><td>Printing</td><td>Browser print pipeline with print stylesheets</td><td>Works with any printer already on the hospital network.</td></tr>
-        <tr><td>Typography</td><td>Plus Jakarta Sans, Inter, JetBrains Mono</td><td>Screen legibility at small sizes; a monospaced face for clinical values so digits align.</td></tr>
+        <tr><td>Typography</td><td>Plus Jakarta Sans, Inter, JetBrains Mono, self-hosted</td><td>Screen legibility at small sizes, and a monospaced face for clinical values so digits align. Self-hosted, so no screen depends on a third party being reachable.</td></tr>
       </tbody>
     </table>
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.2 Deployment view</h3>
+
+    <figure>
+      <svg class="dgm" viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="d1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#94A3B8" /></marker></defs>
+
+        <rect x="14" y="12" width="200" height="54" rx="7" fill="#EEF3FB" stroke="#1D4ED8" stroke-width="1.4" />
+        <text x="114" y="34" font-size="9.5" text-anchor="middle" font-weight="700" fill="#1D4ED8">BROWSER</text>
+        <text x="114" y="52" font-size="8.5" text-anchor="middle" fill="#334155">workstation, tablet, phone</text>
+
+        <path d="M214 39 H300" stroke="#94A3B8" stroke-width="1.4" marker-end="url(#d1)" />
+        <text x="257" y="32" font-size="7.5" text-anchor="middle" fill="#64748B">HTTPS</text>
+        <text x="257" y="55" font-size="7.5" text-anchor="middle" fill="#64748B">session cookie</text>
+
+        <rect x="300" y="12" width="200" height="54" rx="7" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.4" />
+        <text x="400" y="30" font-size="9.5" text-anchor="middle" font-weight="700" fill="#7C3AED">WEB TIER</text>
+        <text x="400" y="45" font-size="8.5" text-anchor="middle" fill="#334155">Next.js 14 on Vercel</text>
+        <text x="400" y="58" font-size="7.5" text-anchor="middle" fill="#64748B">renders every screen</text>
+
+        <path d="M400 66 V104" stroke="#94A3B8" stroke-width="1.4" marker-end="url(#d1)" />
+        <text x="470" y="88" font-size="7.5" text-anchor="middle" fill="#64748B">Bearer token, HTTPS</text>
+
+        <rect x="180" y="104" width="510" height="204" rx="9" fill="#FCFCFD" stroke="#CBD5E1" stroke-dasharray="5 4" />
+        <text x="196" y="122" font-size="8" font-weight="700" fill="#94A3B8">AWS eu-west-1</text>
+
+        <rect x="300" y="132" width="200" height="56" rx="7" fill="#F0FDF9" stroke="#059669" stroke-width="1.4" />
+        <text x="400" y="150" font-size="9.5" text-anchor="middle" font-weight="700" fill="#059669">APPLICATION TIER</text>
+        <text x="400" y="165" font-size="8.5" text-anchor="middle" fill="#334155">FastAPI on App Runner</text>
+        <text x="400" y="178" font-size="7.5" text-anchor="middle" fill="#64748B">every role guard lives here</text>
+
+        <path d="M400 188 V226" stroke="#94A3B8" stroke-width="1.4" marker-end="url(#d1)" />
+        <text x="466" y="210" font-size="7.5" text-anchor="middle" fill="#64748B">VPC connector, 5432</text>
+
+        <rect x="300" y="226" width="200" height="56" rx="7" fill="#FFFBEB" stroke="#B45309" stroke-width="1.4" />
+        <text x="400" y="244" font-size="9.5" text-anchor="middle" font-weight="700" fill="#B45309">DATA TIER</text>
+        <text x="400" y="259" font-size="8.5" text-anchor="middle" fill="#334155">RDS for PostgreSQL 16</text>
+        <text x="400" y="272" font-size="7.5" text-anchor="middle" fill="#64748B">no public ingress</text>
+
+        <path d="M500 160 H570" stroke="#94A3B8" stroke-width="1.4" marker-end="url(#d1)" />
+        <text x="535" y="153" font-size="7.5" text-anchor="middle" fill="#64748B">instance role</text>
+
+        <rect x="570" y="132" width="106" height="56" rx="7" fill="#FDF2F8" stroke="#BE185D" stroke-width="1.4" />
+        <text x="623" y="152" font-size="9" text-anchor="middle" font-weight="700" fill="#BE185D">BEDROCK</text>
+        <text x="623" y="167" font-size="7.5" text-anchor="middle" fill="#334155">Claude Opus 4.6</text>
+        <text x="623" y="179" font-size="7.5" text-anchor="middle" fill="#64748B">no API key</text>
+
+        <rect x="196" y="226" width="90" height="56" rx="7" fill="#fff" stroke="#CBD5E1" />
+        <text x="241" y="248" font-size="8" text-anchor="middle" font-weight="600" fill="#0D1B3E">Secrets</text>
+        <text x="241" y="262" font-size="7.5" text-anchor="middle" fill="#64748B">Manager</text>
+        <text x="241" y="274" font-size="7.5" text-anchor="middle" fill="#64748B">2 secrets</text>
+        <path d="M296 254 H300" stroke="#94A3B8" stroke-width="1.2" />
+        <path d="M241 226 V196 H300" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#d1)" />
+      </svg>
+      <figcaption>Figure 12. Deployment topology. Arrows are the only paths that exist:
+      the browser reaches the web tier and nothing else, the web tier reaches the API and
+      nothing else, and the database accepts connections from the VPC connector and nothing
+      else.</figcaption>
+    </figure>
+    
     <table>
-      <thead><tr><th style="width:22%">Node</th><th>Contents</th></tr></thead>
+      <thead><tr><th style="width:26%">Node</th><th>Contents</th></tr></thead>
       <tbody>
-        <tr><td>Staff workstation or tablet</td><td>Browser running the staff workspace. Reaches the application over the hospital network.</td></tr>
+        <tr><td>Staff workstation or tablet</td><td>Browser running the staff workspace over HTTPS. Holds no patient data and no credential beyond a session cookie it cannot read.</td></tr>
         <tr><td>Patient phone</td><td>Browser running the patient application over mobile data or Wi-Fi.</td></tr>
-        <tr><td>Static hosting platform</td><td>Serves both applications over HTTPS. Version 1.0 is deployed to a platform with automatic builds from the source repository.</td></tr>
-        <tr><td>AI endpoint</td><td>Third-party service reached over HTTPS from the client.</td></tr>
-        <tr><td>Planned database node</td><td>Managed PostgreSQL instance with row-level security, introduced in v2.0 per §9.3.</td></tr>
+        <tr><td>Web tier: Vercel</td><td>The Next.js application. Renders every screen, attaches the session token to its calls, and is the only origin the browser talks to.</td></tr>
+        <tr><td>Application tier: AWS App Runner</td><td>The FastAPI service, from a container image in Elastic Container Registry. Publicly addressable for the web tier; its own egress runs through a VPC connector.</td></tr>
+        <tr><td>Data tier: Amazon RDS for PostgreSQL</td><td>The database. Its security group admits the App Runner connector and nothing else, so no address range on the internet can reach port 5432.</td></tr>
+        <tr><td>AI endpoint: Amazon Bedrock</td><td>Reached from the application tier only, over the AWS network, authorised by the App Runner instance role.</td></tr>
       </tbody>
     </table>
 
-    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.3 Planned migration to a server database</h3>
-    <p style="margin:0 0 8px">Version 1.0 persists to browser storage, which means a record does not follow a patient between devices. This is a known limitation, declared in the SRS as <code>CON-05</code>. The design anticipates the fix rather than needing rework for it.</p>
+    <p style="margin:0 0 8px">The browser reaches exactly one origin. It never holds a database credential, an AI key, or even the address of the API. Every call it makes is relative to the web tier, which forwards it.</p>
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.3 The migration, as carried out</h3>
+    <p style="margin:0 0 8px">Version 1.0 persisted to browser storage, so a record did not follow a patient between devices. The SRS declared this as <code>CON-05</code>. The five steps below are the plan the previous revision of this document set out, with what was actually done against each.</p>
+    
     <table>
-      <thead><tr><th style="width:10%">Step</th><th>Work</th></tr></thead>
+      <thead><tr><th style="width:7%">Step</th><th style="width:41%">Planned</th><th>Delivered</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td>Create the schema in figure 9 as PostgreSQL tables with the constraints listed in §8.1.</td></tr>
-        <tr><td>2</td><td>Move staff accounts to a managed authentication service; map <code>RoleEnum</code> onto row-level security policies so authorisation is enforced by the database, not only the interface.</td></tr>
-        <tr><td>3</td><td>Write a second adapter satisfying the same repository interface, calling REST endpoints instead of browser storage.</td></tr>
-        <tr><td>4</td><td>Switch the adapter at the single point where it is constructed. No screen, no domain class and no application component changes.</td></tr>
-        <tr><td>5</td><td>Move the AI calls behind a server route so the API key is never exposed to the client.</td></tr>
+        <tr><td>1</td><td>Create the schema in figure 9 as PostgreSQL tables with the constraints listed in §8.1.</td><td>As specified. Sixteen tables, with the double-booking index, the one-patient-per-bed index, the forward-only order triggers and the generated invoice status.</td></tr>
+        <tr><td>2</td><td>Move staff accounts to a managed authentication service; map <code>RoleEnum</code> onto row-level security policies so authorisation is enforced by the database rather than only the interface.</td><td><strong>Changed.</strong> Accounts are rows in a <code>users</code> table with argon2id hashes, and authorisation is enforced by guards on API routes rather than by database policies. §9.4 gives the reasoning, and says what carries the guarantee instead.</td></tr>
+        <tr><td>3</td><td>Write a second adapter satisfying the same repository interface, calling REST endpoints instead of browser storage.</td><td>As specified. <code>HttpRepository</code> satisfies the same interface over HTTP.</td></tr>
+        <tr><td>4</td><td>Switch the adapter at the single point where it is constructed.</td><td>As specified, and the claim held: one line changed, and no screen, domain class or application component changed with it.</td></tr>
+        <tr><td>5</td><td>Move the AI calls behind a server route so the API key is never exposed to the client.</td><td>Done, and then taken further: there is no API key at all. The six prompts and the model call live in the application tier, which reaches Bedrock through its instance role.</td></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px">The reason this is a swap and not a rewrite is the dependency direction in figure 1. The repository interface belongs to the domain, so the domain does not know or care which adapter satisfies it.</p>
+
+    <p style="margin:0 0 8px">The reason step 4 was a swap and not a rewrite is the dependency direction in figure 1. The repository interface belongs to the domain, so the domain neither knows nor cares which adapter satisfies it. That interface has now been satisfied three different ways without a screen changing.</p>
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.4 Where authorisation lives, and why it moved</h3>
+    <p style="margin:0 0 8px">The previous revision planned to enforce authorisation with PostgreSQL row-level security. That plan was implemented, tested against a real database, and then deliberately replaced. Both approaches were built, so the comparison below is between two things that worked rather than between one that worked and one that was imagined.</p>
+    
+    <table>
+      <thead><tr><th style="width:22%">Consideration</th><th style="width:39%">Row-level security</th><th>Guards in the application tier</th></tr></thead>
+      <tbody>
+        <tr><td>Enforcement point</td><td>The database. A query that should return nothing returns nothing, whatever issued it.</td><td>A dependency on every route. A route without one is a data leak rather than a bug.</td></tr>
+        <tr><td>Reach</td><td>Only clients connecting as the end user. A service connecting as one database user gets no protection from it at all.</td><td>Every caller, because every caller arrives through the API.</td></tr>
+        <tr><td>Legibility</td><td>Policies in SQL, one per table per operation, whose interaction is hard to read whole.</td><td>Role sets in one module, named on each route beside the handler they govern.</td></tr>
+        <tr><td>Failure mode met in practice</td><td>Policy helper functions recursed without bound during query <em>planning</em> rather than execution, so every query failed with <code>stack depth limit exceeded</code>. Two further defects left a trigger silently unable to fire.</td><td>A missing guard is invisible until something tests for it, which is why the test suite named below is part of the design rather than an afterthought.</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin:0 0 8px">The decision follows the architecture rather than the other way round. Once the clients are a server-rendered web tier and, in future, an integration or a native application, they all arrive through one API, and an authorisation model that protects only direct database connections then protects nothing that actually exists. The API became the single door, so the lock went on the door.</p>
+    <p style="margin:0 0 8px">What carries the guarantee is <code>tests/test_authorisation.py</code>, which exercises the cases the Testing Report lists as TC-95 to TC-99 against the API. Its header states the standard plainly: if one of those tests fails, it is a data leak, not a failing test. The database keeps every constraint, trigger and state machine it had those protect the integrity of the record, which is a different job from deciding who may read it.</p>
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">9.5 The AI credential that does not exist</h3>
+    <p style="margin:0 0 8px">In v1.0 the model was called from the browser with a key the browser could read. The plan was to move that call server-side so the key stayed on the server. What was built removes the key entirely: the App Runner instance role carries <code>bedrock:InvokeModel</code> scoped to one inference profile, and the AWS SDK obtains short-lived credentials from the instance metadata service at call time.</p>
+    <p style="margin:0 0 8px">The practical difference is that there is no secret to leak from this system, no rotation schedule to keep, and nothing to revoke if the repository were ever made public. Withdrawing this system's access to the model is a change to one IAM policy.</p>
+    <p style="margin:0 0 8px">Every AI feature returns nothing on any failure, and the caller shows its documented fallback message. A clinical action is never blocked on a model response; and the safety rules that block a contraindicated prescription are deterministic code rather than a model, so they give the same answer every time and can be reproduced by hand.</p>
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #1D4ED8;padding-bottom:5px">10. User interface design</h2>
 

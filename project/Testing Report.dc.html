@@ -71,12 +71,12 @@
         <tr><td>Functional</td><td>16</td><td>16</td><td>0</td><td>Requirement-by-requirement confirmation.</td></tr>
         <tr><td>Usability</td><td>8</td><td>8</td><td>0</td><td>Five participants, timed task completion.</td></tr>
         <tr><td>Performance</td><td>6</td><td>6</td><td>0</td><td>Render and search timing against the NFR targets.</td></tr>
-        <tr><td>Security</td><td>6</td><td>6</td><td>0</td><td>Access control and session handling.</td></tr>
+        <tr><td>Security</td><td>10</td><td>10</td><td>0</td><td>Access control, session handling and network exposure. Automated in v2.0.</td></tr>
         <tr><td>User acceptance</td><td>10</td><td>10</td><td>0</td><td>Signed off by role representatives.</td></tr>
-        <tr><th>Total</th><th>110</th><th>110</th><th>0</th><th>All passing after 14 defects were fixed and retested.</th></tr>
+        <tr><th>Total</th><th>114</th><th>114</th><th>0</th><th>All passing. 20 defects found across both versions, all closed.</th></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px">Fourteen defects were found during testing and all fourteen are closed. Six were functional, four were interface, three were platform or asset-loading, and one was a data defect. Details and resolutions are in §9.</p>
+    <p style="margin:0 0 10px">Twenty defects were found and all twenty are closed. Fourteen came from testing v1.0: six functional, four interface, three platform or asset-loading, and one data defect. Six more came from the v2.0 migration, four of them found by running the new database code against a real PostgreSQL instance before any of it was deployed. Details and resolutions are in §9.</p>
 
     <figure>
       <svg class="dgm" viewBox="0 0 720 210" xmlns="http://www.w3.org/2000/svg">
@@ -111,7 +111,7 @@
         <tr><td>Functional</td><td>Requirement checklist walked one line at a time.</td><td>Exit when every SRS requirement is confirmed present and correct.</td></tr>
         <tr><td>Usability</td><td>Task-based observation, five participants, think-aloud protocol.</td><td>Enter when the interface is feature complete. Exit when every task is completed unaided inside the target time.</td></tr>
         <tr><td>Performance</td><td>Browser timing instrumentation on the ten most-used screens.</td><td>Exit when NFR-01 and NFR-02 targets are met.</td></tr>
-        <tr><td>Security</td><td>Attempted unauthorised access by direct navigation and by role switching.</td><td>Exit when no clinical or financial screen is reachable without the right role.</td></tr>
+        <tr><td>Security</td><td>Automated. Every case is asserted against the API with each role's token, and again through the browser-facing surface over cookies.</td><td>Exit when no clinical or financial data is reachable without the right role, and when the suites pass in the build.</td></tr>
         <tr><td>Acceptance</td><td>Role representatives run their own daily work and sign off.</td><td>Exit when every representative signs.</td></tr>
       </tbody>
     </table>
@@ -276,15 +276,32 @@
         <tr><td><code>TC-92</code></td><td>Search projected to 5,000 records</td><td>Under 300 ms</td><td>210 ms, extrapolated from a seeded 5,000-record run</td><td>NFR-02</td><td>Pass</td></tr>
         <tr><td><code>TC-93</code></td><td>Mobile home on throttled 3G</td><td>Under 4 s</td><td>2.8 s</td><td>NFR-01</td><td>Pass</td></tr>
         <tr><td><code>TC-94</code></td><td>Action confirmation feedback</td><td>Under 1 s</td><td>Immediate, under 100 ms</td><td>NFR-04</td><td>Pass</td></tr>
-        <tr><td><code>TC-95</code></td><td>Unauthenticated access attempt</td><td>Blocked</td><td>Login screen enforced, no clinical screen reachable</td><td>NFR-06</td><td>Pass</td></tr>
-        <tr><td><code>TC-96</code></td><td>Cashier attempts chart access</td><td>Blocked</td><td>Restriction notice shown, no data rendered</td><td>NFR-07, FR-03</td><td>Pass</td></tr>
-        <tr><td><code>TC-97</code></td><td>Receptionist attempts clinical tabs</td><td>Blocked</td><td>Same restriction, billing remains available</td><td>NFR-07</td><td>Pass</td></tr>
-        <tr><td><code>TC-98</code></td><td>Password exposure check</td><td>Never in plain text</td><td>Masked by default, absent from console output</td><td>NFR-08</td><td>Pass</td></tr>
-        <tr><td><code>TC-99</code></td><td>Patient sees only own record</td><td>Own record only</td><td>No other patient reachable from the mobile application</td><td>NFR-09</td><td>Pass</td></tr>
-        <tr><td><code>TC-100</code></td><td>Audit completeness</td><td>Every write logged</td><td>Twenty sampled actions, all twenty logged with actor and time</td><td>NFR-10</td><td>Pass</td></tr>
+        <tr><td><code>TC-95</code></td><td>Unauthenticated request to a clinical endpoint</td><td>401, no data</td><td>401 from every endpoint tried. The screens redirect to sign-in, but the test asserts against the API, because a redirect is a courtesy and the 401 is the control</td><td>NFR-06</td><td>Pass</td></tr>
+        <tr><td><code>TC-96</code></td><td>Cashier requests a patient chart</td><td>Billing only</td><td>200 with demographics and invoices; the six clinical arrays are empty. Verified twice over: once in the API tests, once by loading the same chart screen as a doctor and as a cashier and comparing the rendered HTML</td><td>NFR-07, FR-03</td><td>Pass</td></tr>
+        <tr><td><code>TC-97</code></td><td>Receptionist requests the same chart</td><td>Billing only</td><td>Same result as TC-96. The two roles are parametrised in one test so they cannot drift apart</td><td>NFR-07</td><td>Pass</td></tr>
+        <tr><td><code>TC-98</code></td><td>Credential and token exposure</td><td>Neither reaches the browser</td><td>Passwords masked and absent from logs; stored as argon2id hashes. The session token is set in an httpOnly cookie and is absent from the sign-in response body, so no script on any page can read it</td><td>NFR-08</td><td>Pass</td></tr>
+        <tr><td><code>TC-99</code></td><td>Patient requests another patient's record</td><td>403</td><td>403 on the chart endpoint; own record returns 200. Searching for the other MRN returns an empty list rather than a refusal, which reveals less: not even that the record exists</td><td>NFR-09</td><td>Pass</td></tr>
+        <tr><td><code>TC-100</code></td><td>Audit completeness and immutability</td><td>Every write logged, none editable</td><td>Sampled actions all logged with actor, action, target and time. A test asserts the API exposes no POST, PUT, PATCH or DELETE on the audit resource, so the log cannot be edited by any account including the administrator</td><td>NFR-10</td><td>Pass</td></tr>
+        <tr><td><code>TC-101</code></td><td>Cross-role actions, eight pairs</td><td>403 each</td><td>All eight refused: a nurse signing an encounter, a cashier signing an encounter, a doctor reading the audit log, a cashier reading the triage queue, a patient reading pharmacy stock, a patient reading invoices, a receptionist dispensing, a nurse taking payment</td><td>NFR-07</td><td>Pass</td></tr>
+        <tr><td><code>TC-102</code></td><td>Unverified laboratory result reaches the patient</td><td>Never</td><td>Every result on the patient's own chart carries verified status. Enforced twice: the release trigger in the database, and the chart query that assembles the patient view</td><td>NFR-09, FR-31</td><td>Pass</td></tr>
+        <tr><td><code>TC-103</code></td><td>Patient booking without the staff directory</td><td>Doctors only</td><td>The staff directory returns 403 to a patient; the bookable-doctors endpoint returns doctors on duty and four columns, with no staff numbers and no roles</td><td>NFR-07</td><td>Pass</td></tr>
+        <tr><td><code>TC-104</code></td><td>Database reachable from the internet</td><td>No route</td><td>The security group holds no address-range rule; the only permitted source is the App Runner VPC connector. Asserted by the deployment script, which fails if any range remains</td><td>NFR-06</td><td>Pass</td></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px">A limitation should be stated plainly. Version 1.0 enforces authorisation in the application layer. Until the server database in the migration plan is in place, a determined technical user with browser tools could inspect stored data on their own machine. This is recorded as a known limitation, and the fix is step 2 of the migration plan: row-level security policies in PostgreSQL so authorisation is enforced by the database rather than the interface.</p>
+    <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">8.1 How these cases are now run</h3>
+    <p style="margin:0 0 10px">In v1.0 the ten security cases above were checked by hand, through the interface. That was the honest weakness this report named: the controls worked as tested, but they were enforced by code the client ran, and a manual pass proves only that nobody clicked the wrong thing on the day.</p>
+    <p style="margin:0 0 10px">They are now automated, and they run against two different surfaces so that neither can quietly stop protecting anything.</p>
+    <table>
+      <thead><tr><th style="width:26%">Suite</th><th style="width:12%">Cases</th><th>What it proves</th></tr></thead>
+      <tbody>
+        <tr><td><code>tests/test_authorisation.py</code></td><td>19</td><td>The API refuses what it should, called directly with each role's token. This is the suite that replaced row-level security, and its header states the standard: if one of these fails, it is a data leak, not a failing test.</td></tr>
+        <tr><td><code>tests/test_journey.py</code> and the rest</td><td>14</td><td>The clinical workflow end to end, plus the deterministic safety rules and the state machines. 33 tests in total, running in under a second.</td></tr>
+        <tr><td><code>scripts/verify-e2e.sh</code></td><td>37</td><td>The same guarantees through the browser-facing surface: cookies, redirects, sign-in for all nine roles, and TC-96 and TC-99 asserted against rendered HTML rather than against JSON.</td></tr>
+        <tr><td><code>scripts/verify-screens.sh</code></td><td>29</td><td>Every screen loads as the role that owns it. A server component that throws renders as a generic error page, which is easy to miss by clicking around; this is the check that none is broken.</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:0 0 10px">Two defects were found by these suites during the migration rather than by a reader, which is the point of writing them. The patient booking screen returned a server error because it asked for the staff directory, which is staff-only; it now asks for bookable doctors instead, and TC-103 pins that. Separately, the first version of the TC-96 assertion was wrong rather than the code: it searched the chart the cashier sees for a test name, but &quot;Lipid Panel&quot; is also the description of a billed line, so a cashier seeing that string is correct. The assertion now uses a result value and a drug name, neither of which reaches the cashier. The first is recorded as D-20.</p>
+    <p style="margin:0 0 10px"><strong>What is still not claimed.</strong> These suites prove the controls this team thought to test. They are not a penetration test, and no independent security review has been carried out. The system holds synthetic data only.</p>
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #047857;padding-bottom:5px">9. Defect log</h2>
     <p style="margin:0 0 10px">Every defect found, its severity, cause and resolution. Severity is graded as critical if it could cause patient harm or data loss, major if it blocks a workflow, minor if it is cosmetic or an inconvenience.</p>
@@ -305,6 +322,12 @@
         <tr><td><code>D-12</code></td><td>Minor</td><td>Nurses looked for the acuity suggestion above the vitals form</td><td>Panel placed after the action buttons rather than beside the inputs</td><td>Moved the suggestion directly under the vitals inputs. Confirmed in a repeat usability session</td><td>Closed</td></tr>
         <tr><td><code>D-13</code></td><td>Minor</td><td>Receipt printing required leaving the invoice list</td><td>Print was only reachable from a separate screen</td><td>Added a print control to each invoice row. Retested under TC-75</td><td>Closed</td></tr>
         <tr><td><code>D-14</code></td><td>Major</td><td>Refreshing the browser lost all work performed in the session</td><td>State was held only in memory with no persistence</td><td>Added a debounced persistence layer behind the repository interface. Retested under TC-61 and TC-62</td><td>Closed</td></tr>
+        <tr><td><code>D-15</code></td><td>Critical</td><td>Every query against the migrated database failed with <code>stack depth limit exceeded</code></td><td>The row-level security helper functions were plain SQL, so PostgreSQL inlined them. Planning one policy applied another policy, which called the same helper, without bound. The recursion was in planning rather than execution, so a fallback value could not stop it</td><td>Declared the helpers <code>security definer</code> with a pinned search path. Found before deployment, by running the schema against a real instance</td><td>Closed</td></tr>
+        <tr><td><code>D-16</code></td><td>Critical</td><td>Verifying a laboratory result silently failed to notify anyone</td><td>The release trigger inserted into <code>notifications</code>, a table with row-level security enabled and no insert policy for any role. The insert was refused and the transaction rolled back</td><td>Declared the trigger function <code>security definer</code>. This defect is the reason TC-102 now asserts release rather than assuming it</td><td>Closed</td></tr>
+        <tr><td><code>D-17</code></td><td>Major</td><td>The seed data would not load: roster doctors violated a foreign key</td><td>Seed rows generated fresh identifiers for doctors, but the staff table requires each to correspond to an account</td><td>Resolved in favour of the schema, which is what the entity model describes. Roster doctors are created as accounts that cannot be signed in to</td><td>Closed</td></tr>
+        <tr><td><code>D-18</code></td><td>Major</td><td>Schema load rejected with &quot;multidimensional arrays must have array expressions with matching dimensions&quot;</td><td>A seeded array column mixed empty and single-element rows, which PostgreSQL reads as a ragged multidimensional array</td><td>Flattened to a fixed width with an empty sentinel</td><td>Closed</td></tr>
+        <tr><td><code>D-19</code></td><td>Major</td><td>Booking an appointment returned a server error for every valid time</td><td>The driver inferred a time parameter from the cast, so the cast applied after binding and a plain string such as 09:30 was rejected</td><td>The value is parsed into a time before binding. Retested under TC-14</td><td>Closed</td></tr>
+        <tr><td><code>D-20</code></td><td>Major</td><td>The patient booking screen returned a server error</td><td>It requested the staff directory, which is restricted to staff, so the request was correctly refused and the screen had nothing to render</td><td>Added an endpoint returning bookable doctors and four columns. Found by <code>verify-screens.sh</code> rather than by a reader. Pinned by TC-103</td><td>Closed</td></tr>
       </tbody>
     </table>
 

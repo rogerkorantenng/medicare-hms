@@ -179,7 +179,7 @@
     <p style="margin:0 0 10px">The class model is composed from Patient, which owns its clinical history. Order lifecycles are modelled as forward-only state machines, so a laboratory sample cannot jump from ordered to verified without passing through collection and processing. That constraint exists because the record must be honest about where a sample actually is.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">10. Architecture</h2>
-    <p style="margin:0 0 12px">Four layers with dependencies pointing downward only. The persistence interface is owned by the domain, so the storage implementation can be replaced without touching any layer above it. That property is what makes the database migration in §21 a swap rather than a rewrite.</p>
+    <p style="margin:0 0 12px">Four layers with dependencies pointing downward only. The persistence interface is owned by the domain, so the storage implementation can be replaced without touching any layer above it. That property is what made the database migration a swap rather than a rewrite, and §13.3 reports how it held in practice.</p>
     <figure>
       <svg class="dgm" viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg">
         <defs><marker id="m1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#94A3B8" /></marker></defs>
@@ -197,9 +197,9 @@
         <path d="M360 190 V206" stroke="#94A3B8" stroke-width="1.4" marker-end="url(#m1)" />
         <rect x="14" y="210" width="692" height="34" rx="7" fill="#FFFBEB" stroke="#B45309" stroke-width="1.4" />
         <text x="28" y="230" font-size="9.5" font-weight="700" fill="#B45309">PERSISTENCE</text>
-        <text x="150" y="230" font-size="8.5" fill="#334155">Repository interface owned by the domain. Browser adapter today, PostgreSQL adapter in v2.0.</text>
+        <text x="150" y="230" font-size="8.5" fill="#334155">Repository interface owned by the domain. Satisfied by an HTTP adapter over FastAPI and PostgreSQL.</text>
       </svg>
-      <figcaption>Figure 1. Architecture in summary. The full figure set is in the design document.</figcaption>
+      <figcaption>Figure 1. Architecture in summary. In v2.0 the lower three layers run in a FastAPI service rather than the browser; the layering itself is unchanged. The full figure set, including the deployment topology, is in the design document.</figcaption>
     </figure>
     <p style="margin:0 0 10px">We chose a layered design over microservices deliberately. Signing a consultation stages a laboratory order, a prescription and an invoice line in one action. Splitting that across services would require distributed transactions for an ordinary clinical event, and would produce a deployment a hospital IT office could not reasonably run. The module boundaries are drawn so a service split remains possible if patient volume ever demands it.</p>
 
@@ -222,14 +222,15 @@
 
     <h3 style="margin:14px 0 5px;font-size:12pt;font-weight:700">13.1 Technology and rationale</h3>
     <table>
-      <thead><tr><th style="width:20%">Layer</th><th style="width:26%">Technology</th><th>Why this choice</th></tr></thead>
+      <thead><tr><th style="width:18%">Layer</th><th style="width:30%">Technology</th><th>Why this choice</th></tr></thead>
       <tbody>
-        <tr><td>Interface</td><td>HTML5, CSS3, component-based JavaScript</td><td>Runs on existing hospital machines with no installation and no plugin. IT can deploy without touching a workstation.</td></tr>
-        <tr><td>Application logic</td><td>JavaScript classes with explicit state and lifecycle</td><td>Rules stay in one place and are testable independently of the screens.</td></tr>
-        <tr><td>Persistence</td><td>Browser storage behind a repository interface</td><td>Delivers working persistence within the project's constraints and leaves a clean seam for a server. See §20 and §21.</td></tr>
-        <tr><td>AI services</td><td>Large language model over HTTPS</td><td>No model training or hosting. The hospital pays per use rather than for infrastructure.</td></tr>
+        <tr><td>Interface</td><td>Next.js 14 (App Router), TypeScript, Tailwind CSS</td><td>Runs on existing hospital machines with no installation and no plugin. Screens render on the server, so a chart is assembled where the authorisation is rather than in the browser.</td></tr>
+        <tr><td>Application logic</td><td>FastAPI on Python 3.12, Pydantic v2</td><td>Rules stay in one place, testable independently of the screens, and now in one process the hospital can audit and version on its own.</td></tr>
+        <tr><td>Persistence</td><td>PostgreSQL 16 on Amazon RDS, behind the same repository interface</td><td>A record follows the patient rather than the device. Constraints and triggers hold the clinical invariants whatever calls the database.</td></tr>
+        <tr><td>Session</td><td>JSON Web Token issued by the API, argon2id password hashing, httpOnly cookie</td><td>The token is signed by the process that also decides what it permits, and no script on any page can read it.</td></tr>
+        <tr><td>AI services</td><td>Amazon Bedrock, Claude Opus 4.6</td><td>No model training or hosting; the hospital pays per use. Reached through the compute role, so there is no API key anywhere in the system.</td></tr>
         <tr><td>Printing</td><td>Browser print pipeline with print stylesheets</td><td>Works with any printer already on the hospital network.</td></tr>
-        <tr><td>Typography</td><td>Plus Jakarta Sans, Inter, JetBrains Mono</td><td>Legibility at small sizes, with a monospaced face for clinical values.</td></tr>
+        <tr><td>Typography</td><td>Plus Jakarta Sans, Inter, JetBrains Mono, self-hosted</td><td>Legibility at small sizes, with a monospaced face for clinical values. Self-hosted, so no screen depends on a third party being reachable.</td></tr>
       </tbody>
     </table>
 
@@ -318,22 +319,29 @@
     <p style="margin:0 0 10px">Two lessons are recorded honestly in the report. We tested persistence late, which is why refreshing the browser lost a session's work until it was fixed. And we assumed external resources would be reachable in the deployed environment, which produced two defects that only appeared after deployment. Testing the deployed build from the start, not just the development build, would have caught both.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">15. Deployment</h2>
+    <p style="margin:0 0 10px">Three tiers, deployed separately, each replaceable without redeploying the others. Figure 12 of the design document shows the topology; the table below is what an examiner needs in order to reach it.</p>
     <table>
-      <thead><tr><th style="width:26%">Item</th><th>Detail</th></tr></thead>
+      <thead><tr><th style="width:24%">Item</th><th>Detail</th></tr></thead>
       <tbody>
-        <tr><td>Hosting</td><td>Static hosting platform with automatic builds from the source repository. Every push to the main branch produces a deployment.</td></tr>
-        <tr><td>Transport</td><td>HTTPS only, certificate managed by the platform.</td></tr>
+        <tr><td>Web tier</td><td>Next.js on Vercel, built from the source repository. Every push to the main branch produces a deployment.</td></tr>
+        <tr><td>Application tier</td><td>FastAPI on AWS App Runner in eu-west-1, from a container image in Elastic Container Registry. The image is the one the local stack runs, so what was tested is what deploys.</td></tr>
+        <tr><td>Data tier</td><td>Amazon RDS for PostgreSQL 16, encrypted at rest, seven-day automated backups, deletion protection on. Not reachable from the internet: the security group admits the App Runner VPC connector and nothing else.</td></tr>
+        <tr><td>Region</td><td>eu-west-1. The region follows the AI model rather than the other way round, because the system uses an EU Bedrock inference profile and that profile is not offered elsewhere.</td></tr>
+        <tr><td>Transport</td><td>HTTPS only, certificates managed by the platforms. No mixed content.</td></tr>
+        <tr><td>Configuration</td><td>Environment variables. The two secret values, the database URL and the token signing key, are held in AWS Secrets Manager and read by App Runner at start-up, so neither appears in the service configuration, in the console, or in this repository. There is no third secret.</td></tr>
         <tr><td>Live application URL</td><td>See Links.txt</td></tr>
-        <tr><td>Administrator URL</td><td>Same address; the administrator workspace is reached by signing in with the administrator role. See Links.txt.</td></tr>
+        <tr><td>API URL</td><td>See Links.txt. <code>/health</code> answers without authentication; <code>/docs</code> lists all forty-nine endpoints.</td></tr>
+        <tr><td>Administrator URL</td><td>Same address as the application; the administrator workspace is reached by signing in with the administrator role. See Links.txt.</td></tr>
         <tr><td>Test-user credentials</td><td>See Links.txt. One account per role is provided so the examiner can inspect every workspace.</td></tr>
-        <tr><td>Administrator credentials</td><td>See Links.txt</td></tr>
         <tr><td>Source-code repository</td><td>See Links.txt</td></tr>
         <tr><td>Credential handling</td><td>No password or key is committed to the repository. Credentials are supplied to the examiner in Links.txt within the submission package only.</td></tr>
         <tr><td>Seed data</td><td>The deployment loads with 28 synthetic patients, nine staff accounts, six wards, and open orders, invoices and claims, so every screen has content on first visit.</td></tr>
-        <tr><td>Reset</td><td>A reset control on the login screen restores the seeded baseline, so an examiner can start clean at any point.</td></tr>
+        <tr><td>Reset</td><td>Re-running the seed script with <code>--reset</code> restores the baseline. The v1.0 reset control on the login screen is gone: with a shared database, one examiner resetting would clear the work of another mid-session.</td></tr>
+        <tr><td>Reproducing the deployment</td><td>Four scripts in <code>deploy/aws/</code>, run in order, each idempotent. They create the network, the database, the roles, the image and the service. A fifth loads the schema and then revokes its own access to the database.</td></tr>
+        <tr><td>Running it locally</td><td><code>docker compose up</code> starts all three tiers. The database image matches the RDS engine version, so nothing behaves differently between a laptop and AWS.</td></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px">Both applications are served from the same deployment. The staff workspace is designed for 1280 pixels and above; the patient application for 360 pixels and above.</p>
+    <p style="margin:0 0 10px">Both applications are served from the same web deployment. The staff workspace is designed for 1280 pixels and above; the patient application for 360 pixels and above.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">16. User manual, summary</h2>
     <div class="xref"><b>Full document:</b> User_Manual.pdf, twelve sections covering all nine roles.</div>
@@ -355,19 +363,23 @@
 
     <h2 style="break-before:page;margin:0 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">18. Security considerations</h2>
     <table>
-      <thead><tr><th style="width:26%">Control</th><th>Implementation in v1.0</th></tr></thead>
+      <thead><tr><th style="width:24%">Control</th><th>Implementation in v2.0</th></tr></thead>
       <tbody>
-        <tr><td>Authentication</td><td>No clinical or financial screen is reachable without an authenticated session. Sessions clear on sign-out.</td></tr>
-        <tr><td>Authorisation</td><td>Role determined at login. Non-clinical roles receive an explicit restriction notice in place of clinical data, not merely a hidden menu item.</td></tr>
-        <tr><td>Least privilege</td><td>Receptionist and cashier can see billing but not charts. A patient sees only their own record.</td></tr>
-        <tr><td>Audit trail</td><td>Every state-changing action recorded with actor, action, target and timestamp. Append-only, not editable from any account.</td></tr>
-        <tr><td>Credential hygiene</td><td>Passwords masked by default and never written to logs. No secret in the repository.</td></tr>
+        <tr><td>Authentication</td><td>Accounts are rows with argon2id password hashes. Sign-in returns a signed token with a twelve-hour lifetime; a wrong password and an unknown address give the same message, so the system cannot be used to discover which accounts exist.</td></tr>
+        <tr><td>Session handling</td><td>The browser posts credentials to the web tier, not the API, and the token is stored in an httpOnly cookie. No script on any page can read it. Signing out clears it server-side.</td></tr>
+        <tr><td>Authorisation</td><td>A guard on every API route, checked against a role re-read from the database on each request rather than trusted from the token. Non-clinical roles receive an explicit restriction notice in place of clinical data, not merely a hidden menu item.</td></tr>
+        <tr><td>Least privilege</td><td>Receptionist and cashier see billing but not charts the same chart request returns demographics and invoices for them and the full record for a clinician. A patient sees only their own record, and only results a technician has verified.</td></tr>
+        <tr><td>Audit trail</td><td>Every state-changing action recorded with actor, action, target and timestamp. Append-only by construction: the API exposes no update or delete route on the resource anywhere, and a test asserts that none appears.</td></tr>
+        <tr><td>Credential hygiene</td><td>Passwords masked by default and never written to logs. No secret in the repository; the two that exist live in Secrets Manager. There is no AI key at all Bedrock is reached through the compute role.</td></tr>
+        <tr><td>Network exposure</td><td>The database accepts no connection from any internet address range. The browser reaches one origin and never learns the API's address.</td></tr>
         <tr><td>Transport</td><td>HTTPS only, no mixed content.</td></tr>
         <tr><td>Data protection</td><td>Processing aligned to the Data Protection Act, 2012 (Act 843). Clinical records are not deletable through any interface action.</td></tr>
-        <tr><td>AI data minimisation</td><td>Only the clinical context needed for the task is sent. No bulk record transfer.</td></tr>
+        <tr><td>AI data minimisation</td><td>Only the clinical context needed for the task is sent. No bulk record transfer. The claims assistant is sent billed lines and never the clinical record.</td></tr>
       </tbody>
     </table>
-    <p style="margin:0 0 10px"><b>The honest weakness.</b> Version 1.0 enforces authorisation in the application layer, not in a database. A determined technical user with browser developer tools could inspect data stored on their own machine. Every access control listed above works as tested, but they are enforced by code the client runs. Until the migration in §21 moves authorisation into row-level security policies in PostgreSQL, this deployment should be treated as a demonstration rather than a live clinical system holding real patient data. We state this plainly rather than leaving an examiner to discover it.</p>
+    <p style="margin:0 0 10px"><strong>What changed since v1.0, and what it cost.</strong> The previous revision named this section as the honest weakness: authorisation was enforced by code the client ran, so the deployment had to be treated as a demonstration rather than a system that could hold real patient data. That weakness is closed. The client now holds nothing but a cookie it cannot read, and every decision about who may see what is taken in a process the user has no access to.</p>
+    <p style="margin:0 0 10px">The enforcement point is the API rather than the database. Row-level security was built first, tested against a real PostgreSQL instance, and then deliberately replaced. §9.4 of the design document sets out the reasoning. The cost of that choice is specific and worth stating: the database will now hand any row to whatever connects to it, so a route without a guard is a data leak rather than a bug. That is why the authorisation tests are not an afterthought but the artefact that carries the guarantee, and why their file says so in its opening lines.</p>
+    <p style="margin:0 0 10px"><strong>What remains true.</strong> The system holds synthetic data only. A production deployment for real patients would need penetration testing by someone who did not write it, a documented breach procedure, and and a review against Act 843 by someone qualified to give it. A capstone can supply none of those, and we claim none of them.</p>
 
     <h2 style="margin:20px 0 10px;font-size:15pt;font-weight:700;border-bottom:2px solid #0D1B3E;padding-bottom:5px">19. Challenges and solutions</h2>
     <table>
