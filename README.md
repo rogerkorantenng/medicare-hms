@@ -27,7 +27,7 @@ as the system's honest weakness. This version closes both.
 | AI calls | From the browser, key exposed | From the API, through an IAM role — no key exists |
 | Result release | Application convention | Database trigger on the verify transition |
 | Audit trail | Editable rows | Append-only: the API exposes no write route, and a test asserts it |
-| Security tests | 6, run by hand | 10, automated, run against the API and again through the browser surface |
+| Security tests | 6, run by hand | 20, automated, run against the API and again through the browser surface |
 
 The test that matters: sign in as a cashier and open a patient chart. You get
 demographics and invoices. Not a hidden tab — the clinical arrays come back
@@ -66,16 +66,16 @@ cd frontend && cp .env.local.example .env.local && npm install && npm run dev
 Four suites. All four pass; run them in this order.
 
 ```bash
-cd backend && uv run pytest                 # 33 tests, under a second
-./scripts/verify-screens.sh                 # 29 screens load as their owning role
-./scripts/verify-e2e.sh                     # 37 checks through the browser surface
+cd backend && uv run pytest                 # 74 tests, about two seconds
+./scripts/verify-screens.sh                 # 30 screens load as their owning role
+./scripts/verify-e2e.sh                     # 39 checks through the browser surface
 ```
 
 `backend/tests/test_authorisation.py` is the one to read first. Moving
 authorisation out of the database into the API was a deliberate decision, and
 its cost is that the database will now hand any row to whatever asks. These
 tests are what stands in for the guarantee row-level security used to give —
-they exercise the cases the Testing Report lists as TC-95 to TC-104. The file
+they exercise the cases the Testing Report lists as TC-95 to TC-114. The file
 says so in its opening lines: **if one of these fails, it is a data leak, not a
 failing test.**
 
@@ -84,11 +84,14 @@ generic error page, which is easy to miss by clicking around. It found a real
 one: the patient booking screen asked for the staff directory, which is
 staff-only.
 
-Row-level security *was* built first, tested against a real PostgreSQL
-instance, and then replaced. Four defects in the original handoff SQL were
-found by that work and are documented in
-[`supabase/DEVIATIONS.md`](supabase/DEVIATIONS.md) rather than changed quietly.
-Three of them stopped the SQL executing at all.
+Row-level security *was* built first and tested against a real PostgreSQL
+instance before it was replaced. That work found four defects in the original
+handoff SQL, three of which stopped it executing at all, and the two worth
+knowing about are recorded as D-15 and D-16 in the Testing Report: policy
+helper functions that recursed during query *planning* rather than execution,
+and a trigger that could never fire because it inserted into a table whose
+policies forbade it. The reasoning for the replacement is in Design
+Documentation §9.4.
 
 ---
 
@@ -98,14 +101,14 @@ Three of them stopped the SQL executing at all.
 backend/
   app/
     security/       THE authorisation boundary — roles, guards, tokens, deps
-    routers/        49 endpoints, each carrying a role guard
+    routers/        63 operations, each carrying a role guard
     queries/        chart.py holds the three views: clinical, own, billing
     safety.py       deterministic prescribing rules — never AI
     prompts.py      the six system prompts, verbatim, in one file
     ai.py           Bedrock and Anthropic behind one function that never raises
   sql/              schema, functions, seed — plain PostgreSQL
   scripts/seed.py   builds a database from nothing
-  tests/            33 tests
+  tests/            74 tests
 frontend/
   app/
     workspace/      staff, one directory per role
@@ -121,16 +124,16 @@ frontend/
       index.ts      the construction point
     api/client.ts   attaches the bearer token, server-side only
     session.ts      who is asking
-deploy/aws/         five idempotent scripts that build the whole deployment
-scripts/            the two end-to-end verification suites
+deploy/aws/         six idempotent scripts that build the whole deployment
+scripts/            the end-to-end verification suites, and the screenshot harness
 ```
 
 ### The repository is still the only boundary
 
 No screen imports an HTTP client. Screens import `repo` and nothing else, so
 swapping storage is one line in `frontend/lib/repository/index.ts`. That same
-interface has now been satisfied three ways — browser storage, Supabase, and
-HTTP against FastAPI — and no screen changed for any of them.
+interface has now been satisfied three ways, the last of them HTTP against
+FastAPI, and no screen changed for any of them.
 
 ### The authorisation boundary is one directory
 
@@ -168,8 +171,11 @@ Fonts and icons are committed to `frontend/public/fonts` and served from this
 origin. Nothing is fetched from Google at build time or at run time. Two v1.0
 defects were caused by unreachable external assets in the deployed build, which
 is why the design uses an icon font and initials tiles rather than photographs
-in the first place. Material Symbols is subsetted to the 70 icons actually
-used — 60 KB rather than the full 3 MB.
+in the first place. Material Symbols is subsetted to the 93 icons actually
+used, 38 KB rather than the full 3 MB. The subset is generated from the code
+by `frontend/scripts/build-icon-font.mjs`, and every screenshot run asserts
+that no icon is rendering as text, because a missing glyph does not fall back
+to a box: the ligature fails and the browser prints the name.
 
 ---
 

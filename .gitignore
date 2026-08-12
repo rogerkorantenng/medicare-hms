@@ -25,11 +25,17 @@ __pycache__/
 # deployment state — holds the database password
 deploy/aws/.state
 
-# browser-automation artefacts
+# browser-automation artefacts. Scoped to the repository root rather than
+# every directory: the screenshot tool drops stray captures here, but a
+# real image asset further down should not be silently skipped.
 .playwright-mcp/
-*.png
+/*.png
 
+# The working bundle from the design handoff. Its content lives in
+# project/design_handoff_medicare_backend/ instead.
 HANDOFF-BUNDLE.md
-/chats
-/deploy
-/project
+
+# project/, deploy/ and chats/ used to be ignored wholesale. They are all
+# tracked, so the rules did nothing except silently drop any NEW file added
+# to them, which is a trap rather than a policy. Ignore what should not be
+# committed, by name.
