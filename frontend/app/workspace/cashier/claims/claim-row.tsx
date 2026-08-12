@@ -6,6 +6,7 @@ import { advanceClaimAction } from '@/app/actions';
 import { useToast } from '@/components/shell/shell';
 import { Card, Icon, StatusChip, AiPanel, money, when } from '@/components/ui';
 import type { Claim } from '@/lib/repository/types';
+import { RejectClaim } from './reject-claim';
 
 const NEXT: Record<string, string | null> = {
   submitted: 'Authorise', authorised: 'Mark paid', paid: null,
@@ -88,6 +89,8 @@ export function ClaimRow({ claim }: { claim: Claim }) {
                 className={loading ? 'animate-spin' : ''} filled={!loading} />
           Draft justification
         </button>
+
+        <RejectClaim claim={claim} />
 
         {next && (
           <button

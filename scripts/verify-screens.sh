@@ -56,6 +56,9 @@ cashier      /workspace/cashier
 cashier      /workspace/cashier/claims
 admin        /workspace/admin
 admin        /workspace/admin/staff
+admin        /workspace/admin/rosters
+admin        /workspace/admin/catalogue
+admin        /workspace/admin/reports
 admin        /workspace/admin/audit
 patient      /app
 patient      /app/book

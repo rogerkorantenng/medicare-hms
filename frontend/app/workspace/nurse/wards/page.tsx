@@ -1,6 +1,7 @@
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, Stat } from '@/components/ui';
 import { BedTile } from './bed-tile';
+import { WardAdmin, BedActions } from './ward-admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,7 @@ export default async function Wards() {
   return (
     <>
       <PageHeader
+        action={<WardAdmin wards={wards.map((w) => w.name)} />}
         title="Wards and beds"
         subtitle="Discharging frees the bed and writes the discharge summary in one action."
       />
@@ -36,7 +38,14 @@ export default async function Wards() {
             }
           >
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {w.beds.map((b) => <BedTile key={b.bedNo} bed={b} />)}
+              {w.beds.map((b) => (
+                <div key={b.bedNo} className="flex flex-col gap-1">
+                  <BedTile bed={b} />
+                  <div className="flex justify-end">
+                    <BedActions bed={b} wards={wards.map((x) => x.name)} />
+                  </div>
+                </div>
+              ))}
             </div>
           </Card>
         ))}

@@ -1,6 +1,7 @@
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, EmptyState, Avatar, Chip } from '@/components/ui';
 import { VitalsDialog } from './vitals-dialog';
+import { Retriage } from './retriage';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +34,7 @@ export default async function TriageQueue() {
                     </p>
                   </div>
                   <span className="val text-support text-ink-soft">{q.waitingSince}</span>
+                  <Retriage mrn={q.mrn} name={q.patientName} acuity={q.acuity} />
                   <VitalsDialog mrn={q.mrn} name={q.patientName} />
                 </li>
               ))}

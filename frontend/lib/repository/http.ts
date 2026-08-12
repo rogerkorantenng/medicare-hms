@@ -6,6 +6,9 @@ import type {
   MarEntry, Invoice, Claim, Kpis, AuditEntry, Staff, OpsSnapshot, AppNotification,
   MomoProvider, AppointmentFilter, PrescriptionSlip, ReceiptDocument, DischargeSummary,
   NewStaff, StaffPatch, PatientDemographics, ClinicalFacts, NotifyPrefs,
+  CatalogueItem, NewCatalogueItem, NewInventoryItem, InventoryPatch, StockMovement,
+  Shift, LeaveEntry, Roster, PaymentEntry, Summary, StaffMessage, PortalAccess,
+  Bed, ClinicalDocument, Acuity,
 } from './types';
 
 /**
@@ -145,6 +148,135 @@ export class HttpRepository implements Repository {
 
   updateClinicalFacts = (mrn: string, patch: ClinicalFacts) =>
     call<Patient>(`/patients/${mrn}/clinical`, { method: 'PATCH', body: patch });
+
+  // ---- catalogues ----
+  catalogue = (kind?: CatalogueItem['kind']) =>
+    call<CatalogueItem[]>('/catalogue', { query: { kind } });
+
+  addCatalogueItem = (input: NewCatalogueItem) =>
+    call<CatalogueItem>('/catalogue', { method: 'POST', body: input });
+
+  updateCatalogueItem = (id: number, patch: Partial<NewCatalogueItem> & { isActive?: boolean }) =>
+    call<CatalogueItem>(`/catalogue/${id}`, { method: 'PATCH', body: patch });
+
+  departments = () => call<string[]>('/catalogue/departments');
+
+  addDepartment = (name: string) =>
+    call<{ name: string }>('/catalogue/departments', { method: 'POST', query: { name } });
+
+  // ---- stock ----
+  addInventoryItem = (input: NewInventoryItem) =>
+    call<InventoryItem>('/pharmacy/inventory', { method: 'POST', body: input });
+
+  updateInventoryItem = (id: number, patch: InventoryPatch) =>
+    call<InventoryItem>(`/pharmacy/inventory/${id}`, { method: 'PATCH', body: patch });
+
+  moveStock = (id: number, quantity: number, reason: string) =>
+    call<{ quantity: number }>(`/pharmacy/inventory/${id}/movement`, {
+      method: 'POST', body: { quantity, reason },
+    });
+
+  stockMovements = (id: number) =>
+    call<StockMovement[]>(`/pharmacy/inventory/${id}/movements`);
+
+  discontinuePrescription = (id: number, reason: string) =>
+    call<void>(`/pharmacy/prescriptions/${id}/discontinue`, {
+      method: 'POST', body: { reason },
+    });
+
+  // ---- wards ----
+  addWard = (name: string) =>
+    call<{ name: string }>('/wards/wards', { method: 'POST', body: { name } });
+
+  addBed = (ward: string, bedNo: string) =>
+    call<Bed>('/wards/beds', { method: 'POST', body: { ward, bedNo } });
+
+  setBedAvailability = (ward: string, bedNo: string, isAvailable: boolean, reason?: string) =>
+    call<Bed>(`/wards/beds/${encodeURIComponent(ward)}/${encodeURIComponent(bedNo)}`, {
+      method: 'PATCH', body: { isAvailable, reason },
+    });
+
+  transferBed = (mrn: string, ward: string, bedNo: string) =>
+    call<void>('/wards/transfer', { method: 'POST', body: { mrn, ward, bedNo } });
+
+  // ---- rosters and the appointment lifecycle ----
+  roster = (doctorId: string) => call<Roster>(`/rosters/${doctorId}`);
+
+  addShift = (shift: Omit<Shift, 'id' | 'dayName'>) =>
+    call<Shift>('/rosters/shifts', { method: 'POST', body: shift });
+
+  removeShift = (id: number) =>
+    call<void>(`/rosters/shifts/${id}`, { method: 'DELETE' });
+
+  bookLeave = (doctorId: string, startsOn: string, endsOn: string, reason?: string) =>
+    call<LeaveEntry>('/rosters/leave', {
+      method: 'POST', body: { doctorId, startsOn, endsOn, reason },
+    });
+
+  cancelLeave = (id: number) => call<void>(`/rosters/leave/${id}`, { method: 'DELETE' });
+
+  cancelAppointment = (id: number, reason: string) =>
+    call<void>(`/appointments/${id}/cancel`, { method: 'POST', body: { reason } });
+
+  rescheduleAppointment = (id: number, apptDate: string, apptTime: string) =>
+    call<Appointment>(`/appointments/${id}/reschedule`, {
+      method: 'POST', body: { apptDate, apptTime },
+    });
+
+  markDidNotAttend = (id: number) =>
+    call<void>(`/appointments/${id}/did-not-attend`, { method: 'POST' });
+
+  // ---- clinical corrections ----
+  fileDocument = (input: { mrn: string; title: string; kind: string; body: string }) =>
+    call<ClinicalDocument>('/documents', { method: 'POST', body: input });
+
+  addAddendum = (encounterId: number, body: string) =>
+    call<void>(`/encounters/${encounterId}/addendum`, { method: 'POST', body: { body } });
+
+  correctVitals = (id: number, patch: Record<string, unknown>) =>
+    call<Vitals>(`/vitals/${id}/correct`, { method: 'POST', body: patch });
+
+  cancelLabOrder = (id: number, reason: string) =>
+    call<void>(`/lab/${id}/cancel`, { method: 'POST', body: { reason } });
+
+  rejectSample = (id: number, reason: string) =>
+    call<void>(`/lab/${id}/reject`, { method: 'POST', body: { reason } });
+
+  advanceImaging = (id: number, next: 'scheduled' | 'scanned') =>
+    call<void>(`/imaging/${id}/advance`, { method: 'POST', query: { next } });
+
+  reprioritise = (mrn: string, acuity: Acuity, reason: string) =>
+    call<void>(`/queue/${mrn}/acuity`, { method: 'POST', body: { acuity, reason } });
+
+  // ---- money ----
+  addInvoiceLine = (invoiceId: string, description: string, amount: number) =>
+    call<void>(`/invoices/${invoiceId}/line`, { method: 'POST', body: { description, amount } });
+
+  refund = (invoiceId: string, amount: number, reason: string) =>
+    call<void>(`/invoices/${invoiceId}/refund`, { method: 'POST', body: { amount, reason } });
+
+  writeOff = (invoiceId: string, amount: number, reason: string) =>
+    call<void>(`/invoices/${invoiceId}/write-off`, { method: 'POST', body: { amount, reason } });
+
+  paymentHistory = (invoiceId: string) =>
+    call<PaymentEntry[]>(`/invoices/${invoiceId}/payments`);
+
+  raiseClaim = (invoiceId: string, insurer: string, amount: number) =>
+    call<Claim>('/claims', { method: 'POST', body: { invoiceId, insurer, amount } });
+
+  rejectClaim = (claimId: string, reason: string) =>
+    call<void>(`/claims/${claimId}/reject`, { method: 'POST', body: { reason } });
+
+  // ---- accounts and operations ----
+  grantPortalAccess = (mrn: string, access: PortalAccess) =>
+    call<{ email: string }>(`/patients/${mrn}/portal-access`, {
+      method: 'POST', body: access,
+    });
+
+  sendMessage = (message: StaffMessage) =>
+    call<void>('/notifications', { method: 'POST', body: message });
+
+  summary = (days = 7) => call<Summary>('/reports/summary', { query: { days } });
 
   // ---- printable documents ----
   // A missing or out-of-scope document becomes null so the page can call

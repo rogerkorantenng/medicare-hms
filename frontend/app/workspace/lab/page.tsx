@@ -1,6 +1,7 @@
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, EmptyState, StatusChip, Chip, Icon, when } from '@/components/ui';
 import { LabRow } from './lab-row';
+import { LabActions } from './lab-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +35,7 @@ export default async function LabWorklist() {
           <EmptyState icon="science" title="Nothing waiting" hint="Every sample has been verified and released." />
         ) : (
           <div className="overflow-x-auto -mx-5">
-            <table className="w-full min-w-[900px] text-body">
+            <table className="w-full min-w-[1120px] text-body">
               <thead>
                 <tr>
                   <th className="th pl-5">Patient</th>
@@ -42,7 +43,8 @@ export default async function LabWorklist() {
                   <th className="th">Priority</th>
                   <th className="th">Stage</th>
                   <th className="th">Ordered</th>
-                  <th className="th pr-5 text-right">Next action</th>
+                  <th className="th text-right">Next action</th>
+                    <th className="th pr-5 text-right">Correct</th>
                 </tr>
               </thead>
               <tbody>
@@ -60,7 +62,10 @@ export default async function LabWorklist() {
                     </td>
                     <td className="td"><StatusChip value={o.status} /></td>
                     <td className="td val text-support text-ink-soft">{when(o.createdAt)}</td>
-                    <td className="td pr-5"><LabRow order={o} /></td>
+                    <td className="td">
+                      <div className="flex justify-end"><LabRow order={o} /></div>
+                    </td>
+                    <td className="td pr-5"><LabActions order={o} /></td>
                   </tr>
                 ))}
               </tbody>

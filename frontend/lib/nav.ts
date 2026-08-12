@@ -48,6 +48,9 @@ export const NAV: Record<Role, NavItem[]> = {
   admin: [
     { href: '/workspace/admin', label: 'Dashboard', icon: 'dashboard' },
     { href: '/workspace/admin/staff', label: 'Staff', icon: 'badge' },
+    { href: '/workspace/admin/rosters', label: 'Clinics', icon: 'calendar_month' },
+    { href: '/workspace/admin/catalogue', label: 'Catalogue', icon: 'receipt_long' },
+    { href: '/workspace/admin/reports', label: 'Reports', icon: 'monitor_heart' },
     { href: '/workspace/admin/audit', label: 'Audit Log', icon: 'history' },
     { href: '/workspace/patients', label: 'Patients', icon: 'groups' },
   ],

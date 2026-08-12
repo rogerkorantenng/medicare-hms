@@ -1,6 +1,7 @@
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, EmptyState, StatusChip, Stat, money, onlyDate } from '@/components/ui';
 import { InvoiceActions } from './invoice-actions';
+import { MoneyActions } from './money-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -61,6 +62,9 @@ export default async function Invoices() {
               </ul>
 
               <InvoiceActions invoice={inv} />
+              <div className="mt-3 pt-3 border-t border-hairline">
+                <MoneyActions invoice={inv} />
+              </div>
             </Card>
           ))}
         </div>

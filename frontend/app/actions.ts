@@ -4,7 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { repo } from '@/lib/repository';
 import type {
   NewPatient, NewAppointment, NewVitals, SignEncounterInput, LabStatus,
-  ResultInput, MomoProvider, NewStaff, StaffPatch, PatientDemographics, ClinicalFacts, NotifyPrefs,
+  ResultInput, MomoProvider, NewStaff, StaffPatch, PatientDemographics, ClinicalFacts, NotifyPrefs, NewInventoryItem,
+  InventoryPatch, NewCatalogueItem, Shift, StaffMessage, Acuity,
 } from '@/lib/repository/types';
 
 /**
@@ -142,3 +143,137 @@ export const updateClinicalFactsAction = (mrn: string, patch: ClinicalFacts) =>
 
 export const saveNotifyPrefsAction = (prefs: NotifyPrefs) =>
   run(() => repo.saveNotificationPreferences(prefs), 'Preferences saved.', ['/app/profile']);
+
+// ---------------------------------------------------------------------
+// Operations. Everything below closes a gap where the system could show
+// you something and not let you change it.
+// ---------------------------------------------------------------------
+
+// ---- stock ----
+export const addInventoryItemAction = (input: NewInventoryItem) =>
+  run(() => repo.addInventoryItem(input), 'Item added to inventory.',
+      ['/workspace/pharmacist/inventory']);
+
+export const updateInventoryItemAction = (id: number, patch: InventoryPatch) =>
+  run(() => repo.updateInventoryItem(id, patch), 'Item updated.',
+      ['/workspace/pharmacist/inventory']);
+
+export const moveStockAction = (id: number, quantity: number, reason: string) =>
+  run(() => repo.moveStock(id, quantity, reason),
+      quantity > 0 ? 'Stock received.' : 'Stock adjusted.',
+      ['/workspace/pharmacist/inventory', '/workspace/pharmacist']);
+
+export const discontinueAction = (id: number, reason: string) =>
+  run(() => repo.discontinuePrescription(id, reason), 'Prescription discontinued.',
+      ['/workspace/pharmacist', '/workspace/doctor']);
+
+// ---- catalogues ----
+export const addCatalogueItemAction = (input: NewCatalogueItem) =>
+  run(() => repo.addCatalogueItem(input), 'Added to the catalogue.',
+      ['/workspace/admin/catalogue']);
+
+export const updateCatalogueItemAction = (
+  id: number, patch: Partial<NewCatalogueItem> & { isActive?: boolean },
+) => run(() => repo.updateCatalogueItem(id, patch), 'Catalogue updated.',
+        ['/workspace/admin/catalogue']);
+
+// ---- wards ----
+export const addWardAction = (name: string) =>
+  run(() => repo.addWard(name), 'Ward opened.', ['/workspace/nurse/wards']);
+
+export const addBedAction = (ward: string, bedNo: string) =>
+  run(() => repo.addBed(ward, bedNo), 'Bed added.', ['/workspace/nurse/wards']);
+
+export const setBedAvailabilityAction = (
+  ward: string, bedNo: string, isAvailable: boolean, reason?: string,
+) => run(() => repo.setBedAvailability(ward, bedNo, isAvailable, reason),
+        isAvailable ? 'Bed back in service.' : 'Bed taken out of service.',
+        ['/workspace/nurse/wards']);
+
+export const transferBedAction = (mrn: string, ward: string, bedNo: string) =>
+  run(() => repo.transferBed(mrn, ward, bedNo), 'Patient transferred.',
+      ['/workspace/nurse/wards']);
+
+// ---- rosters and appointments ----
+export const addShiftAction = (shift: Omit<Shift, 'id' | 'dayName'>) =>
+  run(() => repo.addShift(shift), 'Clinic added.', ['/workspace/admin/rosters']);
+
+export const removeShiftAction = (id: number) =>
+  run(() => repo.removeShift(id), 'Clinic removed.', ['/workspace/admin/rosters']);
+
+export const bookLeaveAction = (
+  doctorId: string, startsOn: string, endsOn: string, reason?: string,
+) => run(() => repo.bookLeave(doctorId, startsOn, endsOn, reason), 'Leave booked.',
+        ['/workspace/admin/rosters']);
+
+export const cancelLeaveAction = (id: number) =>
+  run(() => repo.cancelLeave(id), 'Leave removed.', ['/workspace/admin/rosters']);
+
+const APPOINTMENT_PATHS = ['/workspace/receptionist',
+                           '/workspace/receptionist/appointments', '/app'];
+
+export const cancelAppointmentAction = (id: number, reason: string) =>
+  run(() => repo.cancelAppointment(id, reason), 'Appointment cancelled.', APPOINTMENT_PATHS);
+
+export const rescheduleAction = (id: number, apptDate: string, apptTime: string) =>
+  run(() => repo.rescheduleAppointment(id, apptDate, apptTime), 'Appointment moved.',
+      APPOINTMENT_PATHS);
+
+export const didNotAttendAction = (id: number) =>
+  run(() => repo.markDidNotAttend(id), 'Recorded as did not attend.', APPOINTMENT_PATHS);
+
+// ---- clinical corrections ----
+export const fileDocumentAction = (
+  input: { mrn: string; title: string; kind: string; body: string },
+) => run(() => repo.fileDocument(input), 'Document filed.',
+        [`/workspace/patients/${input.mrn}`]);
+
+export const addAddendumAction = (encounterId: number, mrn: string, body: string) =>
+  run(() => repo.addAddendum(encounterId, body), 'Addendum added.',
+      [`/workspace/patients/${mrn}`]);
+
+export const correctVitalsAction = (id: number, mrn: string, patch: Record<string, unknown>) =>
+  run(() => repo.correctVitals(id, patch), 'Reading corrected.',
+      [`/workspace/patients/${mrn}`, '/workspace/nurse']);
+
+export const cancelLabAction = (id: number, reason: string) =>
+  run(() => repo.cancelLabOrder(id, reason), 'Order cancelled.',
+      ['/workspace/lab', '/workspace/doctor/orders']);
+
+export const rejectSampleAction = (id: number, reason: string) =>
+  run(() => repo.rejectSample(id, reason), 'Sample rejected. A fresh one is needed.',
+      ['/workspace/lab']);
+
+export const advanceImagingAction = (id: number, next: 'scheduled' | 'scanned') =>
+  run(() => repo.advanceImaging(id, next), `Marked ${next}.`, ['/workspace/radiology']);
+
+export const reprioritiseAction = (mrn: string, acuity: Acuity, reason: string) =>
+  run(() => repo.reprioritise(mrn, acuity, reason), 'Queue position updated.',
+      ['/workspace/nurse', '/workspace/doctor']);
+
+// ---- money ----
+const BILLING_PATHS = ['/workspace/cashier', '/workspace/cashier/claims'];
+
+export const addInvoiceLineAction = (invoiceId: string, description: string, amount: number) =>
+  run(() => repo.addInvoiceLine(invoiceId, description, amount), 'Charge added.', BILLING_PATHS);
+
+export const refundAction = (invoiceId: string, amount: number, reason: string) =>
+  run(() => repo.refund(invoiceId, amount, reason), 'Refund recorded.', BILLING_PATHS);
+
+export const writeOffAction = (invoiceId: string, amount: number, reason: string) =>
+  run(() => repo.writeOff(invoiceId, amount, reason), 'Balance written off.', BILLING_PATHS);
+
+export const raiseClaimAction = (invoiceId: string, insurer: string, amount: number) =>
+  run(() => repo.raiseClaim(invoiceId, insurer, amount), 'Claim raised.', BILLING_PATHS);
+
+export const rejectClaimAction = (claimId: string, reason: string) =>
+  run(() => repo.rejectClaim(claimId, reason), 'Rejection recorded.', BILLING_PATHS);
+
+// ---- accounts and messages ----
+export const grantPortalAccessAction = (mrn: string, email: string, password: string) =>
+  run(() => repo.grantPortalAccess(mrn, { email, password }),
+      'Account created. Give them the password in person.',
+      [`/workspace/patients/${mrn}`]);
+
+export const sendMessageAction = (message: StaffMessage) =>
+  run(() => repo.sendMessage(message), 'Message sent.');

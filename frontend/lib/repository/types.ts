@@ -6,6 +6,12 @@
  * below this line — they import `repo` from ./index and nothing else.
  */
 
+export * from './operations';
+import type {
+  CatalogueItem, NewCatalogueItem, NewInventoryItem, InventoryPatch, StockMovement,
+  Shift, LeaveEntry, Roster, PaymentEntry, Summary, StaffMessage, PortalAccess,
+} from './operations';
+
 export type Role =
   | 'patient' | 'doctor' | 'nurse' | 'receptionist'
   | 'lab' | 'radiology' | 'pharmacist' | 'cashier' | 'admin';
@@ -527,6 +533,58 @@ export interface Repository {
   // ---- corrections ----
   correctPatient(mrn: string, patch: PatientDemographics): Promise<Patient>;
   updateClinicalFacts(mrn: string, patch: ClinicalFacts): Promise<Patient>;
+
+  // ---- catalogues ----
+  catalogue(kind?: CatalogueItem['kind']): Promise<CatalogueItem[]>;
+  addCatalogueItem(input: NewCatalogueItem): Promise<CatalogueItem>;
+  updateCatalogueItem(id: number, patch: Partial<NewCatalogueItem> & { isActive?: boolean }): Promise<CatalogueItem>;
+  departments(): Promise<string[]>;
+  addDepartment(name: string): Promise<{ name: string }>;
+
+  // ---- stock ----
+  addInventoryItem(input: NewInventoryItem): Promise<InventoryItem>;
+  updateInventoryItem(id: number, patch: InventoryPatch): Promise<InventoryItem>;
+  moveStock(id: number, quantity: number, reason: string): Promise<{ quantity: number }>;
+  stockMovements(id: number): Promise<StockMovement[]>;
+  discontinuePrescription(id: number, reason: string): Promise<void>;
+
+  // ---- wards ----
+  addWard(name: string): Promise<{ name: string }>;
+  addBed(ward: string, bedNo: string): Promise<Bed>;
+  setBedAvailability(ward: string, bedNo: string, isAvailable: boolean, reason?: string): Promise<Bed>;
+  transferBed(mrn: string, ward: string, bedNo: string): Promise<void>;
+
+  // ---- rosters and the appointment lifecycle ----
+  roster(doctorId: string): Promise<Roster>;
+  addShift(shift: Omit<Shift, 'id' | 'dayName'>): Promise<Shift>;
+  removeShift(id: number): Promise<void>;
+  bookLeave(doctorId: string, startsOn: string, endsOn: string, reason?: string): Promise<LeaveEntry>;
+  cancelLeave(id: number): Promise<void>;
+  cancelAppointment(id: number, reason: string): Promise<void>;
+  rescheduleAppointment(id: number, apptDate: string, apptTime: string): Promise<Appointment>;
+  markDidNotAttend(id: number): Promise<void>;
+
+  // ---- clinical corrections ----
+  fileDocument(input: { mrn: string; title: string; kind: string; body: string }): Promise<ClinicalDocument>;
+  addAddendum(encounterId: number, body: string): Promise<void>;
+  correctVitals(id: number, patch: Record<string, unknown>): Promise<Vitals>;
+  cancelLabOrder(id: number, reason: string): Promise<void>;
+  rejectSample(id: number, reason: string): Promise<void>;
+  advanceImaging(id: number, next: 'scheduled' | 'scanned'): Promise<void>;
+  reprioritise(mrn: string, acuity: Acuity, reason: string): Promise<void>;
+
+  // ---- money ----
+  addInvoiceLine(invoiceId: string, description: string, amount: number): Promise<void>;
+  refund(invoiceId: string, amount: number, reason: string): Promise<void>;
+  writeOff(invoiceId: string, amount: number, reason: string): Promise<void>;
+  paymentHistory(invoiceId: string): Promise<PaymentEntry[]>;
+  raiseClaim(invoiceId: string, insurer: string, amount: number): Promise<Claim>;
+  rejectClaim(claimId: string, reason: string): Promise<void>;
+
+  // ---- accounts and operations ----
+  grantPortalAccess(mrn: string, access: PortalAccess): Promise<{ email: string }>;
+  sendMessage(message: StaffMessage): Promise<void>;
+  summary(days?: number): Promise<Summary>;
 
   // ---- printable documents ----
   prescriptionSlip(id: number): Promise<PrescriptionSlip | null>;

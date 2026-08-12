@@ -1,6 +1,7 @@
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, EmptyState, StatusChip, Chip, when } from '@/components/ui';
 import { ReportForm } from './report-form';
+import { ScanSteps } from './scan-steps';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,7 +44,10 @@ export default async function ImagingWorklist() {
                     <StatusChip value={o.status} />
                   </div>
                   <p className="val text-support text-ink-soft">{when(o.createdAt)}</p>
-                  <div className="ml-auto"><ReportForm order={o} /></div>
+                  <div className="ml-auto flex items-center gap-2">
+                    <ScanSteps order={o} />
+                    <ReportForm order={o} />
+                  </div>
                 </li>
               ))}
             </ul>

@@ -16,7 +16,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 from ..db import connection
 from ..security import CurrentUser, hash_password, require
-from ..serialise import rows
+from ..serialise import row, rows
 
 router = APIRouter(tags=["operations"])
 
@@ -86,7 +86,10 @@ async def summary(user: Admin, days: int = Query(7, ge=1, le=90)):
     the no-show rate, what was earned and what was written off.
     """
     async with connection() as conn:
-        return dict(await conn.fetchrow(
+        # row(), not dict(): the frontend contract is camelCase, and a raw
+        # asyncpg record hands back did_not_attend and written_off, which
+        # arrive at the screen as undefined.
+        return row(await conn.fetchrow(
             """
             select
               (select count(*) from appointments

@@ -1,6 +1,7 @@
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, EmptyState, StatusChip, onlyDate } from '@/components/ui';
 import { BookingPanel } from './booking-panel';
+import { AppointmentActions } from './appointment-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +26,7 @@ export default async function Appointments() {
             <EmptyState icon="event" title="Nothing booked" />
           ) : (
             <div className="overflow-x-auto -mx-5">
-              <table className="w-full min-w-[720px] text-body">
+              <table className="w-full min-w-[1020px] text-body">
                 <thead>
                   <tr>
                     <th className="th pl-5">Date</th>
@@ -33,7 +34,8 @@ export default async function Appointments() {
                     <th className="th">Patient</th>
                     <th className="th">Doctor</th>
                     <th className="th">Type</th>
-                    <th className="th pr-5">Status</th>
+                    <th className="th">Status</th>
+                    <th className="th pr-5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -50,7 +52,8 @@ export default async function Appointments() {
                         <p className="text-chip text-ink-soft">{a.specialty ?? a.doctorDepartment}</p>
                       </td>
                       <td className="td text-ink-soft">{a.apptType}</td>
-                      <td className="td pr-5"><StatusChip value={a.status} /></td>
+                      <td className="td"><StatusChip value={a.status} /></td>
+                      <td className="td pr-5"><AppointmentActions appointment={a} /></td>
                     </tr>
                   ))}
                 </tbody>

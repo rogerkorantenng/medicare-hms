@@ -1,5 +1,7 @@
 import { repo } from '@/lib/repository';
 import { PageHeader, Card, Chip, Stat, money, onlyDate } from '@/components/ui';
+import { AddInventoryItem } from './add-item';
+import { StockMovement } from './stock-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +12,11 @@ export default async function Inventory() {
 
   return (
     <>
-      <PageHeader title="Inventory" subtitle="Stock levels, reorder points and expiry." />
+      <PageHeader
+        title="Inventory"
+        subtitle="Stock levels, reorder points and expiry. Every movement records who and why."
+        action={<AddInventoryItem />}
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Stat label="Items" value={items.length} />
@@ -24,7 +30,7 @@ export default async function Inventory() {
 
       <Card title="All stock">
         <div className="overflow-x-auto -mx-5">
-          <table className="w-full min-w-[820px] text-body">
+          <table className="w-full min-w-[980px] text-body">
             <thead>
               <tr>
                 <th className="th pl-5">Item</th>
@@ -33,7 +39,8 @@ export default async function Inventory() {
                 <th className="th text-right">Reorder at</th>
                 <th className="th text-right">Unit price</th>
                 <th className="th">Expiry</th>
-                <th className="th pr-5">Status</th>
+                <th className="th">Status</th>
+                <th className="th pr-5 text-right">Stock</th>
               </tr>
             </thead>
             <tbody>
@@ -45,7 +52,7 @@ export default async function Inventory() {
                   <td className="td val text-right text-ink-soft">{i.reorderLevel}</td>
                   <td className="td val text-right">{money(i.unitPrice)}</td>
                   <td className="td val text-support">{onlyDate(i.expiryDate)}</td>
-                  <td className="td pr-5">
+                  <td className="td">
                     <div className="flex flex-wrap gap-1.5">
                       {i.lowStock && <Chip tone="danger" icon="trending_down">Low stock</Chip>}
                       {i.expired && <Chip tone="danger" icon="event_busy">Expired</Chip>}
@@ -53,6 +60,7 @@ export default async function Inventory() {
                       {!i.lowStock && !i.expired && !i.expiringSoon && <Chip tone="success">In stock</Chip>}
                     </div>
                   </td>
+                  <td className="td pr-5"><StockMovement item={i} /></td>
                 </tr>
               ))}
             </tbody>

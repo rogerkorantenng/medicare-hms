@@ -4,6 +4,7 @@ import { PageHeader, Avatar, Chip, RestrictionNotice } from '@/components/ui';
 import { ChartTabs } from './chart-tabs';
 import { EditPatient } from './edit-patient';
 import { EditClinical } from './edit-clinical';
+import { FileDocument, GrantPortalAccess } from './record-actions';
 import { ROLE_LABEL } from '@/lib/nav';
 
 export const dynamic = 'force-dynamic';
@@ -47,7 +48,9 @@ export default async function PatientChart({ params }: { params: { mrn: string }
         {(mayCorrectDetails || mayEditClinical) && (
           <div className="flex flex-wrap gap-2">
             {mayEditClinical && <EditClinical patient={p} />}
+            {mayEditClinical && <FileDocument patient={p} />}
             {mayCorrectDetails && <EditPatient patient={p} />}
+            {mayCorrectDetails && !p.authUserId && <GrantPortalAccess patient={p} />}
           </div>
         )}
       </div>
