@@ -79,14 +79,18 @@ async def free_slots(user: Booker, doctor_id: str = Query(...), day: Date = Quer
 async def book(body: NewAppointment, user: Booker):
     scope_to_patient(user, body.mrn)
     async with connection() as conn:
-        record = await conn.fetchrow(
-            """insert into appointments (mrn, doctor_id, specialty, appt_date, appt_time, appt_type)
-               values ($1, $2, $3, $4, $5, $6) returning *""",
-            body.mrn, body.doctorId, body.specialty, body.apptDate, body.slot, body.apptType,
-        )
-        await conn.execute(
-            "select write_audit($1, 'Booked appointment', $2)", user.id, body.mrn
-        )
+        # One transaction. These were two statements, and when the second
+        # failed the first had already committed: the caller was told the
+        # booking had not worked while the appointment sat in the table.
+        async with conn.transaction():
+            record = await conn.fetchrow(
+                """insert into appointments (mrn, doctor_id, specialty, appt_date, appt_time, appt_type)
+                   values ($1, $2, $3, $4, $5, $6) returning *""",
+                body.mrn, body.doctorId, body.specialty, body.apptDate, body.slot, body.apptType,
+            )
+            await conn.execute(
+                "select write_audit($1, 'Booked appointment', $2)", user.id, body.mrn
+            )
     return rows([record])[0]
 
 

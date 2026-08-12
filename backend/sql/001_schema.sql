@@ -413,11 +413,21 @@ create index on audit_entries (occurred_at desc);
 -- The acting user is passed explicitly now that auth.uid() is gone.
 create or replace function write_audit(p_actor uuid, p_action text, p_target text)
 returns void language plpgsql as $$
-declare v_name text;
+declare v_name text; v_staff uuid;
 begin
-  select full_name into v_name from staff where id = p_actor;
+  select id, full_name into v_staff, v_name from staff where id = p_actor;
+  -- A patient acting for themselves is in users and never in staff, and
+  -- staff_id carries a foreign key to staff. Writing their id there
+  -- raised a violation after the caller's own insert had committed, so a
+  -- patient booking their own appointment was shown an error for a
+  -- booking that had in fact been made. Their name still goes on the
+  -- entry; only the staff reference is left empty, which is what it
+  -- means: no member of staff did this.
+  if v_staff is null then
+    select full_name into v_name from patients where user_id = p_actor;
+  end if;
   insert into audit_entries (staff_id, actor_name, action, target)
-  values (p_actor, coalesce(v_name, 'system'), p_action, p_target);
+  values (v_staff, coalesce(v_name, 'system'), p_action, p_target);
 end $$;
 
 -- ---------- 16. notifications ----------

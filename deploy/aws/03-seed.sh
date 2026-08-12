@@ -23,12 +23,20 @@ say "Closing the door"
 # The database was reachable from this machine only so that the schema
 # could be loaded. From here it is reachable from the App Runner
 # connector and nothing else.
-if aws ec2 revoke-security-group-ingress --group-id "$DB_SG" --protocol tcp \
-     --port 5432 --cidr "$MY_IP/32" >/dev/null 2>&1; then
-  note "revoked $MY_IP"
-else
-  note "$MY_IP was not in the group"
-fi
+#
+# Every range is revoked, not just the one in the state file. That file
+# records the address 01-database.sh saw, which is not the address this
+# machine has if it has moved network since — and the first version of
+# this script revoked the stale one, reported success, and left the
+# database open to the internet. The check below caught it, but only
+# after the fact.
+for cidr in $(aws ec2 describe-security-groups --group-ids "$DB_SG" \
+                --query 'SecurityGroups[0].IpPermissions[].IpRanges[].CidrIp' \
+                --output text); do
+  aws ec2 revoke-security-group-ingress --group-id "$DB_SG" --protocol tcp \
+    --port 5432 --cidr "$cidr" >/dev/null 2>&1 \
+    && note "revoked $cidr" || note "could not revoke $cidr"
+done
 
 remaining=$(aws ec2 describe-security-groups --group-ids "$DB_SG" \
              --query 'SecurityGroups[0].IpPermissions[].IpRanges[].CidrIp' --output text)
