@@ -12,29 +12,6 @@ real API, which is what makes it a system and not a demonstration.
 
 ---
 
-## What changed in this version, and why it matters
-
-Version 1.0 kept everything in browser storage. Two people could not see the
-same record, and the submitted documentation named authorisation-in-the-client
-as the system's honest weakness. This version closes both.
-
-| Concern | v1.0 | v2.0 |
-|---|---|---|
-| Storage | Browser, per device | PostgreSQL on Amazon RDS |
-| Authorisation | Enforced in the interface | Enforced by guards in the API, on every route |
-| Sessions | In memory | JWT issued by the API, in an httpOnly cookie |
-| Passwords | A hardcoded list | argon2id hashes in a `users` table |
-| AI calls | From the browser, key exposed | From the API, through an IAM role — no key exists |
-| Result release | Application convention | Database trigger on the verify transition |
-| Audit trail | Editable rows | Append-only: the API exposes no write route, and a test asserts it |
-| Security tests | 6, run by hand | 20, automated, run against the API and again through the browser surface |
-
-The test that matters: sign in as a cashier and open a patient chart. You get
-demographics and invoices. Not a hidden tab — the clinical arrays come back
-empty, because a different query ran.
-
----
-
 ## Running the whole thing locally
 
 ```bash
