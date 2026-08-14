@@ -112,7 +112,12 @@ step "A cashier gets billing without clinical data (TC-96)"
 # The discriminators are a result VALUE and a drug name, not a test name:
 # "Lipid Panel" is also the description of a billed line, so a cashier
 # seeing that string is correct rather than a leak.
-CLINICAL='LDL 128\|Lisinopril'
+# Markers that only ever appear on a clinical record. A drug name is not
+# one: "Lisinopril 10mg x30" is a line on the invoice, because the
+# hospital bills for the medicine, so grepping for it accused the cashier
+# of a leak for correctly showing a bill. The result value and the
+# frequency have no billable equivalent.
+CLINICAL='LDL 128\|Once daily'
 as doctor  /workspace/patients/PT-20481 >/dev/null; cp "$JAR_DIR/body" "$JAR_DIR/chart-doctor.html"
 as cashier /workspace/patients/PT-20481 >/dev/null; cp "$JAR_DIR/body" "$JAR_DIR/chart-cashier.html"
 if grep -q "$CLINICAL" "$JAR_DIR/chart-doctor.html"; then
