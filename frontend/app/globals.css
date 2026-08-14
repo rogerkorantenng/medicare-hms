@@ -59,7 +59,13 @@
   }
   .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
 
-  .card { @apply bg-white rounded-card border border-hairline shadow-card; }
+  /* min-w-0 is not decoration. A grid or flex child defaults to
+     min-width:auto, so it refuses to shrink below its content's intrinsic
+     width. The wide tables carry min-w-[1020px] and expect the
+     overflow-x-auto around them to scroll; without this the card grew to
+     1020px instead, and on a 390px phone the whole page went 1278px wide
+     and scrolled sideways. */
+  .card { @apply bg-white rounded-card border border-hairline shadow-card min-w-0; }
   .panel { @apply bg-white rounded-panel border border-hairline shadow-card; }
 
   .label { @apply text-label uppercase text-ink-soft; }

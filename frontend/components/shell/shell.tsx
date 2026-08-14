@@ -2,11 +2,12 @@
 
 import { useEffect, useState, createContext, useContext, useCallback } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { NAV, ROLE_LABEL, TOUR } from '@/lib/nav';
+import { useRouter } from 'next/navigation';
+import { ROLE_LABEL, TOUR } from '@/lib/nav';
 import { Icon, Avatar } from '@/components/ui';
 import type { Role } from '@/lib/repository/types';
 import { CommandPalette } from './command-palette';
+import { SideBar } from './side-bar';
 import { NotificationBell } from './notifications';
 
 // ---------- toast ----------
@@ -105,8 +106,8 @@ export function Shell({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const pathname = usePathname();
   const router = useRouter();
 
   const push = useCallback((text: string, tone: 'ok' | 'error' = 'ok') => {
@@ -133,63 +134,28 @@ export function Shell({
     router.refresh();
   }
 
-  const items = NAV[role] ?? [];
-
   return (
     <ToastCtx.Provider value={push}>
       <div className="min-h-screen flex">
-        {/* Sidebar */}
-        <aside
-          className={`no-print shrink-0 bg-sidebar text-white flex flex-col transition-all duration-200
-            ${collapsed ? 'w-[68px]' : 'w-[236px]'}`}
-        >
-          <div className="flex items-center gap-2.5 px-4 h-16 shrink-0">
-            <span className="grid place-items-center w-9 h-9 rounded-control bg-white/15 shrink-0">
-              <Icon name="health_and_safety" size={20} filled />
-            </span>
-            {!collapsed && <span className="font-display font-extrabold">MediCare+</span>}
-          </div>
-
-          <nav className="flex-1 px-3 py-2 flex flex-col gap-1 overflow-y-auto">
-            {items.map((item) => {
-              const active = pathname === item.href
-                || (item.href !== `/workspace/${role}` && pathname.startsWith(item.href));
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={collapsed ? item.label : undefined}
-                  className={`flex items-center gap-3 rounded-control px-3 py-2.5 transition
-                    ${active ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
-                >
-                  <Icon name={item.icon} size={20} filled={active} />
-                  {!collapsed && <span className="text-body font-display font-semibold">{item.label}</span>}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="px-3 pb-3 flex flex-col gap-1">
-            <button
-              onClick={() => setCollapsed((c) => !c)}
-              className="flex items-center gap-3 rounded-control px-3 py-2.5 text-white/70 hover:bg-white/10 hover:text-white transition"
-            >
-              <Icon name={collapsed ? 'chevron_right' : 'chevron_left'} size={20} />
-              {!collapsed && <span className="text-body font-display font-semibold">Collapse</span>}
-            </button>
-            <button
-              onClick={signOut}
-              className="flex items-center gap-3 rounded-control px-3 py-2.5 text-white/70 hover:bg-white/10 hover:text-white transition"
-            >
-              <Icon name="logout" size={20} />
-              {!collapsed && <span className="text-body font-display font-semibold">Sign out</span>}
-            </button>
-          </div>
-        </aside>
+        <SideBar
+          role={role}
+          collapsed={collapsed}
+          onCollapse={() => setCollapsed((c) => !c)}
+          open={navOpen}
+          onClose={() => setNavOpen(false)}
+          onSignOut={signOut}
+        />
 
         {/* Main */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <header className="no-print sticky top-0 z-30 h-16 shrink-0 bg-white/85 backdrop-blur border-b border-hairline flex items-center gap-3 px-5">
+          <header className="no-print sticky top-0 z-30 h-16 shrink-0 bg-white/85 backdrop-blur border-b border-hairline flex items-center gap-2 sm:gap-3 px-4 sm:px-5">
+            <button
+              onClick={() => setNavOpen(true)}
+              aria-label="Open the menu"
+              className="lg:hidden shrink-0 grid place-items-center w-10 h-10 -ml-1 rounded-control text-ink-soft hover:bg-surface-row transition"
+            >
+              <Icon name="menu" size={22} />
+            </button>
             <button
               onClick={() => setPaletteOpen(true)}
               className="flex items-center gap-2 rounded-control border border-hairline bg-surface-wash px-3 py-2 text-ink-faint hover:bg-white transition min-w-0 flex-1 max-w-sm"
@@ -201,8 +167,10 @@ export function Shell({
               </span>
             </button>
 
-            <div className="ml-auto flex items-center gap-3">
-              <LiveClock />
+            <div className="ml-auto flex items-center gap-2 sm:gap-3 shrink-0">
+              {/* The clock is the first thing to go on a narrow screen:
+                  a phone already shows one in its own status bar. */}
+              <span className="hidden md:block"><LiveClock /></span>
               <NotificationBell />
               {/* The whole block is the link to your account, so the
                   obvious place to click for "my details" is the one that

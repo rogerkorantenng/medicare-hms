@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, Avatar } from '@/components/ui';
+import { SignOutButton } from './profile/sign-out';
 import { TABS } from './tabs';
 
 /**
@@ -57,7 +58,14 @@ export function SideNav({ name, mrn }: { name: string; mrn: string | null }) {
         );
       })}
 
-      <p className="mt-auto text-chip text-ink-faint px-2 leading-relaxed">
+      {/* Staff sign out from their sidebar, so a patient on a wide screen
+          should be able to as well. On a phone there is no sidebar and it
+          stays where a phone user looks for it, on the profile tab. */}
+      <div className="mt-auto pt-2">
+        <SignOutButton />
+      </div>
+
+      <p className="text-chip text-ink-faint px-2 leading-relaxed">
         All data here is synthetic. No real patient data appears anywhere.
       </p>
     </aside>

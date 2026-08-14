@@ -46,6 +46,13 @@ export function ConsultationWorkspace({ chart, wards }: { chart: PatientChart; w
   const v = chart.vitals[0];
 
   async function draftWithAi() {
+    // A draft with nothing to go on would be a diagnosis invented from the
+    // chart alone. The complaint is what the patient came in with, and it
+    // is the one thing the model cannot infer.
+    if (!complaint.trim()) {
+      toast('Write the presenting complaint first. The draft works from it.', 'error');
+      return;
+    }
     setDrafting(true);
     setAiMessage(null);
     try {
@@ -172,7 +179,9 @@ export function ConsultationWorkspace({ chart, wards }: { chart: PatientChart; w
         <Card
           title="Consultation note"
           action={
-            <button className="btn-secondary" onClick={draftWithAi} disabled={drafting}>
+            <button className="btn-secondary" onClick={draftWithAi}
+                    disabled={drafting || !complaint.trim()}
+                    title={complaint.trim() ? undefined : 'Write the presenting complaint first'}>
               <Icon name={drafting ? 'progress_activity' : 'auto_awesome'}
                     size={16} className={drafting ? 'animate-spin' : ''} filled={!drafting} />
               Draft with AI

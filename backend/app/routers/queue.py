@@ -13,6 +13,13 @@ Clinical = Annotated[CurrentUser, Depends(require(*CLINICAL_ROLES, "receptionist
 # The entity model has no queue table and none was added. A queue entry is
 # a checked-in appointment: waiting until a nurse records vitals, ready for
 # the doctor afterwards.
+#
+# $2 decides whether the untriaged are included. The nurse's triage queue
+# wants them, since they are the work. The doctor's queue does not: a
+# patient who has been checked in but not seen by a nurse has no vitals
+# and no acuity, so there is nothing to consult on, and listing them
+# invited starting a consultation on somebody triage had not looked at
+# yet.
 _QUEUE = """
     with today_vitals as (
       select distinct on (mrn) * from vitals
@@ -33,6 +40,7 @@ _QUEUE = """
       left join today_vitals v on v.mrn = a.mrn
      where a.status = 'checked_in' and a.appt_date = current_date
        and ($1::uuid is null or a.doctor_id = $1)
+       and ($2::boolean or v.id is not null)
      order by a.appt_time
 """
 
@@ -57,8 +65,9 @@ def _shape(record: dict) -> dict:
 
 @router.get("/triage")
 async def triage_queue(user: Clinical):
+    """Everyone checked in, triaged or not. This is the nurse's work."""
     async with connection() as conn:
-        return [_shape(r) for r in rows(await conn.fetch(_QUEUE, None))]
+        return [_shape(r) for r in rows(await conn.fetch(_QUEUE, None, True))]
 
 
 @router.get("/doctor")
@@ -66,4 +75,4 @@ async def doctor_queue(user: Clinical, doctor_id: str | None = None):
     """Defaults to the signed-in doctor's own queue."""
     target = doctor_id or (str(user.id) if user.role == "doctor" else None)
     async with connection() as conn:
-        return [_shape(r) for r in rows(await conn.fetch(_QUEUE, target))]
+        return [_shape(r) for r in rows(await conn.fetch(_QUEUE, target, False))]
